@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GB300에서 VR200으로, AI Rack BOM이 말하는 산업 구조 변화</title>
+  <link rel="stylesheet" href="assets/report.css">
+  <style>
+    .hero-note{margin:0 0 28px;padding:22px 24px;background:#fff;border:1px solid #d9e2ec;border-radius:10px;box-shadow:0 10px 24px rgba(16,24,40,.05)}
+    .eyebrow{margin:0 0 8px;color:#0b63ce;font-size:.92rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .lead{color:#374151;font-size:1.05rem}
+    .insight-box{margin:28px 0;padding:20px 22px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px}
+    .insight-box strong{color:#9a3412}
+    .chart-img{margin:28px 0 34px;padding:14px;background:#fff;border:1px solid #d9e2ec;border-radius:10px}
+    .chart-img img{display:block;width:100%;height:auto;border-radius:6px}
+    .meta{color:#64748b;font-size:.95rem}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero-note">
+      <p class="eyebrow">AI Infrastructure · Memory Market</p>
+      <h1>GB300에서 VR200으로, AI Rack BOM이 말하는 산업 구조 변화</h1>
+      <p class="lead">AI 인프라는 더 이상 GPU 단품 산업이 아니다. GB300에서 VR200으로 넘어가는 BOM 변화는 메모리, 네트워크, 패키징, 전력, 냉각이 함께 커지는 초대형 인프라 산업의 전환을 보여준다.</p>
+      <p class="meta">작성일: 2026-05-26 · 기준 데이터: GB300/VR200 Rack BOM 비교 및 Omdia memory market 분석</p>
+    </div>
+
+    <div class="chart-img">
+      <img src="assets/gb300_vr200_bom_shift_20260526.png" alt="GB300 to VR200 AI rack BOM shift visual dashboard">
+    </div>
+
+    <h2>핵심 결론</h2>
+    <p>GB300에서 VR200으로 넘어가면서 AI rack 총 BOM은 약 399만 달러에서 780만 달러로 증가한다. 증가율은 95%다. 겉으로 보면 GPU 가격이 더 비싸졌다는 이야기처럼 보이지만, 실제 증가분을 분해하면 결론은 다르다.</p>
+
+    <div class="insight-box">
+      <strong>핵심 인사이트:</strong> AI 인프라의 중심 병목은 GPU 단독에서 메모리, 네트워크, 패키징, 전력, 냉각이 함께 움직이는 시스템 병목으로 이동하고 있다.
+    </div>
+
+    <p>특히 HBM 중심 Memory 항목은 37.4만 달러에서 200.2만 달러로 435% 증가한다. 전체 BOM 증가분 380.9만 달러 중 42.7%가 Memory에서 나온다. GPU 증가분 기여도 37.8%보다 크다.</p>
+
+    <h2>GB300과 VR200 BOM 비교</h2>
+    <table>
+      <thead><tr><th>항목</th><th>GB300</th><th>VR200</th><th>증가율</th><th>전략적 의미</th></tr></thead>
+      <tbody>
+        <tr><td>GPU</td><td>$2,520,000</td><td>$3,960,000</td><td>+57%</td><td>여전히 핵심이지만 GPU 단독 경쟁은 아님</td></tr>
+        <tr><td>CPU</td><td>$180,000</td><td>$180,000</td><td>0%</td><td>상대적 중요도 정체</td></tr>
+        <tr><td>NVLink Switch chip</td><td>$64,800</td><td>$144,000</td><td>+122%</td><td>GPU 간 초고속 연결 중요성 증가</td></tr>
+        <tr><td>Other networking chips</td><td>$261,000</td><td>$576,000</td><td>+121%</td><td>AI 클러스터 병렬처리 확대</td></tr>
+        <tr><td>Memory, HBM 중심</td><td>$373,939</td><td>$2,001,600</td><td>+435%</td><td>가장 큰 변화. 병목이 메모리 대역폭으로 이동</td></tr>
+        <tr><td>PCB</td><td>$35,100</td><td>$116,730</td><td>+233%</td><td>고다층·고속 신호 PCB 수요 폭증</td></tr>
+        <tr><td>ABF Substrate</td><td>$11,160</td><td>$20,340</td><td>+82%</td><td>첨단 패키징 기판 중요성 확대</td></tr>
+        <tr><td>MLCC</td><td>$1,530</td><td>$4,320</td><td>+182%</td><td>고전력·고집적 시스템 부품 증가</td></tr>
+        <tr><td>총합</td><td>$3,994,551</td><td>$7,803,148</td><td>+95%</td><td>AI 인프라 원가 거의 2배 상승</td></tr>
+      </tbody>
+    </table>
+
+    <h2>GPU는 여전히 크지만, 증가분의 주도권은 메모리로 이동</h2>
+    <p>GPU는 여전히 가장 큰 단일 항목이다. 그러나 BOM 비중은 GB300의 63.1%에서 VR200의 50.7%로 낮아진다. 반대로 Memory는 9.4%에서 25.7%로 급등한다.</p>
+
+    <table>
+      <thead><tr><th>항목</th><th>GB300 비중</th><th>VR200 비중</th><th>해석</th></tr></thead>
+      <tbody>
+        <tr><td>GPU</td><td>63.1%</td><td>50.7%</td><td>절대 금액은 증가하지만 BOM 내 지배력은 낮아짐</td></tr>
+        <tr><td>Memory, HBM 중심</td><td>9.4%</td><td>25.7%</td><td>가장 큰 구조 변화</td></tr>
+        <tr><td>Networking chips</td><td>8.2%</td><td>9.2%</td><td>scale-up/scale-out 연결 중요성 상승</td></tr>
+        <tr><td>CPU</td><td>4.5%</td><td>2.3%</td><td>AI rack 내 상대적 중요도 하락</td></tr>
+      </tbody>
+    </table>
+
+    <p>증가분 기준으로 보면 변화는 더 선명하다. VR200으로 넘어가며 늘어난 비용 중 Memory/HBM이 42.7%, GPU가 37.8%, 네트워킹 칩이 10.4%를 차지한다.</p>
+
+    <h2>Omdia 데이터와 연결되는 지점</h2>
+    <p>이 rack-level BOM 변화는 Omdia의 반도체 시장 전망과 같은 방향을 가리킨다. Omdia의 Global Semi Market Summary 202605에서 2026년 반도체 매출 증가분의 86.3%는 Memory IC에서 나온다. Memory IC 비중은 2025년 27.5%에서 2026년 50.1%로 상승한다.</p>
+
+    <p>즉, macro market data와 rack BOM data가 같은 결론을 만든다. AI 반도체 사이클의 출발점은 GPU였지만, 수익 풀과 병목은 메모리로 확장되고 있다.</p>
+
+    <h2>웨이퍼보다 중요한 것은 qualified memory system output</h2>
+    <p>앞선 Silicon Demand Forecast 검토에서는 2026년 300mm wafer output 증가율이 demand-driven silicon 증가율보다 높았다. 따라서 전체 blank wafer 총량이 절대적으로 부족하다고 보기는 어렵다.</p>
+
+    <p>그러나 이번 BOM 데이터는 더 중요한 병목을 보여준다. 문제는 wafer 총량이 아니라 HBM용 advanced DRAM wafer allocation, TSV, bonding, stack, test, GPU package와 HBM 통합, CoWoS와 같은 advanced packaging throughput이다.</p>
+
+    <div class="insight-box">
+      <strong>인사이트:</strong> AI rack 원가에서 Memory가 폭증한다고 해서 곧바로 blank wafer 부족을 의미하지는 않는다. 병목은 wafer 총량이 아니라 qualified HBM output과 memory system integration이다.
+    </div>
+
+    <h2>산업별 수혜 구조</h2>
+    <table>
+      <thead><tr><th>영역</th><th>대표 수혜 산업/기업 유형</th><th>인사이트</th></tr></thead>
+      <tbody>
+        <tr><td>GPU</td><td>NVIDIA</td><td>여전히 가장 큰 단일 원가 항목</td></tr>
+        <tr><td>HBM</td><td>SK hynix, Samsung, Micron</td><td>증가분 1위. AI 원가 상승의 중심</td></tr>
+        <tr><td>Networking</td><td>Broadcom, Marvell, NVIDIA networking</td><td>multi-GPU 연결과 scale-up fabric의 핵심</td></tr>
+        <tr><td>PCB/ABF</td><td>고다층 PCB, substrate 업체</td><td>고속 신호·고전력 보드 복잡도 증가</td></tr>
+        <tr><td>MLCC/전력</td><td>Murata, Samsung Electro-Mechanics, 전력부품 업체</td><td>고전력·고집적 시스템 부품 수요 증가</td></tr>
+        <tr><td>Cooling</td><td>액침냉각, CDU, HVAC</td><td>thermal density가 핵심 제약으로 부상</td></tr>
+        <tr><td>Power infrastructure</td><td>변압기, 전력망, 원전, 가스발전, UPS</td><td>AI는 결국 전기와 열의 산업</td></tr>
+      </tbody>
+    </table>
+
+    <h2>결론</h2>
+    <p>GB300에서 VR200으로 넘어가는 BOM 데이터는 AI 산업의 성격 변화를 매우 분명하게 보여준다. 과거에는 AI 인프라를 GPU 산업으로 보는 관점이 맞았다. 그러나 VR200 세대로 가면 이 관점은 부족하다.</p>
+
+    <div class="insight-box">
+      <strong>최종 관점:</strong> AI 산업은 GPU 산업이 아니라, 메모리·네트워크·패키징·전력·냉각이 함께 움직이는 초대형 인프라 산업이다.
+    </div>
+
+    <p>투자와 산업 분석의 초점도 바뀌어야 한다. GPU 단품 판매량만 볼 것이 아니라 HBM attach와 memory dollars per rack을 봐야 한다. HBM만 볼 것이 아니라 CXL, eSSD, KV cache, memory hierarchy를 봐야 한다. 칩만 볼 것이 아니라 PCB, substrate, MLCC, cooling, power grid를 같이 봐야 한다.</p>
+  </main>
+</body>
+</html>
