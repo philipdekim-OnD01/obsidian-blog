@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex">
     <title>Philip Kim</title>
 
     <style>
@@ -20,6 +22,22 @@
 
         * {
             box-sizing: border-box;
+        }
+
+        html.copy-guard,
+        html.copy-guard body,
+        html.copy-guard * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html.copy-guard img,
+        html.copy-guard svg {
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
 
         body {
@@ -531,5 +549,6 @@
         })();
     })();
     </script>
+    <script src="assets/protect.js" defer></script>
 </body>
 </html>

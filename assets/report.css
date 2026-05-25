@@ -4,6 +4,11 @@ html {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
     font-size: 17px;
     line-height: 1.75;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 body {
@@ -47,6 +52,16 @@ li {
 
 a {
     color: #0b63ce;
+}
+
+img,
+svg,
+table,
+figure,
+.chart,
+.mini-chart {
+    -webkit-user-drag: none;
+    user-drag: none;
 }
 
 nav#TOC {
