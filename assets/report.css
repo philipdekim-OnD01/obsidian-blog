@@ -1,0 +1,300 @@
+html {
+    background: #f4f6f8;
+    color: #1f2933;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+}
+
+body {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 22px 80px;
+}
+
+header#title-block-header {
+    display: none;
+}
+
+h1,
+h2,
+h3 {
+    color: #111827;
+    line-height: 1.35;
+}
+
+h1 {
+    margin: 0 0 28px;
+    font-size: 2.15rem;
+}
+
+h2 {
+    margin-top: 44px;
+    padding-top: 18px;
+    border-top: 1px solid #d9e2ec;
+    font-size: 1.45rem;
+}
+
+h3 {
+    margin-top: 32px;
+    font-size: 1.15rem;
+}
+
+p,
+li {
+    word-break: keep-all;
+}
+
+a {
+    color: #0b63ce;
+}
+
+nav#TOC {
+    margin: 0 0 36px;
+    padding: 20px 24px;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 8px;
+}
+
+nav#TOC::before {
+    content: "목차";
+    display: block;
+    color: #111827;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+nav#TOC ul {
+    margin: 8px 0 0;
+    padding-left: 22px;
+}
+
+table {
+    display: block;
+    width: 100%;
+    margin: 0;
+    overflow-x: auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 8px;
+}
+
+th,
+td {
+    padding: 10px 12px;
+    border: 1px solid #d9e2ec;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+th {
+    background: #eef3f8;
+    color: #111827;
+    font-weight: 700;
+}
+
+blockquote {
+    margin: 24px 0;
+    padding: 12px 18px;
+    border-left: 4px solid #0b63ce;
+    background: #ffffff;
+}
+
+.chart {
+    margin: 28px 0 34px;
+    padding: 18px 18px 10px;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 8px;
+}
+
+.table-visual {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    gap: 18px;
+    align-items: stretch;
+    margin: 24px 0 34px;
+}
+
+.table-visual > table {
+    height: 100%;
+}
+
+.table-visual .chart,
+.table-visual .mini-chart {
+    margin: 0;
+}
+
+.mini-chart {
+    padding: 18px 18px 12px;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 8px;
+}
+
+.mini-chart figcaption {
+    margin-bottom: 12px;
+    color: #111827;
+    font-weight: 700;
+}
+
+.mini-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.mini-chart .axis,
+.mini-chart .grid {
+    stroke: #d9e2ec;
+    stroke-width: 1;
+}
+
+.mini-chart .bar,
+.mini-chart .line {
+    fill: none;
+    stroke: #0b63ce;
+    stroke-width: 4;
+}
+
+.mini-chart .bar-fill {
+    fill: #0b63ce;
+}
+
+.mini-chart .bar-fill-alt {
+    fill: #2f8f83;
+}
+
+.mini-chart .bar-fill-warn {
+    fill: #d97706;
+}
+
+.mini-chart .dot {
+    fill: #0b63ce;
+}
+
+.mini-chart .label,
+.mini-chart .value {
+    fill: #111827;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mini-chart .tick {
+    fill: #52616f;
+    font-size: 13px;
+}
+
+.flow-box {
+    fill: #e8f1ff;
+    stroke: #0b63ce;
+    stroke-width: 2;
+}
+
+.flow-box-alt {
+    fill: #e6f5f2;
+    stroke: #2f8f83;
+    stroke-width: 2;
+}
+
+.flow-box-warn {
+    fill: #fff4df;
+    stroke: #d97706;
+    stroke-width: 2;
+}
+
+.flow-arrow {
+    fill: none;
+    stroke: #52616f;
+    stroke-width: 3;
+}
+
+.flow-title {
+    fill: #111827;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.flow-text {
+    fill: #52616f;
+    font-size: 17px;
+}
+
+.flow-note {
+    fill: #111827;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.chart figcaption {
+    margin-bottom: 14px;
+    color: #111827;
+    font-weight: 700;
+}
+
+.chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.chart .axis {
+    stroke: #52616f;
+    stroke-width: 2;
+}
+
+.chart .grid {
+    stroke: #d9e2ec;
+    stroke-width: 1;
+}
+
+.chart .bar {
+    fill: #0b63ce;
+}
+
+.chart .bar-2026 {
+    fill: #2f8f83;
+}
+
+.chart .bar-2027 {
+    fill: #d97706;
+}
+
+.chart .value {
+    fill: #111827;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.chart .label,
+.chart .tick {
+    fill: #52616f;
+    font-size: 18px;
+}
+
+code {
+    padding: 2px 5px;
+    background: #e8eef5;
+    border-radius: 4px;
+}
+
+@media (max-width: 680px) {
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        padding: 28px 16px 56px;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    .table-visual {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OpenAI LLM 경제성 쉬운 시나리오 리포트</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">html {
+background: #f4f6f8;
+color: #1f2933;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
+font-size: 17px;
+line-height: 1.75;
+}
+body {
+max-width: 960px;
+margin: 0 auto;
+padding: 48px 22px 80px;
+}
+header#title-block-header {
+display: none;
+}
+h1,
+h2,
+h3 {
+color: #111827;
+line-height: 1.35;
+}
+h1 {
+margin: 0 0 28px;
+font-size: 2.15rem;
+}
+h2 {
+margin-top: 44px;
+padding-top: 18px;
+border-top: 1px solid #d9e2ec;
+font-size: 1.45rem;
+}
+h3 {
+margin-top: 32px;
+font-size: 1.15rem;
+}
+p,
+li {
+word-break: keep-all;
+}
+a {
+color: #0b63ce;
+}
+nav#TOC {
+margin: 0 0 36px;
+padding: 20px 24px;
+background: #ffffff;
+border: 1px solid #d9e2ec;
+border-radius: 8px;
+}
+nav#TOC::before {
+content: "목차";
+display: block;
+color: #111827;
+font-size: 1.05rem;
+font-weight: 700;
+}
+nav#TOC ul {
+margin: 8px 0 0;
+padding-left: 22px;
+}
+table {
+display: block;
+width: 100%;
+margin: 0;
+overflow-x: auto;
+border-collapse: collapse;
+background: #ffffff;
+border: 1px solid #d9e2ec;
+border-radius: 8px;
+}
+th,
+td {
+padding: 10px 12px;
+border: 1px solid #d9e2ec;
+text-align: left;
+vertical-align: top;
+white-space: nowrap;
+}
+th {
+background: #eef3f8;
+color: #111827;
+font-weight: 700;
+}
+blockquote {
+margin: 24px 0;
+padding: 12px 18px;
+border-left: 4px solid #0b63ce;
+background: #ffffff;
+}
+.chart {
+margin: 28px 0 34px;
+padding: 18px 18px 10px;
+background: #ffffff;
+border: 1px solid #d9e2ec;
+border-radius: 8px;
+}
+.table-visual {
+display: grid;
+grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+gap: 18px;
+align-items: stretch;
+margin: 24px 0 34px;
+}
+.table-visual > table {
+height: 100%;
+}
+.table-visual .chart,
+.table-visual .mini-chart {
+margin: 0;
+}
+.mini-chart {
+padding: 18px 18px 12px;
+background: #ffffff;
+border: 1px solid #d9e2ec;
+border-radius: 8px;
+}
+.mini-chart figcaption {
+margin-bottom: 12px;
+color: #111827;
+font-weight: 700;
+}
+.mini-chart svg {
+display: block;
+width: 100%;
+height: auto;
+}
+.mini-chart .axis,
+.mini-chart .grid {
+stroke: #d9e2ec;
+stroke-width: 1;
+}
+.mini-chart .bar,
+.mini-chart .line {
+fill: none;
+stroke: #0b63ce;
+stroke-width: 4;
+}
+.mini-chart .bar-fill {
+fill: #0b63ce;
+}
+.mini-chart .bar-fill-alt {
+fill: #2f8f83;
+}
+.mini-chart .bar-fill-warn {
+fill: #d97706;
+}
+.mini-chart .dot {
+fill: #0b63ce;
+}
+.mini-chart .label,
+.mini-chart .value {
+fill: #111827;
+font-size: 14px;
+font-weight: 700;
+}
+.mini-chart .tick {
+fill: #52616f;
+font-size: 13px;
+}
+.flow-box {
+fill: #e8f1ff;
+stroke: #0b63ce;
+stroke-width: 2;
+}
+.flow-box-alt {
+fill: #e6f5f2;
+stroke: #2f8f83;
+stroke-width: 2;
+}
+.flow-box-warn {
+fill: #fff4df;
+stroke: #d97706;
+stroke-width: 2;
+}
+.flow-arrow {
+fill: none;
+stroke: #52616f;
+stroke-width: 3;
+}
+.flow-title {
+fill: #111827;
+font-size: 20px;
+font-weight: 700;
+}
+.flow-text {
+fill: #52616f;
+font-size: 17px;
+}
+.flow-note {
+fill: #111827;
+font-size: 18px;
+font-weight: 700;
+}
+.chart figcaption {
+margin-bottom: 14px;
+color: #111827;
+font-weight: 700;
+}
+.chart svg {
+display: block;
+width: 100%;
+height: auto;
+}
+.chart .axis {
+stroke: #52616f;
+stroke-width: 2;
+}
+.chart .grid {
+stroke: #d9e2ec;
+stroke-width: 1;
+}
+.chart .bar {
+fill: #0b63ce;
+}
+.chart .bar-2026 {
+fill: #2f8f83;
+}
+.chart .bar-2027 {
+fill: #d97706;
+}
+.chart .value {
+fill: #111827;
+font-size: 20px;
+font-weight: 700;
+}
+.chart .label,
+.chart .tick {
+fill: #52616f;
+font-size: 18px;
+}
+code {
+padding: 2px 5px;
+background: #e8eef5;
+border-radius: 4px;
+}
+@media (max-width: 680px) {
+html {
+font-size: 16px;
+}
+body {
+padding: 28px 16px 56px;
+}
+h1 {
+font-size: 1.75rem;
+}
+.table-visual {
+grid-template-columns: 1fr;
+}
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">OpenAI LLM 경제성 쉬운 시나리오 리포트</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#openai-llm-경제성-쉬운-시나리오-리포트" id="toc-openai-llm-경제성-쉬운-시나리오-리포트">OpenAI LLM 경제성 쉬운
+시나리오 리포트</a>
+<ul>
+<li><a href="#강의-목표" id="toc-강의-목표">0. 강의 목표</a></li>
+<li><a href="#한-장으로-보는-openai-경제-구조" id="toc-한-장으로-보는-openai-경제-구조">1. 한 장으로 보는 OpenAI 경제
+구조</a></li>
+<li><a href="#먼저-용어부터-정리" id="toc-먼저-용어부터-정리">2. 먼저
+용어부터 정리</a></li>
+<li><a href="#파라미터가-비용으로-바뀌는-과정" id="toc-파라미터가-비용으로-바뀌는-과정">3. 파라미터가 비용으로 바뀌는
+과정</a></li>
+<li><a href="#openai에서-공개된-것과-비공개인-것" id="toc-openai에서-공개된-것과-비공개인-것">4. OpenAI에서 공개된 것과
+비공개인 것</a></li>
+<li><a href="#모델-크기-시나리오와-hbm-요구량" id="toc-모델-크기-시나리오와-hbm-요구량">5. 모델 크기 시나리오와 HBM
+요구량</a></li>
+<li><a href="#학습비-한-번-크게-쓰는-비용" id="toc-학습비-한-번-크게-쓰는-비용">6. 학습비: 한 번 크게 쓰는
+비용</a></li>
+<li><a href="#추론비-매일-나가는-비용" id="toc-추론비-매일-나가는-비용">7. 추론비: 매일 나가는 비용</a></li>
+<li><a href="#추론-원가-시나리오" id="toc-추론-원가-시나리오">8. 추론
+원가 시나리오</a></li>
+<li><a href="#매출-시나리오" id="toc-매출-시나리오">9. 매출
+시나리오</a></li>
+<li><a href="#수익성-gross-margin과-회사-전체-손익은-다르다" id="toc-수익성-gross-margin과-회사-전체-손익은-다르다">10. 수익성: gross
+margin과 회사 전체 손익은 다르다</a></li>
+<li><a href="#강의용-핵심-그림-왜-hbm인가" id="toc-강의용-핵심-그림-왜-hbm인가">11. 강의용 핵심 그림: 왜
+HBM인가</a></li>
+<li><a href="#결론" id="toc-결론">12. 결론</a></li>
+<li><a href="#토론-질문" id="toc-토론-질문">13. 토론 질문</a></li>
+<li><a href="#sources" id="toc-sources">Sources</a></li>
+<li><a href="#관련-노트" id="toc-관련-노트">관련 노트</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="openai-llm-경제성-쉬운-시나리오-리포트">OpenAI LLM 경제성 쉬운
+시나리오 리포트</h1>
+<h2 id="강의-목표">0. 강의 목표</h2>
+<p>이 문서는 OpenAI 같은 LLM 서비스가 왜 단순한 소프트웨어가 아니라
+<strong>GPU, HBM, 데이터센터, 구독 매출이 결합된 거대한 경제
+시스템</strong>인지 설명하기 위한 강의 자료다.</p>
+<p>수업이 끝나면 다음 네 가지를 이해하는 것이 목표다.</p>
+<ol type="1">
+<li>LLM의 파라미터가 왜 GPU/HBM 비용으로 연결되는가</li>
+<li>학습비보다 추론비가 왜 더 큰 반복 비용이 되는가</li>
+<li>무료 사용자, 유료 구독, API 매출이 어떤 식으로 비용을
+회수하는가</li>
+<li>이 구조가 왜 DRAM/HBM 업황과 직접 연결되는가</li>
+</ol>
+<h2 id="한-장으로-보는-openai-경제-구조">1. 한 장으로 보는 OpenAI 경제
+구조</h2>
+<p>OpenAI의 frontier 모델은 파라미터 수, 학습 데이터량, 학습 GPU 수,
+실제 추론 원가를 공개하지 않는다. 따라서 아래 숫자는 OpenAI 내부
+실측값이 아니라 <strong>공개 자료와 합리적 가정을 이용한
+시나리오</strong>다.</p>
+<p>핵심 구조는 간단하다.</p>
+<figure class="chart">
+<figcaption>
+LLM 경제성 flywheel: 사용량이 늘수록 HBM과 GPU 투자가 다시 필요해진다
+</figcaption>
+<svg viewBox="0 0 900 360" role="img" aria-label="LLM 경제성 흐름도">
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L0,6 L9,3 z" fill="#52616f"></path> </marker> </defs>
+<rect x="40" y="120" width="150" height="72" rx="8" class="flow-box"></rect>
+<text x="115" y="150" text-anchor="middle" class="flow-title">거대
+모델</text>
+<text x="115" y="174" text-anchor="middle" class="flow-text">학습/개선</text>
+<rect x="240" y="120" width="150" height="72" rx="8" class="flow-box-alt"></rect>
+<text x="315" y="150" text-anchor="middle" class="flow-title">GPU +
+HBM</text>
+<text x="315" y="174" text-anchor="middle" class="flow-text">Serving
+인프라</text>
+<rect x="440" y="120" width="150" height="72" rx="8" class="flow-box-warn"></rect>
+<text x="515" y="150" text-anchor="middle" class="flow-title">사용자
+요청</text>
+<text x="515" y="174" text-anchor="middle" class="flow-text">Token/day
+증가</text>
+<rect x="640" y="120" width="150" height="72" rx="8" class="flow-box"></rect>
+<text x="715" y="150" text-anchor="middle" class="flow-title">구독/API
+매출</text>
+<text x="715" y="174" text-anchor="middle" class="flow-text">비용
+회수</text>
+<line x1="190" y1="156" x2="230" y2="156" class="flow-arrow" marker-end="url(#arrow)"></line>
+<line x1="390" y1="156" x2="430" y2="156" class="flow-arrow" marker-end="url(#arrow)"></line>
+<line x1="590" y1="156" x2="630" y2="156" class="flow-arrow" marker-end="url(#arrow)"></line>
+<path d="M715 205 C700 295, 170 295, 115 205" class="flow-arrow" marker-end="url(#arrow)"></path>
+<text x="415" y="300" text-anchor="middle" class="flow-note">매출은 다시
+GPU/HBM capacity 확보와 모델 개선에 재투자된다</text>
+</svg>
+</figure>
+<p>쉽게 말하면, 사용자가 질문을 할 때마다 실제로 GPU와 HBM이 일을 한다.
+그래서 OpenAI의 원가 구조는 일반 SaaS보다 <strong>반도체/클라우드
+제조업</strong>에 가깝다.</p>
+<h2 id="먼저-용어부터-정리">2. 먼저 용어부터 정리</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>용어</th>
+<th>쉬운 뜻</th>
+<th>왜 중요한가</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Parameter</td>
+<td>모델 안에 저장된 숫자 weight</td>
+<td>많을수록 HBM에 올릴 데이터가 늘어난다</td>
+</tr>
+<tr class="even">
+<td>Token</td>
+<td>모델이 읽고 쓰는 글자 조각</td>
+<td>요청이 많을수록 token/day가 늘고 추론비가 커진다</td>
+</tr>
+<tr class="odd">
+<td>HBM</td>
+<td>GPU 옆에 붙는 초고속 메모리</td>
+<td>모델 weight와 KV cache를 담고 계속 읽고 쓴다</td>
+</tr>
+<tr class="even">
+<td>KV cache</td>
+<td>긴 대화 맥락을 유지하기 위한 임시 메모리</td>
+<td>context가 길수록 HBM 사용량이 커진다</td>
+</tr>
+<tr class="odd">
+<td>MoE</td>
+<td>Mixture of Experts, 일부 expert만 활성화하는 구조</td>
+<td>계산량은 줄이지만 전체 weight는 저장해야 한다</td>
+</tr>
+<tr class="even">
+<td>Active params</td>
+<td>token 하나를 만들 때 실제 계산에 쓰는 파라미터</td>
+<td>학습/추론 계산량을 추정할 때 쓴다</td>
+</tr>
+<tr class="odd">
+<td>Total params</td>
+<td>모델 전체에 존재하는 파라미터</td>
+<td>HBM 용량을 추정할 때 중요하다</td>
+</tr>
+<tr class="even">
+<td>WAU</td>
+<td>Weekly active users, 주간 활성 사용자</td>
+<td>서비스 규모를 나타낸다</td>
+</tr>
+</tbody>
+</table>
+<p>핵심은 이것이다.</p>
+<pre class="text"><code>Total parameters → HBM 용량 부담
+Active parameters × token 수 → 계산량 부담
+사용자 수 × request 수 × token 수 → 매일 반복되는 추론비</code></pre>
+<h2 id="파라미터가-비용으로-바뀌는-과정">3. 파라미터가 비용으로 바뀌는
+과정</h2>
+<p>LLM의 파라미터는 모델 내부의 weight다. 쉽게 말하면 문장을 이해하고
+다음 token을 예측하기 위해 학습된 숫자다.</p>
+<pre class="text"><code>파라미터 수가 크다
+→ 저장해야 할 weight가 많다
+→ HBM 메모리가 많이 필요하다
+→ token 하나를 만들 때 읽어야 할 데이터가 많다
+→ 추론 비용이 커진다</code></pre>
+<div class="table-visual">
+<table>
+<thead>
+<tr class="header">
+<th>Precision</th>
+<th style="text-align: right;">Parameter당 용량</th>
+<th style="text-align: right;">100B 모델 weight</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BF16/FP16</td>
+<td style="text-align: right;">2 bytes</td>
+<td style="text-align: right;">200GB</td>
+<td>품질은 좋지만 메모리 부담이 큼</td>
+</tr>
+<tr class="even">
+<td>FP8</td>
+<td style="text-align: right;">1 byte</td>
+<td style="text-align: right;">100GB</td>
+<td>serving에서 많이 쓰는 절충</td>
+</tr>
+<tr class="odd">
+<td>4-bit</td>
+<td style="text-align: right;">0.5 byte</td>
+<td style="text-align: right;">50GB</td>
+<td>메모리는 줄지만 품질/운영 trade-off</td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+100B 모델 weight 메모리
+</figcaption>
+<svg viewBox="0 0 340 240" role="img" aria-label="100B 모델 precision별 메모리 막대그래프">
+<line x1="48" y1="190" x2="292" y2="190" class="axis"></line>
+<rect x="70" y="30" width="48" height="160" class="bar-fill"></rect>
+<rect x="146" y="110" width="48" height="80" class="bar-fill-alt"></rect>
+<rect x="222" y="150" width="48" height="40" class="bar-fill-warn"></rect>
+<text x="94" y="22" text-anchor="middle" class="value">200GB</text>
+<text x="170" y="102" text-anchor="middle" class="value">100GB</text>
+<text x="246" y="142" text-anchor="middle" class="value">50GB</text>
+<text x="94" y="216" text-anchor="middle" class="tick">BF16</text>
+<text x="170" y="216" text-anchor="middle" class="tick">FP8</text>
+<text x="246" y="216" text-anchor="middle" class="tick">4-bit</text>
+</svg>
+</figure>
+</div>
+<p>100B 모델은 BF16으로는 200GB가 필요하다. H100 80GB 한 장에는 올라가지
+않는다. 그래서 HBM 용량이 큰 GPU, 여러 GPU를 묶는 네트워크, 더 효율적인
+quantization이 모두 중요해진다.</p>
+<h2 id="openai에서-공개된-것과-비공개인-것">4. OpenAI에서 공개된 것과
+비공개인 것</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th>공개 여부</th>
+<th>현재 상태</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GPT-5/GPT-5.x 파라미터 수</td>
+<td>비공개</td>
+<td>OpenAI가 total/active parameter를 공개하지 않음</td>
+</tr>
+<tr class="even">
+<td>GPT-5/GPT-5.x 학습 token 수</td>
+<td>비공개</td>
+<td>공개되지 않음</td>
+</tr>
+<tr class="odd">
+<td>GPT-5/GPT-5.x 학습 GPU 수</td>
+<td>비공개</td>
+<td>공개되지 않음</td>
+</tr>
+<tr class="even">
+<td>GPT-5/GPT-5.x inference 원가</td>
+<td>비공개</td>
+<td>공개되지 않음</td>
+</tr>
+<tr class="odd">
+<td>gpt-oss-120b 파라미터</td>
+<td>공개</td>
+<td>117B total, 약 5.1B active</td>
+</tr>
+<tr class="even">
+<td>gpt-oss-120b 메모리</td>
+<td>공개</td>
+<td>단일 80GB GPU에서 실행 가능하도록 설계</td>
+</tr>
+<tr class="odd">
+<td>ChatGPT weekly active users</td>
+<td>공개/보도</td>
+<td>2026년 2월 기준 900M WAU 보도</td>
+</tr>
+<tr class="even">
+<td>ChatGPT paid subscribers</td>
+<td>보도</td>
+<td>2026년 초 50M paid subscribers 보도</td>
+</tr>
+<tr class="odd">
+<td>OpenAI revenue run-rate</td>
+<td>보도</td>
+<td>2026년 초 월 $2B, 연환산 $24B 수준 보도</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 이 문서의 숫자는 정확한 내부값이 아니라 <strong>경제성 감각을
+잡기 위한 시나리오</strong>다.</p>
+<h2 id="모델-크기-시나리오와-hbm-요구량">5. 모델 크기 시나리오와 HBM
+요구량</h2>
+<p>OpenAI GPT-5 계열의 실제 크기는 비공개다. 그래서 네 가지 모델 크기
+시나리오를 둔다.</p>
+<div class="table-visual">
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>시나리오</th>
+<th>모델 구조</th>
+<th style="text-align: right;">Total params</th>
+<th style="text-align: right;">Active params/token</th>
+<th style="text-align: right;">BF16 weight</th>
+<th style="text-align: right;">FP8 weight</th>
+<th style="text-align: right;">H100 80GB 최소 장수(BF16)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A. 공개 소형 기준</td>
+<td>gpt-oss-120b급 MoE</td>
+<td style="text-align: right;">117B</td>
+<td style="text-align: right;">5.1B</td>
+<td style="text-align: right;">234GB</td>
+<td style="text-align: right;">117GB</td>
+<td style="text-align: right;">3장</td>
+</tr>
+<tr class="even">
+<td>B. Frontier 효율형</td>
+<td>MoE</td>
+<td style="text-align: right;">500B</td>
+<td style="text-align: right;">50B</td>
+<td style="text-align: right;">1,000GB</td>
+<td style="text-align: right;">500GB</td>
+<td style="text-align: right;">13장</td>
+</tr>
+<tr class="odd">
+<td>C. Frontier 대형</td>
+<td>MoE</td>
+<td style="text-align: right;">1.0T</td>
+<td style="text-align: right;">100B</td>
+<td style="text-align: right;">2,000GB</td>
+<td style="text-align: right;">1,000GB</td>
+<td style="text-align: right;">25장</td>
+</tr>
+<tr class="even">
+<td>D. Mega frontier</td>
+<td>MoE</td>
+<td style="text-align: right;">2.0T</td>
+<td style="text-align: right;">200B</td>
+<td style="text-align: right;">4,000GB</td>
+<td style="text-align: right;">2,000GB</td>
+<td style="text-align: right;">50장</td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+BF16 weight 기준 HBM 부담
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="시나리오별 BF16 weight 메모리 막대그래프">
+<line x1="45" y1="200" x2="305" y2="200" class="axis"></line>
+<rect x="62" y="188" width="38" height="12" class="bar-fill"></rect>
+<rect x="123" y="150" width="38" height="50" class="bar-fill-alt"></rect>
+<rect x="184" y="100" width="38" height="100" class="bar-fill-warn"></rect>
+<rect x="245" y="0" width="38" height="200" class="bar-fill"></rect>
+<text x="81" y="180" text-anchor="middle" class="value">234GB</text>
+<text x="142" y="142" text-anchor="middle" class="value">1TB</text>
+<text x="203" y="92" text-anchor="middle" class="value">2TB</text>
+<text x="264" y="18" text-anchor="middle" class="value">4TB</text>
+<text x="81" y="226" text-anchor="middle" class="tick">A</text>
+<text x="142" y="226" text-anchor="middle" class="tick">B</text>
+<text x="203" y="226" text-anchor="middle" class="tick">C</text>
+<text x="264" y="226" text-anchor="middle" class="tick">D</text>
+</svg>
+</figure>
+</div>
+<p>읽는 법은 단순하다.</p>
+<ul>
+<li><strong>HBM 용량은 total params 기준</strong>으로 본다.</li>
+<li><strong>계산량은 active params 기준</strong>으로 본다.</li>
+<li>MoE는 계산은 줄이지만, 전체 expert weight는 어딘가에 올라가 있어야
+한다.</li>
+</ul>
+<h2 id="학습비-한-번-크게-쓰는-비용">6. 학습비: 한 번 크게 쓰는
+비용</h2>
+<p>LLM 학습 compute는 단순화하면 다음과 비례한다.</p>
+<pre class="text"><code>Training FLOPs ≈ 6 × active parameters × training tokens</code></pre>
+<p>가정:</p>
+<ul>
+<li>H100 한 장의 실효 학습 성능: 400 TFLOP/s</li>
+<li>H100 cloud-equivalent 비용: $3.5/GPU-hour</li>
+<li>실제 all-in 비용은 데이터 준비, 실험, failed run, RL/post-training,
+인건비, 전력, 네트워크, 스토리지까지 포함</li>
+</ul>
+<div class="table-visual">
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>시나리오</th>
+<th style="text-align: right;">Active params</th>
+<th style="text-align: right;">Token</th>
+<th style="text-align: right;">H100 GPU-days</th>
+<th style="text-align: right;">50K H100 기준 기간</th>
+<th style="text-align: right;">순수 GPU 임대비</th>
+<th style="text-align: right;">all-in 학습비 추정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A. gpt-oss-120b급</td>
+<td style="text-align: right;">5.1B</td>
+<td style="text-align: right;">10T</td>
+<td style="text-align: right;">8,900</td>
+<td style="text-align: right;">0.2일</td>
+<td style="text-align: right;">$0.7M</td>
+<td style="text-align: right;">$10M~$50M</td>
+</tr>
+<tr class="even">
+<td>B. 500B MoE</td>
+<td style="text-align: right;">50B</td>
+<td style="text-align: right;">30T</td>
+<td style="text-align: right;">260,000</td>
+<td style="text-align: right;">5.2일</td>
+<td style="text-align: right;">$21.8M</td>
+<td style="text-align: right;">$100M~$300M</td>
+</tr>
+<tr class="odd">
+<td>C. 1T MoE</td>
+<td style="text-align: right;">100B</td>
+<td style="text-align: right;">50T</td>
+<td style="text-align: right;">868,000</td>
+<td style="text-align: right;">17.4일</td>
+<td style="text-align: right;">$72.9M</td>
+<td style="text-align: right;">$300M~$800M</td>
+</tr>
+<tr class="even">
+<td>D. 2T MoE</td>
+<td style="text-align: right;">200B</td>
+<td style="text-align: right;">80T</td>
+<td style="text-align: right;">2,778,000</td>
+<td style="text-align: right;">55.6일</td>
+<td style="text-align: right;">$233.3M</td>
+<td style="text-align: right;">$700M~$1.5B+</td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+학습비는 frontier로 갈수록 급증
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="시나리오별 all-in 학습비 막대그래프">
+<line x1="48" y1="200" x2="300" y2="200" class="axis"></line>
+<rect x="64" y="194" width="42" height="6" class="bar-fill"></rect>
+<rect x="125" y="160" width="42" height="40" class="bar-fill-alt"></rect>
+<rect x="186" y="100" width="42" height="100" class="bar-fill-warn"></rect>
+<rect x="247" y="20" width="42" height="180" class="bar-fill"></rect>
+<text x="85" y="184" text-anchor="middle" class="value">$50M</text>
+<text x="146" y="151" text-anchor="middle" class="value">$300M</text>
+<text x="207" y="91" text-anchor="middle" class="value">$800M</text>
+<text x="268" y="16" text-anchor="middle" class="value">$1.5B+</text>
+<text x="85" y="226" text-anchor="middle" class="tick">A</text>
+<text x="146" y="226" text-anchor="middle" class="tick">B</text>
+<text x="207" y="226" text-anchor="middle" class="tick">C</text>
+<text x="268" y="226" text-anchor="middle" class="tick">D</text>
+</svg>
+</figure>
+</div>
+<p>강의 포인트:</p>
+<ul>
+<li>학습비는 크지만, 매일 반복되지는 않는다.</li>
+<li>frontier 모델은 한 번의 최종 run만 있는 것이 아니라 수많은 실험과
+post-training이 붙는다.</li>
+<li>그래서 모델 하나가 수억 달러에서 10억 달러급 프로젝트가 될 수
+있다.</li>
+</ul>
+<h2 id="추론비-매일-나가는-비용">7. 추론비: 매일 나가는 비용</h2>
+<p>ChatGPT처럼 매일 수십억 request가 들어오면 추론비가 회사의 핵심
+원가가 된다.</p>
+<p>시나리오 가정:</p>
+<ul>
+<li>ChatGPT weekly active users: 900M</li>
+<li>일일 request: 2.0B건</li>
+<li>request당 평균 token: input 1,500 + output 500 = 2,000 tokens</li>
+<li>일일 처리 token: 4.0T tokens/day</li>
+<li>H100 한 장의 실효 serving 처리량: 500 tokens/s</li>
+<li>평균 utilization: 40%</li>
+</ul>
+<p>필요 H100 수:</p>
+<pre class="text"><code>4.0T tokens/day ÷ (500 tokens/s × 86,400s × 40%)
+≈ 231,000 H100-equivalent GPUs</code></pre>
+<div class="table-visual">
+<table>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th style="text-align: right;">값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>일일 request</td>
+<td style="text-align: right;">2.0B</td>
+</tr>
+<tr class="even">
+<td>request당 평균 token</td>
+<td style="text-align: right;">2,000</td>
+</tr>
+<tr class="odd">
+<td>일일 token 처리량</td>
+<td style="text-align: right;">4.0T tokens</td>
+</tr>
+<tr class="even">
+<td>GPU당 실효 처리량</td>
+<td style="text-align: right;">500 tokens/s</td>
+</tr>
+<tr class="odd">
+<td>평균 utilization</td>
+<td style="text-align: right;">40%</td>
+</tr>
+<tr class="even">
+<td>필요 GPU</td>
+<td style="text-align: right;">약 231K H100-equivalent</td>
+</tr>
+<tr class="odd">
+<td>총 HBM</td>
+<td style="text-align: right;">약 18.5PB <span class="citation" data-cites="80GB/GPU">@80GB/GPU</span></td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+일일 token이 GPU 수를 결정
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="일일 token 처리량과 필요 GPU 개념도">
+<rect x="38" y="54" width="92" height="58" rx="8" class="flow-box"></rect>
+<text x="84" y="78" text-anchor="middle" class="flow-title">2.0B</text>
+<text x="84" y="100" text-anchor="middle" class="flow-text">requests/day</text>
+<text x="154" y="88" class="value">×</text>
+<rect x="185" y="54" width="92" height="58" rx="8" class="flow-box-alt"></rect>
+<text x="231" y="78" text-anchor="middle" class="flow-title">2,000</text>
+<text x="231" y="100" text-anchor="middle" class="flow-text">tokens/req</text>
+<line x1="84" y1="125" x2="84" y2="162" class="flow-arrow"></line>
+<line x1="231" y1="125" x2="231" y2="162" class="flow-arrow"></line>
+<rect x="92" y="165" width="138" height="58" rx="8" class="flow-box-warn"></rect>
+<text x="161" y="188" text-anchor="middle" class="flow-title">4.0T
+tokens/day</text>
+<text x="161" y="211" text-anchor="middle" class="flow-text">≈ 231K
+H100</text>
+</svg>
+</figure>
+</div>
+<p>이 숫자는 blended serving scenario다. 실제 OpenAI는 작은 모델, 큰
+모델, reasoning 모델, image/audio/video 모델을 router로 나눠 쓰기 때문에
+평균 비용은 요청 종류에 따라 달라진다.</p>
+<h2 id="추론-원가-시나리오">8. 추론 원가 시나리오</h2>
+<p>H100 1장의 daily cost를 보수적으로 다음처럼 잡는다.</p>
+<table>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th style="text-align: right;">가정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>H100 capex</td>
+<td style="text-align: right;">$25,000</td>
+</tr>
+<tr class="even">
+<td>3년 감가상각</td>
+<td style="text-align: right;">$22.8/day</td>
+</tr>
+<tr class="odd">
+<td>전력/냉각/서버/네트워크</td>
+<td style="text-align: right;">$10~$20/day</td>
+</tr>
+<tr class="even">
+<td>총 내부원가</td>
+<td style="text-align: right;">$35~$45/day</td>
+</tr>
+<tr class="odd">
+<td>cloud/lease equivalent</td>
+<td style="text-align: right;">$2~$4/GPU-hour = $48~$96/day</td>
+</tr>
+</tbody>
+</table>
+<div class="table-visual">
+<table>
+<thead>
+<tr class="header">
+<th>비용 기준</th>
+<th style="text-align: right;">일 추론비</th>
+<th style="text-align: right;">연 추론비</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>내부 원가 $40/GPU-day</td>
+<td style="text-align: right;">$9.2M/day</td>
+<td style="text-align: right;">$3.4B/year</td>
+</tr>
+<tr class="even">
+<td>임대/클라우드 $70/GPU-day</td>
+<td style="text-align: right;">$16.2M/day</td>
+<td style="text-align: right;">$5.9B/year</td>
+</tr>
+<tr class="odd">
+<td>heavy reasoning mix 포함</td>
+<td style="text-align: right;">$20M~$35M/day</td>
+<td style="text-align: right;">$7.3B~$12.8B/year</td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+추론비는 매년 반복되는 원가
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="연 추론비 시나리오 막대그래프">
+<line x1="48" y1="200" x2="300" y2="200" class="axis"></line>
+<rect x="66" y="147" width="46" height="53" class="bar-fill"></rect>
+<rect x="147" y="108" width="46" height="92" class="bar-fill-alt"></rect>
+<rect x="228" y="0" width="46" height="200" class="bar-fill-warn"></rect>
+<text x="89" y="138" text-anchor="middle" class="value">$3.4B</text>
+<text x="170" y="99" text-anchor="middle" class="value">$5.9B</text>
+<text x="251" y="18" text-anchor="middle" class="value">$12.8B</text>
+<text x="89" y="226" text-anchor="middle" class="tick">내부</text>
+<text x="170" y="226" text-anchor="middle" class="tick">클라우드</text>
+<text x="251" y="226" text-anchor="middle" class="tick">Reasoning</text>
+</svg>
+</figure>
+</div>
+<p>결론은 중요하다. OpenAI 같은 서비스는 “모델 하나를 학습하는 비용”보다
+<strong>매일 추론으로 나가는 비용</strong>이 더 중요한 사업이 된다.</p>
+<h2 id="매출-시나리오">9. 매출 시나리오</h2>
+<p>공개/보도 기반:</p>
+<ul>
+<li>ChatGPT WAU: 약 900M</li>
+<li>paid subscribers: 약 50M</li>
+<li>OpenAI revenue run-rate: 월 $2B, 연환산 $24B 수준 보도</li>
+</ul>
+<div class="table-visual">
+<table>
+<thead>
+<tr class="header">
+<th>매출원</th>
+<th>가정</th>
+<th style="text-align: right;">연 매출</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Plus</td>
+<td>40M명 × $20/month</td>
+<td style="text-align: right;">$9.6B</td>
+</tr>
+<tr class="even">
+<td>Pro</td>
+<td>2.5M명 × $200/month</td>
+<td style="text-align: right;">$6.0B</td>
+</tr>
+<tr class="odd">
+<td>Business/Enterprise</td>
+<td>9M seats × 평균 $35/month</td>
+<td style="text-align: right;">$3.8B</td>
+</tr>
+<tr class="even">
+<td>API/Codex/기타</td>
+<td>developer/API/agent/video/search</td>
+<td style="text-align: right;">$4B~$8B</td>
+</tr>
+<tr class="odd">
+<td><strong>합계</strong></td>
+<td></td>
+<td style="text-align: right;"><strong>$23B~$27B</strong></td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+연 매출 구성 시나리오
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="OpenAI 연 매출 구성 막대그래프">
+<line x1="48" y1="200" x2="300" y2="200" class="axis"></line>
+<rect x="62" y="80" width="42" height="120" class="bar-fill"></rect>
+<rect x="123" y="125" width="42" height="75" class="bar-fill-alt"></rect>
+<rect x="184" y="153" width="42" height="47" class="bar-fill-warn"></rect>
+<rect x="245" y="100" width="42" height="100" class="bar-fill"></rect>
+<text x="83" y="72" text-anchor="middle" class="value">$9.6B</text>
+<text x="144" y="117" text-anchor="middle" class="value">$6.0B</text>
+<text x="205" y="145" text-anchor="middle" class="value">$3.8B</text>
+<text x="266" y="92" text-anchor="middle" class="value">$4~8B</text>
+<text x="83" y="226" text-anchor="middle" class="tick">Plus</text>
+<text x="144" y="226" text-anchor="middle" class="tick">Pro</text>
+<text x="205" y="226" text-anchor="middle" class="tick">Biz</text>
+<text x="266" y="226" text-anchor="middle" class="tick">API</text>
+</svg>
+</figure>
+</div>
+<p>이 구조는 보도된 $24B run-rate와 대략 맞는다.</p>
+<h2 id="수익성-gross-margin과-회사-전체-손익은-다르다">10. 수익성: gross
+margin과 회사 전체 손익은 다르다</h2>
+<p>OpenAI의 회사 전체 수익성은 공개되지 않았다. 따라서 unit economics를
+나눠 봐야 한다.</p>
+<div class="table-visual">
+<table>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th style="text-align: right;">보수</th>
+<th style="text-align: right;">중앙</th>
+<th style="text-align: right;">공격</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>연 매출</td>
+<td style="text-align: right;">$24B</td>
+<td style="text-align: right;">$24B</td>
+<td style="text-align: right;">$27B</td>
+</tr>
+<tr class="even">
+<td>추론비</td>
+<td style="text-align: right;">$12B</td>
+<td style="text-align: right;">$7B</td>
+<td style="text-align: right;">$4B</td>
+</tr>
+<tr class="odd">
+<td>serving gross profit</td>
+<td style="text-align: right;">$12B</td>
+<td style="text-align: right;">$17B</td>
+<td style="text-align: right;">$23B</td>
+</tr>
+<tr class="even">
+<td>serving gross margin</td>
+<td style="text-align: right;">50%</td>
+<td style="text-align: right;">71%</td>
+<td style="text-align: right;">85%</td>
+</tr>
+</tbody>
+</table>
+<figure class="mini-chart">
+<figcaption>
+매출 대비 추론비 부담
+</figcaption>
+<svg viewBox="0 0 340 250" role="img" aria-label="수익성 시나리오별 매출과 추론비 비교">
+<line x1="48" y1="200" x2="300" y2="200" class="axis"></line>
+<rect x="65" y="40" width="30" height="160" class="bar-fill"></rect>
+<rect x="100" y="120" width="30" height="80" class="bar-fill-warn"></rect>
+<rect x="150" y="40" width="30" height="160" class="bar-fill"></rect>
+<rect x="185" y="153" width="30" height="47" class="bar-fill-warn"></rect>
+<rect x="235" y="20" width="30" height="180" class="bar-fill"></rect>
+<rect x="270" y="173" width="30" height="27" class="bar-fill-warn"></rect>
+<text x="97" y="226" text-anchor="middle" class="tick">보수</text>
+<text x="182" y="226" text-anchor="middle" class="tick">중앙</text>
+<text x="267" y="226" text-anchor="middle" class="tick">공격</text>
+<text x="54" y="24" class="label">파랑: 매출</text>
+<text x="54" y="45" class="label">주황: 추론비</text>
+</svg>
+</figure>
+</div>
+<p>여기서 다음 비용이 추가된다.</p>
+<ul>
+<li>모델 학습비</li>
+<li>연구개발 인력</li>
+<li>데이터센터 선투자</li>
+<li>Microsoft/클라우드 revenue share</li>
+<li>sales/enterprise support</li>
+<li>safety/compliance</li>
+<li>product 운영비</li>
+<li>무료 사용자 subsidization</li>
+</ul>
+<p>그래서 회사 전체로는 매출이 커도 단기 순이익은 낮거나 적자일 수 있다.
+OpenAI는 회계상 이익보다 <strong>GPU/HBM capacity 확보와 사용자
+lock-in</strong>을 우선하는 단계로 볼 수 있다.</p>
+<h2 id="강의용-핵심-그림-왜-hbm인가">11. 강의용 핵심 그림: 왜
+HBM인가</h2>
+<figure class="chart">
+<figcaption>
+LLM 추론에서 HBM이 병목이 되는 이유
+</figcaption>
+<svg viewBox="0 0 900 380" role="img" aria-label="LLM inference와 HBM 병목 설명도">
+<defs>
+<marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+<path d="M0,0 L0,6 L9,3 z" fill="#52616f"></path> </marker> </defs>
+<rect x="55" y="60" width="190" height="90" rx="8" class="flow-box"></rect>
+<text x="150" y="96" text-anchor="middle" class="flow-title">Model
+weight</text>
+<text x="150" y="124" text-anchor="middle" class="flow-text">Total
+params</text>
+<rect x="55" y="220" width="190" height="90" rx="8" class="flow-box-alt"></rect>
+<text x="150" y="256" text-anchor="middle" class="flow-title">KV
+cache</text>
+<text x="150" y="284" text-anchor="middle" class="flow-text">긴
+context</text>
+<rect x="360" y="140" width="180" height="90" rx="8" class="flow-box-warn"></rect>
+<text x="450" y="176" text-anchor="middle" class="flow-title">HBM</text>
+<text x="450" y="204" text-anchor="middle" class="flow-text">용량 +
+bandwidth</text>
+<rect x="655" y="140" width="180" height="90" rx="8" class="flow-box"></rect>
+<text x="745" y="176" text-anchor="middle" class="flow-title">Token
+생성</text>
+<text x="745" y="204" text-anchor="middle" class="flow-text">속도와 원가
+결정</text>
+<line x1="245" y1="105" x2="350" y2="170" class="flow-arrow" marker-end="url(#arrow2)"></line>
+<line x1="245" y1="265" x2="350" y2="200" class="flow-arrow" marker-end="url(#arrow2)"></line>
+<line x1="540" y1="185" x2="645" y2="185" class="flow-arrow" marker-end="url(#arrow2)"></line>
+<text x="450" y="300" text-anchor="middle" class="flow-note">모델이
+커지고 context가 길어질수록 HBM 용량과 bandwidth가 먼저
+부족해진다</text>
+</svg>
+</figure>
+<p>OpenAI가 더 많은 사용자를 받고, 더 긴 context를 제공하고, 더 강한
+reasoning model을 제공하려면 세 가지가 필요하다.</p>
+<ol type="1">
+<li><strong>더 큰 HBM 용량</strong>: model weight와 KV cache를 올리기
+위해</li>
+<li><strong>더 높은 HBM bandwidth</strong>: token 생성 속도를 유지하기
+위해</li>
+<li><strong>더 낮은 $/token</strong>: 무료/저가 사용자를 감당하기
+위해</li>
+</ol>
+<h2 id="결론">12. 결론</h2>
+<ul>
+<li>OpenAI GPT-5 계열의 정확한 파라미터 수와 학습 GPU 수는
+비공개다.</li>
+<li>공개된 gpt-oss-120b는 117B total, 5.1B active이고, 80GB GPU에 맞도록
+설계됐다.</li>
+<li>GPT-5급 frontier model은 시나리오상 500B~2T total parameter MoE
+구조를 놓고 봐야 한다.</li>
+<li>1T MoE 모델은 BF16 weight만 2TB이고, FP8로 줄여도 1TB다.</li>
+<li>ChatGPT가 900M weekly users, 수십억 request/day 규모라면 추론에는
+수십만 H100-equivalent와 수십 PB HBM이 필요할 수 있다.</li>
+<li>OpenAI의 매출은 $24B run-rate 수준까지 커졌지만, 추론비와 인프라
+재투자 때문에 회사 전체 이익은 단기적으로 낮거나 적자일 수 있다.</li>
+<li>이 모든 구조가 DRAM/HBM 시장의 초호황과 직접 연결된다.</li>
+</ul>
+<h2 id="토론-질문">13. 토론 질문</h2>
+<ol type="1">
+<li>OpenAI가 무료 사용자를 계속 유지하는 이유는 무엇인가?</li>
+<li>reasoning model이 일반 chat model보다 비싼 이유는 무엇인가?</li>
+<li>HBM 용량이 80GB에서 288GB로 커지면 어떤 서비스가 쉬워지는가?</li>
+<li>LLM 원가가 낮아지면 OpenAI의 매출 모델은 구독 중심에서 API/agent
+중심으로 바뀔 수 있는가?</li>
+<li>이 구조에서 SK hynix, Samsung, Micron 중 누가 가장 직접적인 수혜를
+받는가?</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li><a href="https://platform.openai.com/docs/models/gpt-oss-120b">OpenAI
+gpt-oss model docs</a></li>
+<li><a href="https://openai.com/index/introducing-gpt-oss">OpenAI
+gpt-oss announcement</a></li>
+<li><a href="https://openai.com/index/building-the-compute-infrastructure-for-the-intelligence-age/">OpenAI
+compute infrastructure note</a></li>
+<li><a href="https://techcrunch.com/2026/02/27/chatgpt-reaches-900m-weekly-active-users/">ChatGPT
+reaches 900M weekly active users - TechCrunch</a></li>
+<li><a href="https://www.techradar.com/pro/we-are-growing-revenue-four-times-faster-than-the-companies-who-defined-the-internet-and-mobile-eras-openai-says-its-making-usd2-billion-a-month-mostly-from-enterprise-users">OpenAI
+reports $2B monthly revenue and 50M paid subscribers -
+TechRadar</a></li>
+<li><a href="https://help.openai.com/en/articles/6950777-chatgpt-plus-.eps">ChatGPT
+Plus price - OpenAI Help Center</a></li>
+<li><a href="https://help.openai.com/en/articles/9793128-what-is-chatgpt-pro/">ChatGPT
+Pro price - OpenAI Help Center</a></li>
+<li><a href="https://epoch.ai/blog/how-much-does-it-cost-to-train-frontier-ai-models/">Epoch
+AI training cost methodology</a></li>
+<li><a href="https://epoch.ai/data-insights/grok-4-training-resources">Epoch AI
+Grok 4 training resources</a></li>
+</ul>
+<h2 id="관련-노트">관련 노트</h2>
+<ul>
+<li>[[LLM 파라미터 크기와 GPU 메모리 비용 순위]]</li>
+<li>[[HBM 36GB와 LLM 메모리 병목 기술 설명]]</li>
+<li>[[DRAM 2026 bit density sales profit table]]</li>
+<li>[[Memory Market 2025-2027 인사이트 리포트]]</li>
+</ul>
+</body>
+</html>
