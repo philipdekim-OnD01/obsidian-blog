@@ -128,6 +128,92 @@
             gap: 12px;
         }
 
+        .stats {
+            margin-top: 20px;
+        }
+
+        .stats-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stats-head h2 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .stats-note {
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: minmax(160px, 0.55fr) minmax(0, 1.45fr);
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .metric {
+            display: grid;
+            gap: 12px;
+            align-content: start;
+            padding: 14px;
+            background: #fbfdff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .metric-value {
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .metric-sub {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .chart-box {
+            padding: 14px 14px 10px;
+            background: #fbfdff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+        }
+
+        .chart-box svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .chart-label {
+            fill: var(--muted);
+            font-size: 12px;
+        }
+
+        .chart-value {
+            fill: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .chart-bar {
+            fill: #0b63ce;
+        }
+
         .contact-label {
             color: var(--muted);
             font-size: 0.88rem;
@@ -223,6 +309,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
             .section-head {
                 flex-direction: column;
                 align-items: flex-start;
@@ -266,6 +356,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="panel stats">
+                <div class="stats-head">
+                    <h2>Visitors</h2>
+                    <div class="stats-note">Live counts via CounterAPI</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="metric">
+                        <div class="metric-label">Total</div>
+                        <div class="metric-value" id="visitor-total">--</div>
+                        <div class="metric-sub" id="visitor-today">Today: --</div>
+                    </div>
+                    <div class="chart-box">
+                        <svg id="visitor-chart" viewBox="0 0 640 220" role="img" aria-label="최근 7일 방문 그래프">
+                            <text x="12" y="18" class="chart-label">Last 7 days</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="section">
@@ -275,18 +384,6 @@
             </div>
 
             <ul class="post-list">
-                <li>
-                    <a class="post-link" href="gb300-vr200-ai-rack-bom-insight.html">
-                        <span class="post-title">GB300에서 VR200으로, AI Rack BOM이 말하는 산업 구조 변화</span>
-                        <span class="post-meta">AI는 GPU 단품 산업이 아니라 메모리·네트워크·패키징·전력·냉각 인프라 산업</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="post-link" href="global-semi-market-summary-202605.html">
-                        <span class="post-title">2026년 반도체 시장, 메모리가 판을 다시 짠다</span>
-                        <span class="post-meta">AI가 촉발한 메모리 재가격화와 삼성의 memory hierarchy 전략</span>
-                    </a>
-                </li>
                 <li>
                     <a class="post-link" href="why-japanese-empire-failed.html">
                         <span class="post-title">왜 일본 제국은 실패하였는가</span>
@@ -314,5 +411,112 @@
             </ul>
         </section>
     </main>
+
+    <script>
+    (function () {
+        const namespace = 'philipkim-blog';
+        const totalCounter = 'home-total';
+        const apiBase = 'https://api.counterapi.dev/v1';
+
+        const totalEl = document.getElementById('visitor-total');
+        const todayEl = document.getElementById('visitor-today');
+        const chartEl = document.getElementById('visitor-chart');
+
+        function dateParts(date) {
+            const parts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            }).formatToParts(date);
+
+            const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+            const iso = `${map.year}-${map.month}-${map.day}`;
+            const label = `${map.month}/${map.day}`;
+            return { iso, label };
+        }
+
+        function dayKey(offset) {
+            const date = new Date(Date.now() - offset * 86400000);
+            return dateParts(date);
+        }
+
+        async function fetchJson(url) {
+            const response = await fetch(url, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        }
+
+        async function increment(name) {
+            const data = await fetchJson(`${apiBase}/${namespace}/${name}/up`);
+            return Number(data.count ?? data.value ?? 0);
+        }
+
+        async function getCount(name) {
+            try {
+                const data = await fetchJson(`${apiBase}/${namespace}/${name}`);
+                return Number(data.count ?? data.value ?? 0);
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        function renderChart(points) {
+            const width = 640;
+            const height = 220;
+            const pad = { top: 28, right: 18, bottom: 34, left: 18 };
+            const chartWidth = width - pad.left - pad.right;
+            const chartHeight = height - pad.top - pad.bottom;
+            const max = Math.max(1, ...points.map((point) => point.value));
+            const gap = 14;
+            const barWidth = (chartWidth - gap * (points.length - 1)) / points.length;
+
+            const bars = points.map((point, index) => {
+                const barHeight = Math.max(6, (point.value / max) * chartHeight);
+                const x = pad.left + index * (barWidth + gap);
+                const y = pad.top + (chartHeight - barHeight);
+                const labelX = x + barWidth / 2;
+                const valueY = y - 6;
+                const baseY = pad.top + chartHeight + 18;
+                return `
+                    <rect class="chart-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="8"></rect>
+                    <text class="chart-value" x="${labelX}" y="${valueY}" text-anchor="middle">${point.value}</text>
+                    <text class="chart-label" x="${labelX}" y="${baseY}" text-anchor="middle">${point.label}</text>
+                `;
+            }).join('');
+
+            chartEl.innerHTML = `
+                <text x="12" y="18" class="chart-label">Last 7 days</text>
+                ${bars}
+            `;
+        }
+
+        (async function init() {
+            try {
+                const today = dayKey(0);
+                const totalValue = await increment(totalCounter);
+                const todayValue = await increment(`home-${today.iso}`);
+
+                totalEl.textContent = totalValue.toLocaleString('en-US');
+                todayEl.textContent = `Today: ${todayValue.toLocaleString('en-US')}`;
+
+                const points = [];
+                for (let offset = 6; offset >= 0; offset -= 1) {
+                    const day = dayKey(offset);
+                    const value = offset === 0 ? todayValue : await getCount(`home-${day.iso}`);
+                    points.push({ label: day.label, value });
+                }
+
+                renderChart(points);
+            } catch (error) {
+                totalEl.textContent = 'n/a';
+                todayEl.textContent = 'Today: n/a';
+                chartEl.innerHTML = '<text x="12" y="64" class="chart-label">Analytics unavailable</text>';
+            }
+        })();
+    })();
+    </script>
 </body>
 </html>
