@@ -21,52 +21,99 @@
 </head>
 <body>
   <main>
-    <div class="hero-note">
-      <p class="eyebrow">AI Infrastructure · Power · Grid</p>
-      <h1>AI 데이터센터 전력 병목 및 에너지 인프라 전환 리포트</h1>
-      <p class="lead">AI 병목은 GPU 부족에서 전력 부족으로 단순히 교체되는 것이 아니다. 2026년 이후의 핵심은 GPU, HBM, 패키징 병목 위에 전력, 냉각, 송전망, 변압기 병목이 추가되는 복합 인프라 경쟁이다.</p>
-      <p class="meta">작성일: 2026-05-26 · 기준 자료: IEA, LBNL, EPRI, NVIDIA, Guru3D/Morgan Stanley BOM, Omdia 기반 기존 분석</p>
-    </div>
-
     <div class="chart-panel">
-      <svg viewBox="0 0 960 420" role="img" aria-label="AI infrastructure bottleneck shift diagram">
-        <rect x="0" y="0" width="960" height="420" rx="12" fill="#f8fafc"/>
-        <text x="40" y="48" fill="#111827" font-size="24" font-weight="800">AI 병목은 단일 병목에서 복합 인프라 병목으로 이동</text>
-        <text x="40" y="78" fill="#52616f" font-size="15">GPU 확보만으로는 충분하지 않고, HBM·패키징·전력·냉각·그리드가 동시에 맞아야 실제 가동률이 나온다.</text>
+  <svg viewBox="0 0 1100 460" role="img" aria-label="AI infrastructure bottleneck shift diagram">
+    <rect x="0" y="0" width="1100" height="460" rx="16" fill="#f8fafc"/>
 
-        <rect x="52" y="125" width="245" height="150" rx="10" fill="#e8f1ff" stroke="#0b63ce" stroke-width="2"/>
-        <text x="78" y="160" fill="#0b63ce" font-size="18" font-weight="800">2023-2025</text>
-        <text x="78" y="194" fill="#111827" font-size="17" font-weight="700">반도체 내부 병목</text>
-        <text x="78" y="226" fill="#334155" font-size="15">GPU</text>
-        <text x="78" y="250" fill="#334155" font-size="15">HBM</text>
-        <text x="78" y="274" fill="#334155" font-size="15">CoWoS / advanced packaging</text>
+    <!-- Title -->
+    <text x="44" y="58" fill="#111827" font-size="28" font-weight="800">
+      AI 병목은 단일 병목에서 복합 인프라 병목으로 이동
+    </text>
+    <text x="44" y="94" fill="#52616f" font-size="18" font-weight="500">
+      GPU 확보만으로는 충분하지 않고, HBM·패키징·전력·냉각·그리드가 동시에 맞아야 실제 가동률이 나온다.
+    </text>
 
-        <path d="M320 200 H420" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+    <!-- Left box -->
+    <rect x="48" y="155" width="300" height="180" rx="12"
+          fill="#e8f1ff" stroke="#0b63ce" stroke-width="2.5"/>
 
-        <rect x="443" y="102" width="220" height="96" rx="10" fill="#e6f5f2" stroke="#2f8f83" stroke-width="2"/>
-        <text x="470" y="137" fill="#2f8f83" font-size="17" font-weight="800">Rack 내부</text>
-        <text x="470" y="169" fill="#334155" font-size="15">HBM, network, PCB, power delivery</text>
+    <text x="82" y="198" fill="#0b63ce" font-size="23" font-weight="800"
+          letter-spacing="2">
+      2023-2025
+    </text>
 
-        <rect x="443" y="222" width="220" height="96" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
-        <text x="470" y="257" fill="#b45309" font-size="17" font-weight="800">Site/Grid 외부</text>
-        <text x="470" y="289" fill="#334155" font-size="15">전력, 냉각, 변압기, 송전망</text>
+    <text x="82" y="245" fill="#111827" font-size="20" font-weight="800">
+      반도체 내부 병목
+    </text>
 
-        <path d="M685 150 H800" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
-        <path d="M685 270 H800" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+    <text x="82" y="288" fill="#334155" font-size="19" font-weight="500">
+      GPU
+    </text>
+    <text x="82" y="320" fill="#334155" font-size="19" font-weight="500">
+      HBM
+    </text>
+    <text x="82" y="352" fill="#334155" font-size="19" font-weight="500">
+      CoWoS / Advanced Packaging
+    </text>
 
-        <rect x="815" y="154" width="105" height="112" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-        <text x="837" y="196" fill="#111827" font-size="18" font-weight="800">실제</text>
-        <text x="833" y="224" fill="#111827" font-size="18" font-weight="800">GPU</text>
-        <text x="828" y="252" fill="#111827" font-size="18" font-weight="800">가동률</text>
+    <!-- Arrow 1 -->
+    <path d="M380 245 H470" stroke="#64748b" stroke-width="5" marker-end="url(#arrow)"/>
 
-        <defs>
-          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
-          </marker>
-        </defs>
-      </svg>
-      <p class="source-note">그림: 본문 설명을 위해 자체 작성. 데이터 방향성 출처는 IEA, LBNL, EPRI, NVIDIA GB300 NVL72 및 Guru3D/Morgan Stanley BOM 추정치.</p>
-    </div>
+    <!-- Middle upper box -->
+    <rect x="500" y="130" width="330" height="112" rx="12"
+          fill="#e6f5f2" stroke="#2f8f83" stroke-width="2.5"/>
+
+    <text x="535" y="172" fill="#2f8f83" font-size="22" font-weight="800">
+      Rack 내부
+    </text>
+
+    <text x="535" y="209" fill="#334155" font-size="18" font-weight="500">
+      <tspan x="535" dy="0">HBM, Network, PCB,</tspan>
+      <tspan x="535" dy="25">Power Delivery</tspan>
+    </text>
+
+    <!-- Middle lower box -->
+    <rect x="500" y="278" width="330" height="112" rx="12"
+          fill="#fff7ed" stroke="#d97706" stroke-width="2.5"/>
+
+    <text x="535" y="320" fill="#b45309" font-size="22" font-weight="800">
+      Site / Grid 외부
+    </text>
+
+    <text x="535" y="357" fill="#334155" font-size="18" font-weight="500">
+      전력, 냉각, 변압기, 송전망
+    </text>
+
+    <!-- Arrows to output -->
+    <path d="M860 186 H970" stroke="#64748b" stroke-width="5" marker-end="url(#arrow)"/>
+    <path d="M860 334 H970" stroke="#64748b" stroke-width="5" marker-end="url(#arrow)"/>
+
+    <!-- Output box -->
+    <rect x="990" y="210" width="82" height="130" rx="12"
+          fill="#ffffff" stroke="#94a3b8" stroke-width="2.5"/>
+
+    <text x="1031" y="254" fill="#111827" font-size="21" font-weight="800" text-anchor="middle">
+      실제
+    </text>
+    <text x="1031" y="292" fill="#111827" font-size="21" font-weight="800" text-anchor="middle">
+      GPU
+    </text>
+    <text x="1031" y="330" fill="#111827" font-size="21" font-weight="800" text-anchor="middle">
+      가동률
+    </text>
+
+    <defs>
+      <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4"
+              orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,8 L11,4 z" fill="#64748b"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <p class="source-note">
+    그림: 본문 설명을 위해 자체 작성. 데이터 방향성 출처는 IEA, LBNL, EPRI, NVIDIA GB300 NVL72 및 Guru3D/Morgan Stanley BOM 추정치.
+  </p>
+</div>
 
     <h2>핵심 결론</h2>
     <p>AI 산업의 병목은 GPU 부족에서 전력 부족으로 단순히 교체되는 것이 아니다. 더 정확히는 GPU, HBM, CoWoS/advanced packaging 병목 위에 전력, 냉각, 송전망, 변압기, 발전설비 병목이 추가되는 구조다.</p>
