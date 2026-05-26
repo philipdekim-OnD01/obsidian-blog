@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex">
+  <title>AI 데이터센터 전력 병목 및 에너지 인프라 전환 리포트</title>
+  <link rel="stylesheet" href="assets/report.css">
+  <style>
+    .hero-note{margin:0 0 28px;padding:22px 24px;background:#fff;border:1px solid #d9e2ec;border-radius:10px;box-shadow:0 10px 24px rgba(16,24,40,.05)}
+    .eyebrow{margin:0 0 8px;color:#0b63ce;font-size:.92rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .lead{color:#374151;font-size:1.05rem}
+    .meta,.source-note{color:#64748b;font-size:.95rem}
+    .insight-box{margin:28px 0;padding:20px 22px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px}
+    .insight-box strong{color:#9a3412}
+    .chart-panel{margin:28px 0 34px;padding:18px;background:#fff;border:1px solid #d9e2ec;border-radius:10px}
+    .chart-panel svg{display:block;width:100%;height:auto}
+    .source-note a{color:#0b63ce}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero-note">
+      <p class="eyebrow">AI Infrastructure · Power · Grid</p>
+      <h1>AI 데이터센터 전력 병목 및 에너지 인프라 전환 리포트</h1>
+      <p class="lead">AI 병목은 GPU 부족에서 전력 부족으로 단순히 교체되는 것이 아니다. 2026년 이후의 핵심은 GPU, HBM, 패키징 병목 위에 전력, 냉각, 송전망, 변압기 병목이 추가되는 복합 인프라 경쟁이다.</p>
+      <p class="meta">작성일: 2026-05-26 · 기준 자료: IEA, LBNL, EPRI, NVIDIA, Guru3D/Morgan Stanley BOM, Omdia 기반 기존 분석</p>
+    </div>
+
+    <div class="chart-panel">
+      <svg viewBox="0 0 960 420" role="img" aria-label="AI infrastructure bottleneck shift diagram">
+        <rect x="0" y="0" width="960" height="420" rx="12" fill="#f8fafc"/>
+        <text x="40" y="48" fill="#111827" font-size="24" font-weight="800">AI 병목은 단일 병목에서 복합 인프라 병목으로 이동</text>
+        <text x="40" y="78" fill="#52616f" font-size="15">GPU 확보만으로는 충분하지 않고, HBM·패키징·전력·냉각·그리드가 동시에 맞아야 실제 가동률이 나온다.</text>
+
+        <rect x="52" y="125" width="245" height="150" rx="10" fill="#e8f1ff" stroke="#0b63ce" stroke-width="2"/>
+        <text x="78" y="160" fill="#0b63ce" font-size="18" font-weight="800">2023-2025</text>
+        <text x="78" y="194" fill="#111827" font-size="17" font-weight="700">반도체 내부 병목</text>
+        <text x="78" y="226" fill="#334155" font-size="15">GPU</text>
+        <text x="78" y="250" fill="#334155" font-size="15">HBM</text>
+        <text x="78" y="274" fill="#334155" font-size="15">CoWoS / advanced packaging</text>
+
+        <path d="M320 200 H420" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+
+        <rect x="443" y="102" width="220" height="96" rx="10" fill="#e6f5f2" stroke="#2f8f83" stroke-width="2"/>
+        <text x="470" y="137" fill="#2f8f83" font-size="17" font-weight="800">Rack 내부</text>
+        <text x="470" y="169" fill="#334155" font-size="15">HBM, network, PCB, power delivery</text>
+
+        <rect x="443" y="222" width="220" height="96" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+        <text x="470" y="257" fill="#b45309" font-size="17" font-weight="800">Site/Grid 외부</text>
+        <text x="470" y="289" fill="#334155" font-size="15">전력, 냉각, 변압기, 송전망</text>
+
+        <path d="M685 150 H800" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+        <path d="M685 270 H800" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+
+        <rect x="815" y="154" width="105" height="112" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+        <text x="837" y="196" fill="#111827" font-size="18" font-weight="800">실제</text>
+        <text x="833" y="224" fill="#111827" font-size="18" font-weight="800">GPU</text>
+        <text x="828" y="252" fill="#111827" font-size="18" font-weight="800">가동률</text>
+
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+          </marker>
+        </defs>
+      </svg>
+      <p class="source-note">그림: 본문 설명을 위해 자체 작성. 데이터 방향성 출처는 IEA, LBNL, EPRI, NVIDIA GB300 NVL72 및 Guru3D/Morgan Stanley BOM 추정치.</p>
+    </div>
+
+    <h2>핵심 결론</h2>
+    <p>AI 산업의 병목은 GPU 부족에서 전력 부족으로 단순히 교체되는 것이 아니다. 더 정확히는 GPU, HBM, CoWoS/advanced packaging 병목 위에 전력, 냉각, 송전망, 변압기, 발전설비 병목이 추가되는 구조다.</p>
+
+    <div class="insight-box">
+      <strong>핵심 인사이트:</strong> AI 인프라 경쟁력은 GPU 확보력에서 megawatt 확보력, grid connection 속도, cooling density, 전력 조달 계약 능력까지 확장되고 있다.
+    </div>
+
+    <h2>글로벌 데이터센터 전력 수요</h2>
+    <p>IEA는 2024년 전세계 데이터센터 전력 소비를 약 415TWh, 세계 전력 소비의 약 1.5%로 추정한다. 2030년에는 약 945TWh까지 증가할 수 있다고 본다.</p>
+    <table>
+      <thead><tr><th>구분</th><th>2024</th><th>2030 전망</th><th>해석</th></tr></thead>
+      <tbody>
+        <tr><td>전세계 데이터센터 전력 소비</td><td>약 415TWh</td><td>약 945TWh</td><td>2030년까지 2배 이상</td></tr>
+        <tr><td>세계 전력 소비 비중</td><td>약 1.5%</td><td>약 3% 내외</td><td>전체 전력망 안에서도 의미 있는 부하로 상승</td></tr>
+        <tr><td>지역 비중</td><td>미국 45%, 중국 25%, 유럽 15%</td><td>미국·중국 중심</td><td>AI 데이터센터 경쟁은 전력 입지 경쟁</td></tr>
+      </tbody>
+    </table>
+
+    <h2>미국 전력 전망은 단일값보다 범위로 봐야 한다</h2>
+    <p>LBNL은 2023년 미국 데이터센터 전력 사용량을 약 176TWh로 보고, 2028년에는 325~580TWh 범위까지 올라갈 수 있다고 제시한다. EPRI의 2026년 업데이트는 2024년 177~192TWh, 2030년 380~790TWh 범위를 제시한다.</p>
+    <table>
+      <thead><tr><th>출처</th><th>기준 연도</th><th>전망 연도</th><th>전력 소비 전망</th></tr></thead>
+      <tbody>
+        <tr><td>LBNL</td><td>2023 약 176TWh</td><td>2028</td><td>325~580TWh</td></tr>
+        <tr><td>EPRI</td><td>2024 약 177~192TWh</td><td>2030</td><td>380~790TWh</td></tr>
+        <tr><td>보수적 base case 감각</td><td>2024 약 180TWh</td><td>2030</td><td>400TWh+ 가능</td></tr>
+      </tbody>
+    </table>
+
+    <h2>한국은 총량보다 입지가 문제다</h2>
+    <p>한국 데이터센터 전력 수요 전망은 자료별로 차이가 있으나, 2040년 26.5~42.1TWh 범위까지 확대될 가능성이 제시되고 있다. 핵심은 전국 총량보다 수도권 집중, 송전망, 부지, 냉각, 전력요금이다.</p>
+    <table>
+      <thead><tr><th>항목</th><th>수치</th></tr></thead>
+      <tbody>
+        <tr><td>한국 전체 전력 소비</td><td>약 550~600TWh</td></tr>
+        <tr><td>한국 평균 전력 환산</td><td>약 63~68GW</td></tr>
+        <tr><td>데이터센터 전력 수요 전망</td><td>2040년 26.5~42.1TWh 범위 가능</td></tr>
+        <tr><td>2040년 평균 전력 환산</td><td>약 3.0~4.8GW</td></tr>
+      </tbody>
+    </table>
+
+    <h2>GB300/VR200 BOM과 연결</h2>
+    <p>기존 GB300/VR200 BOM 분석은 AI rack 내부에서 HBM, 네트워크, PCB/ABF/MLCC가 빠르게 커지는 것을 보여준다. 그러나 데이터센터 외부에서는 power supply 부품 가격보다 site-level capacity, utility interconnection, 열밀도, 변압기 납기가 더 중요하다.</p>
+    <table>
+      <thead><tr><th>층위</th><th>핵심 병목</th></tr></thead>
+      <tbody>
+        <tr><td>chip/package level</td><td>GPU die, HBM, CoWoS, advanced packaging</td></tr>
+        <tr><td>rack level</td><td>NVLink, networking, PCB, power delivery, thermal density</td></tr>
+        <tr><td>site/grid level</td><td>변압기, 송전망, 발전소, 냉각수, 계통 연결, 전력 계약</td></tr>
+      </tbody>
+    </table>
+
+    <h2>GPU 수요 환산표는 조심해야 한다</h2>
+    <p>GPU 수요를 전력 증가율만으로 단순 환산하는 방식은 직관적이지만 위험하다. 데이터센터 전체 전력에는 AI GPU 외에도 CPU, storage, networking, cooling, power conversion loss, non-AI workload가 포함된다.</p>
+    <p>따라서 GPU 수량을 단일값으로 제시하기보다, 전력과 냉각이 GPU installed base의 상한을 결정한다는 구조적 판단으로 쓰는 것이 맞다.</p>
+
+    <h2>우주 데이터센터 논의의 위치</h2>
+    <p>우주 데이터센터는 전력 병목의 심각성을 보여주는 장기 옵션으로는 의미가 있다. 그러나 냉각, 발사 비용, 유지보수, 경제성 제약이 커서 단기 주류 해법으로 보기는 어렵다. 단기 해법은 지상 전력망, 가스터빈, 원전, 재생 PPA, ESS, 액침냉각, 변압기 증설이다.</p>
+
+    <h2>수혜 산업과 기업군</h2>
+    <table>
+      <thead><tr><th>분야</th><th>대표 기업/유형</th><th>인사이트</th></tr></thead>
+      <tbody>
+        <tr><td>전력 관리</td><td>Schneider Electric, Eaton, Siemens, ABB</td><td>데이터센터 전력 분배와 제어</td></tr>
+        <tr><td>냉각/전원 인프라</td><td>Vertiv</td><td>고밀도 rack cooling, UPS, thermal management</td></tr>
+        <tr><td>발전 장비</td><td>GE Vernova, Siemens Energy</td><td>가스터빈, grid equipment</td></tr>
+        <tr><td>전력/재생 PPA</td><td>NextEra Energy, Brookfield Renewable</td><td>장기 전력 조달과 재생에너지</td></tr>
+        <tr><td>원전/연료</td><td>Cameco, Constellation Energy</td><td>기저전력과 원전 재가동</td></tr>
+        <tr><td>현장형 전력</td><td>Bloom Energy, Caterpillar, Cummins</td><td>연료전지, 분산전원, backup power</td></tr>
+      </tbody>
+    </table>
+
+    <h2>최종 결론</h2>
+    <div class="insight-box">
+      <strong>최종 관점:</strong> AI 병목은 GPU 단품 부족에서 전력 부족으로 단순 이동하는 것이 아니라, GPU, HBM, advanced packaging, networking, power, cooling, grid가 함께 제약하는 복합 인프라 병목으로 진화하고 있다.
+    </div>
+    <p>따라서 2030년 AI 경쟁력은 GPU와 HBM 확보력, advanced packaging과 high-speed networking 확보력, megawatt와 grid connection 확보 속도, cooling density와 PUE 개선 능력을 동시에 보는 방식으로 평가해야 한다.</p>
+
+    <h2>주요 출처</h2>
+    <ul>
+      <li>IEA, <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noreferrer">Energy and AI</a></li>
+      <li>IEA, <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer">Energy demand from AI</a></li>
+      <li>LBNL, <a href="https://buildings.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report" target="_blank" rel="noreferrer">2024 United States Data Center Energy Usage Report</a></li>
+      <li>EPRI, <a href="https://powering-intelligence.epri.com/executive-summary.html" target="_blank" rel="noreferrer">Powering Intelligence 2026 Executive Summary</a></li>
+      <li>NVIDIA, <a href="https://www.nvidia.com/en-gb/data-center/gb300-nvl72/" target="_blank" rel="noreferrer">GB300 NVL72</a></li>
+      <li>Guru3D, <a href="https://www.guru3d.com/story/nvidia-vera-rubin-ai-rack-cost-reportedly-hits-million/" target="_blank" rel="noreferrer">NVIDIA Vera Rubin AI Rack Cost Reportedly Hits $7.8 Million</a></li>
+      <li>매일경제, <a href="https://www.mk.co.kr/en/economy/12024321" target="_blank" rel="noreferrer">한국 데이터센터 전력 수요 2040년 42.1TWh 전망</a></li>
+      <li>연합뉴스, <a href="https://www.yna.co.kr/view/AKR20260422057251530" target="_blank" rel="noreferrer">2040년 전력수요 전망</a></li>
+    </ul>
+  </main>
+  <script src="assets/protect.js" defer></script>
+</body>
+</html>
