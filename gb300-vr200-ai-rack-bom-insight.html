@@ -177,6 +177,29 @@
       이 글의 목적은 정확한 판매가 산정이 아니라, GB300에서 VR200으로 넘어갈 때 비용 증가의 중심이
       GPU 단품에서 메모리·네트워크·패키징·전력·냉각 인프라로 확장된다는 산업 구조 변화를 읽는 데 있다.
     </p>
+
+    <h2>참고자료</h2>
+    <p>
+      * <strong>Grace CPU란 무엇인가:</strong> NVIDIA Grace CPU는 NVIDIA가 만든 데이터센터용 Arm 서버 CPU다.
+      일반 PC용 x86 CPU가 아니라, AI rack 안에서 GPU를 제어하고 데이터를 공급하며 CPU-GPU 간 고속 연결과
+      memory coherence를 지원하는 host CPU에 가깝다. NVIDIA 공식 자료에 따르면 Grace CPU Superchip은
+      두 개의 Grace CPU를 NVLink-C2C 900GB/s로 연결한 모듈이며, 총 144 Arm Neoverse V2 코어와 최대
+      960GB LPDDR5X 메모리를 제공한다.
+      출처:
+      <a href="https://www.nvidia.com/en-us/data-center/grace-cpu-superchip/" target="_blank" rel="noreferrer">NVIDIA Grace CPU Superchip</a>,
+      <a href="https://developer.nvidia.com/blog/inside-nvidia-grace-cpu-nvidia-amps-up-superchip-engineering-for-hpc-and-ai/" target="_blank" rel="noreferrer">NVIDIA Grace CPU Architecture</a>.
+    </p>
+    <p>
+      * <strong>Grace CPU 가격 추정:</strong> NVIDIA는 Grace CPU의 공식 list price를 공개하지 않는다.
+      따라서 이 글에서는 Guru3D 기사에 인용된 Morgan Stanley BOM 추정치의 CPU 항목을 기준으로 역산했다.
+      GB300 rack CPU 항목 $180,000을 NVIDIA GB300 NVL72의 Grace CPU 36개로 나누면 약 $5,000 per Grace CPU,
+      즉 Grace CPU 2개로 구성된 Superchip 기준 약 $10,000으로 해석할 수 있다.
+      이 숫자는 공식 판매가가 아니라 rack BOM 안에서 배정된 원가 추정치이며, 실제 가격은 고객 계약, 시스템 구성,
+      메모리 용량, ODM 조건에 따라 달라질 수 있다.
+      출처:
+      <a href="https://www.nvidia.com/en-gb/data-center/gb300-nvl72/" target="_blank" rel="noreferrer">NVIDIA GB300 NVL72</a>,
+      <a href="https://www.guru3d.com/story/nvidia-vera-rubin-ai-rack-cost-reportedly-hits-million/" target="_blank" rel="noreferrer">Guru3D/Morgan Stanley BOM 추정치</a>.
+    </p>
   </main>
   <script src="assets/protect.js" defer></script>
 </body>
