@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05-derivative-chain-rule</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/ai-math.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">05-derivative-chain-rule</h1>
+</header>
+<nav class="site-nav">
+<a href="../index.html">블로그 홈</a><a href="index.html">AI와 수학
+목차</a><a href="ai-math-foundations.html">전체 로드맵</a>
+</nav>
+<h1 id="미분과chainrule">05_미분과ChainRule</h1>
+<h2 id="한-문장-요약">한 문장 요약</h2>
+<p>미분은 입력이 아주 조금 바뀔 때 출력이 얼마나 바뀌는지 보는 방법이고,
+AI에서는 손실을 줄이기 위해 가중치를 어느 방향으로 바꿀지 알려준다.</p>
+<h2 id="왜-ai에-필요한가">왜 AI에 필요한가</h2>
+<p>AI 학습은 손실함수를 줄이는 과정이다.</p>
+<pre class="text"><code>예측 -&gt; 손실 계산 -&gt; 손실을 줄이는 방향 찾기 -&gt; 가중치 수정</code></pre>
+<p>여기서 “손실을 줄이는 방향”을 찾을 때 미분이 필요하다.</p>
+<p>예를 들어 가중치 <code>w</code>를 조금 키웠더니 손실이 커졌다면,
+다음에는 <code>w</code>를 줄여야 한다. 반대로 <code>w</code>를 키웠더니
+손실이 작아졌다면, <code>w</code>를 더 키워볼 수 있다.</p>
+<p>미분은 이 판단을 숫자로 해준다.</p>
+<h2 id="미분을-아주-쉽게-말하면">미분을 아주 쉽게 말하면</h2>
+<p>미분은 변화에 대한 민감도다.</p>
+<pre class="text"><code>입력이 조금 바뀌면 출력이 얼마나 바뀌는가?</code></pre>
+<p>예를 들어 자동차 속도를 생각해 보자.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">시간</th>
+<th style="text-align: right;">이동 거리</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0초</td>
+<td style="text-align: right;">0m</td>
+</tr>
+<tr>
+<td style="text-align: right;">1초</td>
+<td style="text-align: right;">10m</td>
+</tr>
+<tr>
+<td style="text-align: right;">2초</td>
+<td style="text-align: right;">20m</td>
+</tr>
+</tbody>
+</table>
+<p>1초마다 10m씩 이동한다면 속도는 다음과 같다.</p>
+<pre class="text"><code>속도 = 거리 변화 / 시간 변화 = 10m / 1초 = 10m/s</code></pre>
+<p>이것도 변화율이다.</p>
+<p>미분은 이 생각을 더 작게 쪼개서 “바로 지금 순간의 변화율”을 보는
+것이다.</p>
+<figure>
+<img src="assets/05_derivative_slope.svg"
+alt="05_derivative_slope.svg" />
+<figcaption aria-hidden="true">05_derivative_slope.svg</figcaption>
+</figure>
+<h2 id="평균-변화율과-순간-변화율">평균 변화율과 순간 변화율</h2>
+<p>평균 변화율은 두 지점 사이의 전체 변화다.</p>
+<pre class="text"><code>평균 변화율 = y의 변화량 / x의 변화량</code></pre>
+<p>예를 들어 <code>x</code>가 1에서 3으로 바뀔 때 <code>y</code>가 2에서
+10으로 바뀌었다면,</p>
+<pre class="text"><code>평균 변화율 = (10 - 2) / (3 - 1) = 8 / 2 = 4</code></pre>
+<p>순간 변화율은 한 점에서의 기울기다. 이것이 미분이다.</p>
+<pre class="text"><code>미분값 = 그 점에서의 기울기</code></pre>
+<p>직선에서는 모든 지점의 기울기가 같다. 하지만 곡선에서는 위치마다
+기울기가 다르다.</p>
+<h2 id="일차함수의-미분">일차함수의 미분</h2>
+<p>가장 쉬운 함수부터 보자.</p>
+<pre class="text"><code>y = 3x + 2</code></pre>
+<p>이 함수는 <code>x</code>가 1 증가할 때 <code>y</code>가 3
+증가한다.</p>
+<p>그래서 기울기는 3이다.</p>
+<pre class="text"><code>dy/dx = 3</code></pre>
+<p><code>dy/dx</code>는 이렇게 읽으면 된다.</p>
+<pre class="text"><code>x가 조금 바뀔 때 y가 얼마나 바뀌는가?</code></pre>
+<p>즉 <code>y = 3x + 2</code>는 어디에서 보아도 미분값이 3이다.</p>
+<h2 id="이차함수의-미분">이차함수의 미분</h2>
+<p>이번에는 곡선을 보자.</p>
+<pre class="text"><code>y = x^2</code></pre>
+<p>이 함수의 미분은 다음과 같다.</p>
+<pre class="text"><code>dy/dx = 2x</code></pre>
+<p>여기서 중요한 점은 미분값이 <code>x</code>에 따라 달라진다는
+것이다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y = x^2</th>
+<th style="text-align: right;">dy/dx = 2x</th>
+<th>뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td>완만하게 증가</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td>더 빠르게 증가</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6</td>
+<td>훨씬 빠르게 증가</td>
+</tr>
+</tbody>
+</table>
+<p>즉 <code>x</code>가 클수록 그래프가 더 가파르게 올라간다.</p>
+<h2 id="ai-예제-예측값이-가중치에-얼마나-민감한가">AI 예제: 예측값이
+가중치에 얼마나 민감한가</h2>
+<p>가장 단순한 모델을 보자.</p>
+<pre class="text"><code>y_hat = wx + b</code></pre>
+<p>여기서 <code>w</code>가 조금 바뀌면 예측값 <code>y_hat</code>도
+바뀐다.</p>
+<p>예를 들어,</p>
+<pre class="text"><code>x = 3
+b = 0
+y_hat = 3w</code></pre>
+<p>그러면 <code>w</code>가 1 증가할 때 <code>y_hat</code>은 3
+증가한다.</p>
+<pre class="text"><code>dy_hat/dw = 3</code></pre>
+<p>즉 입력 <code>x</code>가 클수록 가중치 <code>w</code>의 변화가
+예측값에 더 큰 영향을 준다.</p>
+<h2 id="손실함수와-미분">손실함수와 미분</h2>
+<p>AI는 예측값이 아니라 손실을 줄이고 싶다.</p>
+<p>실제값을 <code>y</code>, 예측값을 <code>y_hat</code>이라고 하면
+간단한 손실은 다음처럼 쓸 수 있다.</p>
+<pre class="text"><code>L = (y_hat - y)^2</code></pre>
+<p>예를 들어 실제값이 10이고 예측값이 7이면,</p>
+<pre class="text"><code>L = (7 - 10)^2 = 9</code></pre>
+<p>예측값이 8이면,</p>
+<pre class="text"><code>L = (8 - 10)^2 = 4</code></pre>
+<p>손실이 줄었다. 즉 예측값이 실제값에 가까워졌다.</p>
+<p>미분은 <code>w</code>를 바꾸면 <code>L</code>이 어떻게 바뀌는지
+알려준다.</p>
+<pre class="text"><code>dL/dw = w가 조금 바뀔 때 손실 L이 얼마나 바뀌는가?</code></pre>
+<figure>
+<img src="assets/05_loss_slope.svg" alt="05_loss_slope.svg" />
+<figcaption aria-hidden="true">05_loss_slope.svg</figcaption>
+</figure>
+<h2 id="기울기의-부호-해석">기울기의 부호 해석</h2>
+<p>손실함수의 기울기는 방향을 알려준다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">기울기</th>
+<th>의미</th>
+<th>해야 할 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">양수</td>
+<td>w를 키우면 손실이 커진다</td>
+<td>w를 줄인다</td>
+</tr>
+<tr>
+<td style="text-align: right;">음수</td>
+<td>w를 키우면 손실이 작아진다</td>
+<td>w를 키운다</td>
+</tr>
+<tr>
+<td style="text-align: right;">0 근처</td>
+<td>더 움직여도 손실 변화가 작다</td>
+<td>최소점 근처일 수 있다</td>
+</tr>
+</tbody>
+</table>
+<p>그래서 경사하강법은 다음처럼 쓴다.</p>
+<pre class="text"><code>w_new = w_old - learning_rate * dL/dw</code></pre>
+<p>여기서 <code>learning_rate</code>는 한 번에 얼마나 움직일지 정하는
+작은 숫자다.</p>
+<h2 id="chain-rule이-필요한-이유">Chain Rule이 필요한 이유</h2>
+<p>딥러닝 모델은 함수 하나가 아니라 여러 함수가 이어진 구조다.</p>
+<pre class="text"><code>x -&gt; 선형계산 -&gt; ReLU -&gt; 선형계산 -&gt; softmax -&gt; loss</code></pre>
+<p>손실 <code>L</code>은 맨 마지막에 계산된다. 하지만 우리가 바꾸고 싶은
+것은 앞쪽의 가중치들이다.</p>
+<p>그래서 이런 질문이 필요하다.</p>
+<pre class="text"><code>앞쪽 가중치 w가 손실 L에 얼마나 영향을 주는가?</code></pre>
+<p>이것을 계산할 때 chain rule을 쓴다.</p>
+<figure>
+<img src="assets/05_chain_rule.svg" alt="05_chain_rule.svg" />
+<figcaption aria-hidden="true">05_chain_rule.svg</figcaption>
+</figure>
+<h2 id="chain-rule을-쉬운-예로-보기">Chain Rule을 쉬운 예로 보기</h2>
+<p>다음처럼 함수가 두 단계로 이어져 있다고 하자.</p>
+<pre class="text"><code>u = 2x
+y = u^2</code></pre>
+<p>즉 <code>x</code>가 먼저 <code>u</code>를 만들고, <code>u</code>가
+다시 <code>y</code>를 만든다.</p>
+<pre class="text"><code>x -&gt; u -&gt; y</code></pre>
+<p><code>x</code>가 <code>y</code>에 미치는 영향은 두 영향을 곱해서
+구한다.</p>
+<pre class="text"><code>dy/dx = dy/du * du/dx</code></pre>
+<p>각각 계산하면,</p>
+<pre class="text"><code>du/dx = 2
+dy/du = 2u</code></pre>
+<p>따라서,</p>
+<pre class="text"><code>dy/dx = 2u * 2 = 4u</code></pre>
+<p>그런데 <code>u = 2x</code>이므로,</p>
+<pre class="text"><code>dy/dx = 4 * 2x = 8x</code></pre>
+<p>실제로 전체 함수를 하나로 합치면,</p>
+<pre class="text"><code>y = u^2 = (2x)^2 = 4x^2</code></pre>
+<p>이 함수의 미분은 다음과 같다.</p>
+<pre class="text"><code>dy/dx = 8x</code></pre>
+<p>같은 결과가 나온다.</p>
+<h2 id="ai에서-chain-rule은-역전파다">AI에서 Chain Rule은 역전파다</h2>
+<p>딥러닝에서는 계산이 앞에서 뒤로 진행된다.</p>
+<pre class="text"><code>입력 -&gt; 예측 -&gt; 손실</code></pre>
+<p>하지만 미분은 뒤에서 앞으로 계산된다.</p>
+<pre class="text"><code>손실 -&gt; 마지막 층 -&gt; 이전 층 -&gt; 더 이전 층</code></pre>
+<p>이 과정을 backpropagation, 즉 역전파라고 부른다.</p>
+<p>역전파는 특별한 마법이 아니라 chain rule을 반복해서 적용하는
+계산이다.</p>
+<h2 id="손계산-예제">손계산 예제</h2>
+<p>모델이 다음과 같다고 하자.</p>
+<pre class="text"><code>y_hat = wx
+L = (y_hat - y)^2</code></pre>
+<p>값은 다음과 같다.</p>
+<pre class="text"><code>x = 2
+w = 3
+y = 10</code></pre>
+<p>먼저 예측값을 계산한다.</p>
+<pre class="text"><code>y_hat = wx = 3 * 2 = 6</code></pre>
+<p>손실을 계산한다.</p>
+<pre class="text"><code>L = (6 - 10)^2 = 16</code></pre>
+<p>이제 <code>w</code>가 손실에 주는 영향을 계산한다.</p>
+<pre class="text"><code>L = (y_hat - y)^2
+y_hat = wx</code></pre>
+<p>chain rule:</p>
+<pre class="text"><code>dL/dw = dL/dy_hat * dy_hat/dw</code></pre>
+<p>각각 계산하면,</p>
+<pre class="text"><code>dL/dy_hat = 2(y_hat - y) = 2(6 - 10) = -8
+dy_hat/dw = x = 2</code></pre>
+<p>따라서,</p>
+<pre class="text"><code>dL/dw = -8 * 2 = -16</code></pre>
+<p>기울기가 음수다. 이것은 <code>w</code>를 키우면 손실이 줄어든다는
+뜻이다.</p>
+<p>실제로 <code>w</code>를 3에서 3.1로 키우면,</p>
+<pre class="text"><code>y_hat = 3.1 * 2 = 6.2
+L = (6.2 - 10)^2 = 14.44</code></pre>
+<p>손실이 16에서 14.44로 줄었다.</p>
+<h2 id="코드-예제">코드 예제</h2>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="fl">3.0</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fl">10.0</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> w <span class="op">*</span> x</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> (y_hat <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>dL_dyhat <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (y_hat <span class="op">-</span> y)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>dyhat_dw <span class="op">=</span> x</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>dL_dw <span class="op">=</span> dL_dyhat <span class="op">*</span> dyhat_dw</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(y_hat)  <span class="co"># 6.0</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(loss)   <span class="co"># 16.0</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dL_dw)  <span class="co"># -16.0</span></span></code></pre></div>
+<p>PyTorch 자동미분으로 확인하면 다음과 같다.</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> torch.tensor(<span class="fl">3.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.tensor(<span class="fl">10.0</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> w <span class="op">*</span> x</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> (y_hat <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>loss.backward()</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(w.grad)  <span class="co"># tensor(-16.)</span></span></code></pre></div>
+<h2 id="자주-헷갈리는-점">자주 헷갈리는 점</h2>
+<table>
+<thead>
+<tr>
+<th>헷갈리는 말</th>
+<th>쉽게 풀어쓴 말</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>미분</td>
+<td>입력이 조금 바뀔 때 출력이 얼마나 바뀌는지</td>
+</tr>
+<tr>
+<td>기울기</td>
+<td>그래프가 그 지점에서 얼마나 가파른지</td>
+</tr>
+<tr>
+<td>손실의 기울기</td>
+<td>가중치를 바꾸면 손실이 어떻게 변하는지</td>
+</tr>
+<tr>
+<td>chain rule</td>
+<td>연결된 함수들의 변화율을 곱하는 법칙</td>
+</tr>
+<tr>
+<td>역전파</td>
+<td>chain rule로 손실의 영향을 뒤에서 앞으로 계산하는 과정</td>
+</tr>
+<tr>
+<td>learning rate</td>
+<td>가중치를 한 번에 얼마나 움직일지 정하는 값</td>
+</tr>
+</tbody>
+</table>
+<h2 id="확인-질문">확인 질문</h2>
+<ul>
+<li>미분을 한 문장으로 설명하면 무엇인가?</li>
+<li><code>y = 3x + 2</code>의 미분값은 얼마인가?</li>
+<li><code>y = x^2</code>의 미분값은 무엇인가?</li>
+<li>손실함수의 기울기가 양수이면 <code>w</code>를 어느 방향으로 움직여야
+하는가?</li>
+<li>chain rule은 왜 필요한가?</li>
+<li>역전파와 chain rule은 어떤 관계인가?</li>
+<li><code>dL/dw</code>는 AI 학습에서 무엇을 의미하는가?</li>
+</ul>
+<h2 id="오늘의-정리">오늘의 정리</h2>
+<p>미분은 변화에 대한 민감도다. AI에서는 손실이 가중치에 얼마나 민감한지
+계산하기 위해 미분을 사용한다. 딥러닝 모델은 여러 함수가 이어진
+구조이므로 chain rule이 필요하고, 이 chain rule을 뒤에서 앞으로 반복
+적용하는 과정이 역전파다.</p>
+<p>다음 노트: 06_그래디언트와역전파 (준비 중)</p>
+<script src="../assets/protect.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", function(){ if (window.mermaid) mermaid.initialize({ startOnLoad: true }); });</script>
+</body>
+</html>

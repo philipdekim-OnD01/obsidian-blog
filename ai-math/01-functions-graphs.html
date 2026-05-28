@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01-functions-graphs</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/ai-math.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">01-functions-graphs</h1>
+</header>
+<nav class="site-nav">
+<a href="../index.html">블로그 홈</a><a href="index.html">AI와 수학
+목차</a><a href="ai-math-foundations.html">전체 로드맵</a>
+</nav>
+<h1 id="함수와그래프">01_함수와그래프</h1>
+<h2 id="한-문장-요약">한 문장 요약</h2>
+<p>함수는 입력을 받아 출력을 만드는 규칙이고, AI 모델은 아주 큰 함수라고
+볼 수 있다.</p>
+<h2 id="왜-ai에-필요한가">왜 AI에 필요한가</h2>
+<p>AI 모델은 데이터를 넣으면 예측값을 내놓는다.</p>
+<pre class="text"><code>입력 x -&gt; 모델 f -&gt; 예측 y_hat</code></pre>
+<p>이 구조는 수학의 함수와 같다.</p>
+<pre class="text"><code>y = f(x)</code></pre>
+<p>그래서 AI를 이해하려면 먼저 함수와 그래프를 편하게 볼 수 있어야 한다.
+그래프는 함수가 입력을 어떻게 출력으로 바꾸는지 눈으로 보여준다.</p>
+<h2 id="전체-그림">전체 그림</h2>
+<pre class="mermaid"><code>flowchart LR
+    A[입력 데이터 x] --&gt; B[모델 함수 f]
+    B --&gt; C[예측값 y_hat]
+    C --&gt; D[실제값 y와 비교]
+    D --&gt; E[손실 계산]</code></pre>
+<p>AI 모델은 복잡하지만, 가장 기본 생각은 위 그림과 같다.</p>
+<h2 id="함수란-무엇인가">함수란 무엇인가</h2>
+<p>함수는 입력 하나를 넣으면 정해진 규칙에 따라 출력 하나를 만드는
+기계처럼 생각하면 쉽다.</p>
+<pre class="text"><code>입력 -&gt; 함수 -&gt; 출력</code></pre>
+<p>예를 들어 다음 함수가 있다고 하자.</p>
+<pre class="text"><code>f(x) = 2x</code></pre>
+<p>입력과 출력은 다음처럼 연결된다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">입력 x</th>
+<th style="text-align: right;">출력 f(x)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+</tr>
+</tbody>
+</table>
+<p>즉 <code>x</code>에 무엇을 넣든 2를 곱해서 내보내는 규칙이다.</p>
+<h2 id="ai-모델도-함수다">AI 모델도 함수다</h2>
+<p>집값 예측 모델을 생각해 보자.</p>
+<pre class="text"><code>집 크기 -&gt; 모델 -&gt; 예상 집값</code></pre>
+<p>이것도 함수다.</p>
+<pre class="text"><code>예상 집값 = f(집 크기)</code></pre>
+<p>이미지 분류 모델도 함수다.</p>
+<pre class="text"><code>이미지 -&gt; 모델 -&gt; 고양이 확률, 개 확률, 자동차 확률</code></pre>
+<p>언어모델도 함수다.</p>
+<pre class="text"><code>지금까지의 문장 -&gt; 모델 -&gt; 다음 토큰 확률</code></pre>
+<h2 id="일차함수-ai의-가장-작은-출발점">일차함수: AI의 가장 작은
+출발점</h2>
+<p>AI 모델의 가장 작은 형태는 일차함수로 생각할 수 있다.</p>
+<pre class="text"><code>y_hat = wx + b</code></pre>
+<p>여기서 <code>w</code>와 <code>b</code>는 모델이 학습하면서 바꾸는
+숫자다.</p>
+<figure>
+<img src="assets/01_linear_function.svg" alt="01_linear_function.svg" />
+<figcaption aria-hidden="true">01_linear_function.svg</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>기호</th>
+<th>쉬운 뜻</th>
+<th>AI에서의 이름</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td>입력</td>
+<td>데이터</td>
+</tr>
+<tr>
+<td><code>y_hat</code></td>
+<td>예측값</td>
+<td>모델 출력</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>기울기</td>
+<td>weight</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>시작 위치</td>
+<td>bias</td>
+</tr>
+</tbody>
+</table>
+<h2 id="기울기-w의-의미">기울기 w의 의미</h2>
+<p>기울기 <code>w</code>는 <code>x</code>가 1만큼 바뀔 때
+<code>y</code>가 얼마나 바뀌는지를 나타낸다.</p>
+<pre class="text"><code>y = 2x</code></pre>
+<p>이 함수에서는 <code>x</code>가 1 늘면 <code>y</code>는 2 늘어난다.
+그래서 기울기는 2다.</p>
+<pre class="text"><code>y = 5x</code></pre>
+<p>이 함수에서는 <code>x</code>가 1 늘면 <code>y</code>는 5 늘어난다.
+그래서 그래프가 더 가파르다.</p>
+<p>AI 관점에서는 <code>w</code>가 입력의 영향력을 나타낸다.
+<code>w</code>가 크면 입력 <code>x</code>가 예측값에 크게 영향을
+준다.</p>
+<h2 id="절편-b의-의미">절편 b의 의미</h2>
+<p>절편 <code>b</code>는 <code>x = 0</code>일 때의 출력값이다.</p>
+<pre class="text"><code>y = 2x + 3</code></pre>
+<p>이 함수에서 <code>x = 0</code>이면 <code>y = 3</code>이다. 그래서
+<code>b = 3</code>이다.</p>
+<p>AI 관점에서는 bias가 기본값을 조정하는 역할을 한다. 입력이 0이어도
+모델이 어떤 기본 출력을 가질 수 있게 해준다.</p>
+<h2 id="그래프를-읽는-법">그래프를 읽는 법</h2>
+<p>그래프를 볼 때는 세 가지를 먼저 확인한다.</p>
+<ol type="1">
+<li>오른쪽으로 갈수록 값이 커지는가, 작아지는가?</li>
+<li>얼마나 가파르게 변하는가?</li>
+<li>어느 지점에서 0을 지나거나 꺾이는가?</li>
+</ol>
+<p>이 세 가지만 봐도 함수의 성격을 대부분 이해할 수 있다.</p>
+<h2 id="자주-나오는-함수-1-relu">자주 나오는 함수 1: ReLU</h2>
+<p>ReLU는 딥러닝에서 많이 쓰는 활성화 함수다.</p>
+<pre class="text"><code>ReLU(x) = max(0, x)</code></pre>
+<p>뜻은 단순하다.</p>
+<ul>
+<li><code>x</code>가 음수이면 0으로 만든다.</li>
+<li><code>x</code>가 양수이면 그대로 통과시킨다.</li>
+</ul>
+<figure>
+<img src="assets/01_relu.svg" alt="01_relu.svg" />
+<figcaption aria-hidden="true">01_relu.svg</figcaption>
+</figure>
+<p>ReLU는 신경망에 꺾이는 성질을 넣어준다. 이 꺾임 덕분에 신경망은
+단순한 직선보다 훨씬 복잡한 패턴을 표현할 수 있다.</p>
+<h2 id="자주-나오는-함수-2-sigmoid">자주 나오는 함수 2: sigmoid</h2>
+<p>sigmoid는 어떤 숫자든 0과 1 사이로 바꾸는 함수다.</p>
+<pre class="text"><code>sigmoid(x) = 1 / (1 + e^(-x))</code></pre>
+<figure>
+<img src="assets/01_sigmoid.svg" alt="01_sigmoid.svg" />
+<figcaption aria-hidden="true">01_sigmoid.svg</figcaption>
+</figure>
+<p>sigmoid는 확률처럼 해석하고 싶을 때 유용하다.</p>
+<p>예를 들어 출력이 <code>0.8</code>이면 다음처럼 말할 수 있다.</p>
+<pre class="text"><code>이메일이 스팸일 가능성 80%</code></pre>
+<h2 id="자주-나오는-함수-3-softmax">자주 나오는 함수 3: softmax</h2>
+<p>softmax는 여러 개의 점수를 확률처럼 바꾼다.</p>
+<p>예를 들어 모델이 다음 점수를 냈다고 하자.</p>
+<table>
+<thead>
+<tr>
+<th>클래스</th>
+<th style="text-align: right;">점수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>고양이</td>
+<td style="text-align: right;">2.0</td>
+</tr>
+<tr>
+<td>개</td>
+<td style="text-align: right;">1.0</td>
+</tr>
+<tr>
+<td>자동차</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+</tbody>
+</table>
+<p>softmax를 통과하면 전체 합이 1인 확률 형태가 된다.</p>
+<table>
+<thead>
+<tr>
+<th>클래스</th>
+<th style="text-align: right;">확률 예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>고양이</td>
+<td style="text-align: right;">0.66</td>
+</tr>
+<tr>
+<td>개</td>
+<td style="text-align: right;">0.24</td>
+</tr>
+<tr>
+<td>자동차</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+</tbody>
+</table>
+<p>softmax는 분류 모델의 마지막 단계에서 자주 등장한다.</p>
+<h2 id="손계산-예제">손계산 예제</h2>
+<p>모델이 다음과 같다고 하자.</p>
+<pre class="text"><code>y_hat = 3x + 2</code></pre>
+<p><code>x = 4</code>일 때 예측값은 다음과 같다.</p>
+<pre class="text"><code>y_hat = 3 * 4 + 2 = 14</code></pre>
+<p>여기서 의미는 다음과 같다.</p>
+<ul>
+<li>입력 <code>x</code>는 4다.</li>
+<li>기울기 <code>w</code>는 3이다.</li>
+<li>bias <code>b</code>는 2다.</li>
+<li>예측값 <code>y_hat</code>은 14다.</li>
+</ul>
+<h2 id="ai-학습과-연결하기">AI 학습과 연결하기</h2>
+<p>처음 모델이 이렇게 예측한다고 하자.</p>
+<pre class="text"><code>y_hat = 1x + 0</code></pre>
+<p>하지만 실제 데이터가 다음 규칙에 가깝다면,</p>
+<pre class="text"><code>y = 3x + 2</code></pre>
+<p>학습은 <code>w</code>를 1에서 3에 가깝게, <code>b</code>를 0에서 2에
+가깝게 바꾸는 과정이다.</p>
+<p>즉 학습은 함수의 모양을 데이터에 맞게 조정하는 일이다.</p>
+<pre class="mermaid"><code>flowchart TD
+    A[처음 함수] --&gt; B[예측]
+    B --&gt; C[오차 확인]
+    C --&gt; D[w와 b 수정]
+    D --&gt; E[더 나은 함수]
+    E --&gt; B</code></pre>
+<h2 id="코드-예제">코드 예제</h2>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> model(x, w, b):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> model(x, w, b)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(y_hat)  <span class="co"># 14</span></span></code></pre></div>
+<p>ReLU도 코드로 쓰면 간단하다.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relu(x):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">max</span>(<span class="dv">0</span>, x)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(relu(<span class="op">-</span><span class="dv">3</span>))  <span class="co"># 0</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(relu(<span class="dv">5</span>))   <span class="co"># 5</span></span></code></pre></div>
+<h2 id="헷갈린-점-정리">헷갈린 점 정리</h2>
+<table>
+<thead>
+<tr>
+<th>헷갈리는 말</th>
+<th>쉽게 풀어쓴 말</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>함수</td>
+<td>입력을 출력으로 바꾸는 규칙</td>
+</tr>
+<tr>
+<td>그래프</td>
+<td>함수의 모양을 눈으로 보여준 것</td>
+</tr>
+<tr>
+<td>기울기</td>
+<td>입력이 바뀔 때 출력이 얼마나 바뀌는지</td>
+</tr>
+<tr>
+<td>bias</td>
+<td>기본 출력 위치를 조정하는 값</td>
+</tr>
+<tr>
+<td>활성화 함수</td>
+<td>신경망에 꺾임과 비선형성을 넣는 함수</td>
+</tr>
+</tbody>
+</table>
+<h2 id="확인-질문">확인 질문</h2>
+<ul>
+<li>함수란 무엇인가?</li>
+<li>AI 모델을 함수라고 볼 수 있는 이유는 무엇인가?</li>
+<li><code>y_hat = wx + b</code>에서 <code>w</code>와 <code>b</code>는
+각각 무엇인가?</li>
+<li>기울기가 크면 그래프는 어떻게 변하는가?</li>
+<li>ReLU는 음수 입력을 어떻게 처리하는가?</li>
+<li>sigmoid 출력은 왜 확률처럼 해석할 수 있는가?</li>
+</ul>
+<h2 id="오늘의-정리">오늘의 정리</h2>
+<p>AI 모델은 입력을 예측값으로 바꾸는 함수다. 학습은 이 함수의 모양을
+데이터에 맞게 바꾸는 과정이다. 가장 작은 출발점은
+<code>y_hat = wx + b</code>이며, 딥러닝은 이런 함수들을 아주 많이 연결한
+구조로 볼 수 있다.</p>
+<p>다음 노트: <a
+href="02-vectors-dot-product.html">02_벡터와내적</a></p>
+<script src="../assets/protect.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", function(){ if (window.mermaid) mermaid.initialize({ startOnLoad: true }); });</script>
+</body>
+</html>

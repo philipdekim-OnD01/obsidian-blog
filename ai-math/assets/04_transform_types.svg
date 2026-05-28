@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="480" viewBox="0 0 880 480">
+  <rect width="880" height="480" fill="#ffffff"/>
+  <text x="55" y="48" font-family="Arial, sans-serif" font-size="28" fill="#111">행렬이 만드는 대표적인 변환</text>
+  <g transform="translate(50,95)">
+    <rect x="0" y="0" width="180" height="180" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <line x1="90" y1="160" x2="90" y2="20" stroke="#222" stroke-width="2"/>
+    <line x1="20" y1="90" x2="160" y2="90" stroke="#222" stroke-width="2"/>
+    <rect x="70" y="50" width="40" height="40" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/>
+    <text x="36" y="220" font-family="Arial, sans-serif" font-size="22" fill="#111">원래 모양</text>
+  </g>
+  <g transform="translate(260,95)">
+    <rect x="0" y="0" width="180" height="180" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <line x1="90" y1="160" x2="90" y2="20" stroke="#222" stroke-width="2"/>
+    <line x1="20" y1="90" x2="160" y2="90" stroke="#222" stroke-width="2"/>
+    <rect x="50" y="55" width="80" height="30" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
+    <text x="25" y="220" font-family="Arial, sans-serif" font-size="22" fill="#111">확대/축소</text>
+    <text x="10" y="250" font-family="Arial, sans-serif" font-size="16" fill="#444">특정 방향으로 늘림</text>
+  </g>
+  <g transform="translate(470,95)">
+    <rect x="0" y="0" width="180" height="180" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+    <line x1="90" y1="160" x2="90" y2="20" stroke="#222" stroke-width="2"/>
+    <line x1="20" y1="90" x2="160" y2="90" stroke="#222" stroke-width="2"/>
+    <rect x="70" y="50" width="40" height="40" fill="#fdba74" stroke="#f97316" stroke-width="2" transform="rotate(35 90 70)"/>
+    <text x="63" y="220" font-family="Arial, sans-serif" font-size="22" fill="#111">회전</text>
+    <text x="20" y="250" font-family="Arial, sans-serif" font-size="16" fill="#444">방향을 돌림</text>
+  </g>
+  <g transform="translate(680,95)">
+    <rect x="0" y="0" width="180" height="180" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <line x1="90" y1="160" x2="90" y2="20" stroke="#222" stroke-width="2"/>
+    <line x1="20" y1="90" x2="160" y2="90" stroke="#222" stroke-width="2"/>
+    <polygon points="60,50 110,50 130,90 80,90" fill="#fca5a5" stroke="#dc2626" stroke-width="2"/>
+    <text x="45" y="220" font-family="Arial, sans-serif" font-size="22" fill="#111">찌그러짐</text>
+    <text x="10" y="250" font-family="Arial, sans-serif" font-size="16" fill="#444">축을 기울임</text>
+  </g>
+  <text x="78" y="390" font-family="Arial, sans-serif" font-size="22" fill="#111">AI에서 가중치 행렬 W는 입력 특징 공간을 새 특징 공간으로 바꾸는 변환이다.</text>
+  <text x="78" y="425" font-family="Arial, sans-serif" font-size="20" fill="#444">그래서 W를 배운다는 말은 데이터를 잘 구분되는 방향으로 바꾸는 규칙을 배운다는 뜻이다.</text>
+</svg>

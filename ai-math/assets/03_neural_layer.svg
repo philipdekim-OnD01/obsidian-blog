@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="460" viewBox="0 0 840 460">
+  <rect width="840" height="460" fill="#ffffff"/>
+  <text x="70" y="55" font-family="Arial, sans-serif" font-size="28" fill="#111">신경망 한 층은 행렬곱으로 계산된다</text>
+  <rect x="70" y="130" width="170" height="120" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+  <text x="105" y="180" font-family="Arial, sans-serif" font-size="25">입력 X</text>
+  <text x="94" y="215" font-family="Arial, sans-serif" font-size="18" fill="#444">데이터 묶음</text>
+  <text x="275" y="200" font-family="Arial, sans-serif" font-size="34">x</text>
+  <rect x="335" y="130" width="170" height="120" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+  <text x="365" y="180" font-family="Arial, sans-serif" font-size="25">가중치 W</text>
+  <text x="370" y="215" font-family="Arial, sans-serif" font-size="18" fill="#444">학습되는 값</text>
+  <text x="535" y="200" font-family="Arial, sans-serif" font-size="34">+</text>
+  <rect x="585" y="130" width="95" height="120" fill="#fff7ed" stroke="#f97316" stroke-width="3"/>
+  <text x="625" y="180" font-family="Arial, sans-serif" font-size="25">b</text>
+  <text x="605" y="215" font-family="Arial, sans-serif" font-size="18" fill="#444">bias</text>
+  <text x="705" y="200" font-family="Arial, sans-serif" font-size="34">=</text>
+  <rect x="750" y="130" width="70" height="120" fill="#fef2f2" stroke="#dc2626" stroke-width="3"/>
+  <text x="774" y="180" font-family="Arial, sans-serif" font-size="25">Y</text>
+  <text x="758" y="215" font-family="Arial, sans-serif" font-size="18" fill="#444">출력</text>
+  <text x="235" y="330" font-family="Arial, sans-serif" font-size="32" fill="#111">Y = XW + b</text>
+  <text x="130" y="380" font-family="Arial, sans-serif" font-size="20" fill="#444">여러 데이터를 한 번에 넣으면 행렬곱으로 한꺼번에 계산할 수 있다.</text>
+</svg>

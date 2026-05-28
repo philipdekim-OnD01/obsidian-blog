@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430">
+  <rect width="760" height="430" fill="#ffffff"/>
+  <text x="65" y="55" font-family="Arial, sans-serif" font-size="28" fill="#111">행렬 = 숫자를 행과 열로 정리한 표</text>
+  <rect x="90" y="105" width="560" height="220" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+  <line x1="90" y1="160" x2="650" y2="160" stroke="#334155" stroke-width="2"/>
+  <line x1="90" y1="215" x2="650" y2="215" stroke="#334155" stroke-width="2"/>
+  <line x1="90" y1="270" x2="650" y2="270" stroke="#334155" stroke-width="2"/>
+  <line x1="230" y1="105" x2="230" y2="325" stroke="#334155" stroke-width="2"/>
+  <line x1="370" y1="105" x2="370" y2="325" stroke="#334155" stroke-width="2"/>
+  <line x1="510" y1="105" x2="510" y2="325" stroke="#334155" stroke-width="2"/>
+  <text x="130" y="140" font-family="Arial, sans-serif" font-size="20" fill="#111">학생</text>
+  <text x="270" y="140" font-family="Arial, sans-serif" font-size="20" fill="#111">수학</text>
+  <text x="410" y="140" font-family="Arial, sans-serif" font-size="20" fill="#111">영어</text>
+  <text x="550" y="140" font-family="Arial, sans-serif" font-size="20" fill="#111">과학</text>
+  <text x="132" y="195" font-family="Arial, sans-serif" font-size="20" fill="#2563eb">A</text>
+  <text x="285" y="195" font-family="Arial, sans-serif" font-size="20">90</text>
+  <text x="425" y="195" font-family="Arial, sans-serif" font-size="20">80</text>
+  <text x="565" y="195" font-family="Arial, sans-serif" font-size="20">70</text>
+  <text x="132" y="250" font-family="Arial, sans-serif" font-size="20" fill="#2563eb">B</text>
+  <text x="285" y="250" font-family="Arial, sans-serif" font-size="20">60</text>
+  <text x="425" y="250" font-family="Arial, sans-serif" font-size="20">75</text>
+  <text x="565" y="250" font-family="Arial, sans-serif" font-size="20">85</text>
+  <text x="132" y="305" font-family="Arial, sans-serif" font-size="20" fill="#2563eb">C</text>
+  <text x="285" y="305" font-family="Arial, sans-serif" font-size="20">95</text>
+  <text x="425" y="305" font-family="Arial, sans-serif" font-size="20">70</text>
+  <text x="565" y="305" font-family="Arial, sans-serif" font-size="20">90</text>
+  <text x="90" y="370" font-family="Arial, sans-serif" font-size="20" fill="#444">행: 데이터 1개, 열: 특징 1개</text>
+</svg>

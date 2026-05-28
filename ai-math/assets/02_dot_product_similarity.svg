@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <rect width="720" height="420" fill="#ffffff"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  <line x1="80" y1="340" x2="650" y2="340" stroke="#222" stroke-width="2"/>
+  <line x1="120" y1="370" x2="120" y2="55" stroke="#222" stroke-width="2"/>
+  <line x1="160" y1="320" x2="440" y2="170" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowBlue)"/>
+  <line x1="160" y1="320" x2="475" y2="220" stroke="#16a34a" stroke-width="5" marker-end="url(#arrowGreen)"/>
+  <line x1="160" y1="320" x2="230" y2="105" stroke="#dc2626" stroke-width="5" marker-end="url(#arrowRed)"/>
+  <text x="450" y="170" font-family="Arial, sans-serif" font-size="20" fill="#2563eb">A: 영화 취향</text>
+  <text x="485" y="225" font-family="Arial, sans-serif" font-size="20" fill="#16a34a">B: 비슷한 취향</text>
+  <text x="240" y="105" font-family="Arial, sans-serif" font-size="20" fill="#dc2626">C: 다른 취향</text>
+  <text x="245" y="55" font-family="Arial, sans-serif" font-size="26" fill="#111">방향이 비슷할수록 내적이 크다</text>
+  <text x="245" y="85" font-family="Arial, sans-serif" font-size="18" fill="#444">추천, 검색, 임베딩 유사도에 사용</text>
+</svg>

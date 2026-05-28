@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430">
+  <rect width="760" height="430" fill="#ffffff"/>
+  <text x="60" y="50" font-family="Arial, sans-serif" font-size="28" fill="#111">미분 = 지금 이 순간의 기울기</text>
+  <line x1="80" y1="350" x2="680" y2="350" stroke="#222" stroke-width="2"/>
+  <line x1="120" y1="370" x2="120" y2="55" stroke="#222" stroke-width="2"/>
+  <text x="690" y="355" font-family="Arial, sans-serif" font-size="18">x</text>
+  <text x="105" y="45" font-family="Arial, sans-serif" font-size="18">y</text>
+  <path d="M125 345 C220 330, 300 270, 375 205 C460 130, 540 85, 650 75" fill="none" stroke="#2563eb" stroke-width="5"/>
+  <line x1="255" y1="283" x2="510" y2="120" stroke="#dc2626" stroke-width="4"/>
+  <circle cx="380" cy="202" r="8" fill="#dc2626"/>
+  <text x="395" y="198" font-family="Arial, sans-serif" font-size="20" fill="#111">현재 위치</text>
+  <path d="M380 202 L430 202 L430 170" fill="none" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 7"/>
+  <text x="386" y="225" font-family="Arial, sans-serif" font-size="18" fill="#16a34a">x가 조금 증가</text>
+  <text x="438" y="180" font-family="Arial, sans-serif" font-size="18" fill="#16a34a">y 변화</text>
+  <text x="470" y="115" font-family="Arial, sans-serif" font-size="19" fill="#dc2626">접선의 기울기</text>
+  <text x="205" y="395" font-family="Arial, sans-serif" font-size="20" fill="#444">미분값이 크면 작은 입력 변화에도 출력이 많이 바뀐다.</text>
+</svg>

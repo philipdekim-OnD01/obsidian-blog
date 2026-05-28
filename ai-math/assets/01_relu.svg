@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <rect width="720" height="420" fill="#ffffff"/>
+  <line x1="70" y1="310" x2="650" y2="310" stroke="#222" stroke-width="2"/>
+  <line x1="360" y1="360" x2="360" y2="55" stroke="#222" stroke-width="2"/>
+  <text x="660" y="315" font-family="Arial, sans-serif" font-size="18">x</text>
+  <text x="345" y="45" font-family="Arial, sans-serif" font-size="18">y</text>
+  <line x1="90" y1="310" x2="360" y2="310" stroke="#16a34a" stroke-width="5"/>
+  <line x1="360" y1="310" x2="620" y2="90" stroke="#16a34a" stroke-width="5"/>
+  <circle cx="360" cy="310" r="6" fill="#16a34a"/>
+  <text x="410" y="105" font-family="Arial, sans-serif" font-size="28" fill="#111">ReLU(x)</text>
+  <text x="410" y="140" font-family="Arial, sans-serif" font-size="18" fill="#444">x가 음수이면 0, 양수이면 그대로 통과</text>
+  <text x="145" y="285" font-family="Arial, sans-serif" font-size="18" fill="#444">꺼짐</text>
+  <text x="500" y="215" font-family="Arial, sans-serif" font-size="18" fill="#444">켜짐</text>
+</svg>
