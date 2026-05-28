@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="450" viewBox="0 0 820 450">
+  <rect width="820" height="450" fill="#ffffff"/>
+  <text x="58" y="52" font-family="Arial, sans-serif" font-size="28" fill="#111">조건부확률 = 어떤 조건이 주어졌을 때의 확률</text>
+  <rect x="80" y="125" width="280" height="210" rx="8" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="130" y="165" font-family="Arial, sans-serif" font-size="24" fill="#111">전체 이메일</text>
+  <text x="125" y="220" font-family="Arial, sans-serif" font-size="22" fill="#444">스팸: 20개</text>
+  <text x="125" y="260" font-family="Arial, sans-serif" font-size="22" fill="#444">정상: 80개</text>
+  <text x="125" y="300" font-family="Arial, sans-serif" font-size="20" fill="#2556a2">P(스팸) = 20/100</text>
+  <rect x="455" y="125" width="285" height="210" rx="8" fill="#fffdf8" stroke="#b42318" stroke-width="3"/>
+  <text x="490" y="165" font-family="Arial, sans-serif" font-size="24" fill="#111">"무료" 포함 이메일</text>
+  <text x="500" y="220" font-family="Arial, sans-serif" font-size="22" fill="#444">스팸: 15개</text>
+  <text x="500" y="260" font-family="Arial, sans-serif" font-size="22" fill="#444">정상: 5개</text>
+  <text x="500" y="300" font-family="Arial, sans-serif" font-size="20" fill="#b42318">P(스팸 | 무료) = 15/20</text>
+  <text x="138" y="392" font-family="Arial, sans-serif" font-size="20" fill="#444">조건이 추가되면 확률이 달라진다. 모델도 입력 조건에 따라 확률을 낸다.</text>
+</svg>

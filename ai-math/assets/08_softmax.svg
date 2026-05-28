@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="450" viewBox="0 0 860 450">
+  <rect width="860" height="450" fill="#ffffff"/>
+  <text x="58" y="52" font-family="Arial, sans-serif" font-size="28" fill="#111">Softmax = 점수를 확률처럼 바꾼다</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2556a2"/>
+    </marker>
+  </defs>
+  <rect x="70" y="125" width="230" height="210" rx="6" fill="#fffdf8" stroke="#cbbf9f" stroke-width="3"/>
+  <text x="122" y="165" font-family="Arial, sans-serif" font-size="24" fill="#111">모델 점수</text>
+  <text x="118" y="215" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">고양이: 2.0</text>
+  <text x="118" y="255" font-family="Arial, sans-serif" font-size="22" fill="#0f7b5f">개: 1.0</text>
+  <text x="118" y="295" font-family="Arial, sans-serif" font-size="22" fill="#b42318">자동차: 0.1</text>
+  <line x1="305" y1="230" x2="440" y2="230" stroke="#2556a2" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="330" y="205" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">softmax</text>
+  <rect x="455" y="125" width="285" height="210" rx="6" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="520" y="165" font-family="Arial, sans-serif" font-size="24" fill="#111">확률분포</text>
+  <text x="505" y="215" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">고양이: 0.66</text>
+  <text x="505" y="255" font-family="Arial, sans-serif" font-size="22" fill="#0f7b5f">개: 0.24</text>
+  <text x="505" y="295" font-family="Arial, sans-serif" font-size="22" fill="#b42318">자동차: 0.10</text>
+  <text x="180" y="392" font-family="Arial, sans-serif" font-size="20" fill="#444">큰 점수는 큰 확률이 되고, 전체 합은 1이 된다.</text>
+</svg>
