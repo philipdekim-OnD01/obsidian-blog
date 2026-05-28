@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="450" viewBox="0 0 860 450">
+  <rect width="860" height="450" fill="#ffffff"/>
+  <text x="58" y="52" font-family="Arial, sans-serif" font-size="28" fill="#111">역전파 = 손실의 영향을 뒤에서 앞으로 전달</text>
+  <defs>
+    <marker id="arrowF" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2556a2"/>
+    </marker>
+    <marker id="arrowB" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M10,2 L2,6 L10,10 Z" fill="#b42318"/>
+    </marker>
+  </defs>
+  <rect x="70" y="150" width="120" height="80" rx="6" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="111" y="198" font-family="Arial, sans-serif" font-size="22">입력 x</text>
+  <rect x="250" y="150" width="140" height="80" rx="6" fill="#ffffff" stroke="#2556a2" stroke-width="3"/>
+  <text x="281" y="183" font-family="Arial, sans-serif" font-size="20">계산 1</text>
+  <text x="282" y="210" font-family="Arial, sans-serif" font-size="16" fill="#444">w1, b1</text>
+  <rect x="450" y="150" width="140" height="80" rx="6" fill="#ffffff" stroke="#2556a2" stroke-width="3"/>
+  <text x="481" y="183" font-family="Arial, sans-serif" font-size="20">계산 2</text>
+  <text x="482" y="210" font-family="Arial, sans-serif" font-size="16" fill="#444">w2, b2</text>
+  <rect x="650" y="150" width="140" height="80" rx="6" fill="#fff5f4" stroke="#b42318" stroke-width="3"/>
+  <text x="694" y="183" font-family="Arial, sans-serif" font-size="20">손실 L</text>
+  <text x="681" y="210" font-family="Arial, sans-serif" font-size="16" fill="#444">정답과 비교</text>
+  <line x1="192" y1="190" x2="248" y2="190" stroke="#2556a2" stroke-width="4" marker-end="url(#arrowF)"/>
+  <line x1="392" y1="190" x2="448" y2="190" stroke="#2556a2" stroke-width="4" marker-end="url(#arrowF)"/>
+  <line x1="592" y1="190" x2="648" y2="190" stroke="#2556a2" stroke-width="4" marker-end="url(#arrowF)"/>
+  <line x1="648" y1="285" x2="592" y2="285" stroke="#b42318" stroke-width="4" marker-end="url(#arrowB)"/>
+  <line x1="448" y1="285" x2="392" y2="285" stroke="#b42318" stroke-width="4" marker-end="url(#arrowB)"/>
+  <line x1="248" y1="285" x2="192" y2="285" stroke="#b42318" stroke-width="4" marker-end="url(#arrowB)"/>
+  <text x="300" y="110" font-family="Arial, sans-serif" font-size="20" fill="#2556a2">순전파: 예측과 손실 계산</text>
+  <text x="300" y="330" font-family="Arial, sans-serif" font-size="20" fill="#b42318">역전파: 각 가중치의 책임 계산</text>
+  <text x="120" y="395" font-family="Arial, sans-serif" font-size="20" fill="#444">각 층은 dL/dw, dL/db를 받아 파라미터 업데이트에 사용한다.</text>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="450" viewBox="0 0 780 450">
+  <rect width="780" height="450" fill="#ffffff"/>
+  <text x="58" y="50" font-family="Arial, sans-serif" font-size="28" fill="#111">그래디언트 = 여러 방향의 기울기를 모은 화살표</text>
+  <line x1="90" y1="355" x2="690" y2="355" stroke="#222" stroke-width="2"/>
+  <line x1="130" y1="380" x2="130" y2="70" stroke="#222" stroke-width="2"/>
+  <text x="700" y="360" font-family="Arial, sans-serif" font-size="18">w</text>
+  <text x="112" y="62" font-family="Arial, sans-serif" font-size="18">b</text>
+  <ellipse cx="390" cy="230" rx="230" ry="105" fill="none" stroke="#d8e2ee" stroke-width="3"/>
+  <ellipse cx="390" cy="230" rx="150" ry="68" fill="none" stroke="#9eb6d8" stroke-width="3"/>
+  <ellipse cx="390" cy="230" rx="70" ry="32" fill="none" stroke="#2556a2" stroke-width="3"/>
+  <circle cx="390" cy="230" r="8" fill="#0f7b5f"/>
+  <text x="350" y="270" font-family="Arial, sans-serif" font-size="18" fill="#0f7b5f">손실 낮음</text>
+  <circle cx="540" cy="150" r="9" fill="#b42318"/>
+  <defs>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#b42318"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2556a2"/>
+    </marker>
+  </defs>
+  <line x1="540" y1="150" x2="600" y2="105" stroke="#b42318" stroke-width="4" marker-end="url(#arrowRed)"/>
+  <line x1="540" y1="150" x2="475" y2="185" stroke="#2556a2" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <text x="608" y="108" font-family="Arial, sans-serif" font-size="18" fill="#b42318">그래디언트 방향</text>
+  <text x="455" y="210" font-family="Arial, sans-serif" font-size="18" fill="#2556a2">학습은 반대 방향</text>
+  <text x="155" y="405" font-family="Arial, sans-serif" font-size="20" fill="#444">그래디언트는 손실이 가장 빨리 증가하는 방향이다. 경사하강법은 그 반대로 움직인다.</text>
+</svg>

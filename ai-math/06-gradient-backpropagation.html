@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>06-gradient-backpropagation</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/ai-math.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">06-gradient-backpropagation</h1>
+</header>
+<nav class="site-nav">
+<a href="../index.html">블로그 홈</a><a href="index.html">AI와 수학
+목차</a><a href="ai-math-foundations.html">전체 로드맵</a>
+</nav>
+<h1 id="그래디언트와역전파">06_그래디언트와역전파</h1>
+<h2 id="한-문장-요약">한 문장 요약</h2>
+<p>그래디언트는 여러 파라미터에 대한 미분값을 모은 것이고, 역전파는 그
+그래디언트를 뒤에서 앞으로 계산하는 방법이다.</p>
+<h2 id="왜-ai에-필요한가">왜 AI에 필요한가</h2>
+<p>5단계에서는 <code>w</code> 하나가 손실에 얼마나 영향을 주는지
+계산했다.</p>
+<pre class="text"><code>dL/dw = w가 조금 바뀔 때 손실 L이 얼마나 바뀌는가?</code></pre>
+<p>하지만 실제 AI 모델에는 가중치가 하나만 있지 않다. 가중치
+<code>w</code>, bias <code>b</code>, 그리고 수많은 행렬 <code>W</code>가
+있다.</p>
+<p>그래서 이런 질문이 필요하다.</p>
+<pre class="text"><code>w를 바꾸면 손실은 어떻게 변하는가?
+b를 바꾸면 손실은 어떻게 변하는가?
+W의 각 원소를 바꾸면 손실은 어떻게 변하는가?</code></pre>
+<p>이 질문에 대한 답을 모은 것이 그래디언트다.</p>
+<h2 id="편미분이란-무엇인가">편미분이란 무엇인가</h2>
+<p>편미분은 여러 변수 중 하나만 움직이고 나머지는 고정한 채 미분하는
+것이다.</p>
+<p>손실함수가 다음처럼 두 파라미터에 의해 결정된다고 하자.</p>
+<pre class="text"><code>L(w, b)</code></pre>
+<p>그러면 <code>w</code>에 대한 편미분은 <code>b</code>를 고정하고
+<code>w</code>만 조금 바꿔 보는 것이다.</p>
+<pre class="text"><code>∂L/∂w = w가 손실에 주는 영향</code></pre>
+<p><code>b</code>에 대한 편미분은 <code>w</code>를 고정하고
+<code>b</code>만 조금 바꿔 보는 것이다.</p>
+<pre class="text"><code>∂L/∂b = b가 손실에 주는 영향</code></pre>
+<figure>
+<img src="assets/06_partial_derivative.svg"
+alt="06_partial_derivative.svg" />
+<figcaption aria-hidden="true">06_partial_derivative.svg</figcaption>
+</figure>
+<p><code>d</code> 대신 <code>∂</code>를 쓰는 이유는 변수가 여러 개이기
+때문이다.</p>
+<h2 id="그래디언트란-무엇인가">그래디언트란 무엇인가</h2>
+<p>그래디언트는 편미분들을 모은 벡터다.</p>
+<pre class="text"><code>gradient = [∂L/∂w, ∂L/∂b]</code></pre>
+<p>예를 들어,</p>
+<pre class="text"><code>∂L/∂w = -16
+∂L/∂b = -8</code></pre>
+<p>이면 그래디언트는 다음과 같다.</p>
+<pre class="text"><code>gradient = [-16, -8]</code></pre>
+<p>이 벡터는 손실이 가장 빠르게 증가하는 방향을 가리킨다.</p>
+<p>학습에서는 손실을 줄여야 하므로 그래디언트의 반대 방향으로
+움직인다.</p>
+<figure>
+<img src="assets/06_gradient_vector.svg" alt="06_gradient_vector.svg" />
+<figcaption aria-hidden="true">06_gradient_vector.svg</figcaption>
+</figure>
+<h2 id="경사하강법과-그래디언트">경사하강법과 그래디언트</h2>
+<p>파라미터가 하나일 때 업데이트는 다음과 같았다.</p>
+<pre class="text"><code>w_new = w_old - learning_rate * dL/dw</code></pre>
+<p>파라미터가 여러 개이면 각각 같은 방식으로 업데이트한다.</p>
+<pre class="text"><code>w_new = w_old - learning_rate * ∂L/∂w
+b_new = b_old - learning_rate * ∂L/∂b</code></pre>
+<p>즉 그래디언트는 모든 파라미터를 어느 방향으로 움직일지 알려주는
+지도다.</p>
+<h2 id="손계산-예제-w와-b를-같이-학습하기">손계산 예제: w와 b를 같이
+학습하기</h2>
+<p>모델이 다음과 같다고 하자.</p>
+<pre class="text"><code>y_hat = wx + b
+L = (y_hat - y)^2</code></pre>
+<p>값은 다음과 같다.</p>
+<pre class="text"><code>x = 2
+w = 3
+b = 1
+y = 10</code></pre>
+<p>먼저 예측값을 계산한다.</p>
+<pre class="text"><code>y_hat = wx + b = 3*2 + 1 = 7</code></pre>
+<p>손실을 계산한다.</p>
+<pre class="text"><code>L = (7 - 10)^2 = 9</code></pre>
+<p>이제 <code>w</code>와 <code>b</code>가 손실에 주는 영향을
+계산한다.</p>
+<pre class="text"><code>dL/dy_hat = 2(y_hat - y)</code></pre>
+<p>값을 넣으면,</p>
+<pre class="text"><code>dL/dy_hat = 2(7 - 10) = -6</code></pre>
+<p><code>y_hat = wx + b</code>이므로,</p>
+<pre class="text"><code>dy_hat/dw = x = 2
+dy_hat/db = 1</code></pre>
+<p>chain rule을 적용하면,</p>
+<pre class="text"><code>∂L/∂w = dL/dy_hat * dy_hat/dw = -6 * 2 = -12
+∂L/∂b = dL/dy_hat * dy_hat/db = -6 * 1 = -6</code></pre>
+<p>따라서 그래디언트는 다음과 같다.</p>
+<pre class="text"><code>gradient = [-12, -6]</code></pre>
+<h2 id="업데이트-해보기">업데이트 해보기</h2>
+<p>learning rate를 <code>0.1</code>로 정하자.</p>
+<pre class="text"><code>learning_rate = 0.1</code></pre>
+<p>업데이트 식은 다음과 같다.</p>
+<pre class="text"><code>w_new = w_old - learning_rate * ∂L/∂w
+b_new = b_old - learning_rate * ∂L/∂b</code></pre>
+<p>값을 넣으면,</p>
+<pre class="text"><code>w_new = 3 - 0.1*(-12) = 4.2
+b_new = 1 - 0.1*(-6) = 1.6</code></pre>
+<p>새 예측값은 다음과 같다.</p>
+<pre class="text"><code>y_hat_new = 4.2*2 + 1.6 = 10</code></pre>
+<p>새 손실은 다음과 같다.</p>
+<pre class="text"><code>L_new = (10 - 10)^2 = 0</code></pre>
+<p>이번 예제는 숫자가 딱 맞게 설계되어 한 번에 손실이 0이 되었다. 실제
+학습에서는 보통 여러 번 반복해서 조금씩 좋아진다.</p>
+<h2 id="그래디언트가-말해주는-것">그래디언트가 말해주는 것</h2>
+<p>위 예제에서 그래디언트는 다음과 같았다.</p>
+<pre class="text"><code>∂L/∂w = -12
+∂L/∂b = -6</code></pre>
+<p>둘 다 음수다. 이것은 <code>w</code>와 <code>b</code>를 키우면 손실이
+줄어든다는 뜻이다.</p>
+<p>그래서 업데이트 후에 실제로 <code>w</code>는 3에서 4.2로,
+<code>b</code>는 1에서 1.6으로 커졌다.</p>
+<h2 id="역전파란-무엇인가">역전파란 무엇인가</h2>
+<p>역전파는 손실에서 시작해 앞쪽 파라미터까지 그래디언트를 계산하는
+과정이다.</p>
+<p>순전파는 앞에서 뒤로 간다.</p>
+<pre class="text"><code>입력 x -&gt; 모델 계산 -&gt; 예측 y_hat -&gt; 손실 L</code></pre>
+<p>역전파는 뒤에서 앞으로 간다.</p>
+<pre class="text"><code>손실 L -&gt; 예측 y_hat -&gt; 각 층의 가중치와 bias</code></pre>
+<figure>
+<img src="assets/06_backprop_flow.svg" alt="06_backprop_flow.svg" />
+<figcaption aria-hidden="true">06_backprop_flow.svg</figcaption>
+</figure>
+<p>역전파가 하는 일은 각 파라미터의 책임을 계산하는 것이다.</p>
+<pre class="text"><code>이 가중치가 손실을 얼마나 키웠는가?
+이 bias가 손실을 얼마나 줄일 수 있는가?</code></pre>
+<h2 id="역전파는-chain-rule의-반복이다">역전파는 chain rule의
+반복이다</h2>
+<p>딥러닝은 함수가 여러 개 연결된 구조다.</p>
+<pre class="text"><code>x -&gt; z1 -&gt; a1 -&gt; z2 -&gt; y_hat -&gt; L</code></pre>
+<p>앞쪽 파라미터가 손실에 미치는 영향을 알려면 중간 계산을 모두 지나가야
+한다.</p>
+<pre class="text"><code>dL/dw1 = dL/dy_hat * dy_hat/dz2 * dz2/da1 * da1/dz1 * dz1/dw1</code></pre>
+<p>복잡해 보이지만 의미는 단순하다.</p>
+<pre class="text"><code>연결된 변화율을 차례대로 곱한다.</code></pre>
+<p>이것이 5단계의 chain rule이고, 신경망 전체에 적용한 것이
+역전파다.</p>
+<h2 id="코드-예제-손으로-계산하기">코드 예제: 손으로 계산하기</h2>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="fl">3.0</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fl">10.0</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> w <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> (y_hat <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>dL_dyhat <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (y_hat <span class="op">-</span> y)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>dyhat_dw <span class="op">=</span> x</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>dyhat_db <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>dL_dw <span class="op">=</span> dL_dyhat <span class="op">*</span> dyhat_dw</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>dL_db <span class="op">=</span> dL_dyhat <span class="op">*</span> dyhat_db</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>w_new <span class="op">=</span> w <span class="op">-</span> lr <span class="op">*</span> dL_dw</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>b_new <span class="op">=</span> b <span class="op">-</span> lr <span class="op">*</span> dL_db</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(y_hat, loss)      <span class="co"># 7.0 9.0</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dL_dw, dL_db)     <span class="co"># -12.0 -6.0</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(w_new, b_new)     <span class="co"># 4.2 1.6</span></span></code></pre></div>
+<h2 id="코드-예제-pytorch-자동미분">코드 예제: PyTorch 자동미분</h2>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> torch.tensor(<span class="fl">3.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> torch.tensor(<span class="fl">1.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.tensor(<span class="fl">10.0</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> w <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> (y_hat <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>loss.backward()</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(w.grad)  <span class="co"># tensor(-12.)</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b.grad)  <span class="co"># tensor(-6.)</span></span></code></pre></div>
+<p>PyTorch의 <code>backward()</code>는 역전파를 실행해서
+<code>w.grad</code>, <code>b.grad</code>에 그래디언트를 저장한다.</p>
+<h2 id="자주-헷갈리는-점">자주 헷갈리는 점</h2>
+<table>
+<thead>
+<tr>
+<th>헷갈리는 말</th>
+<th>쉽게 풀어쓴 말</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>편미분</td>
+<td>여러 변수 중 하나만 바꿔 보는 미분</td>
+</tr>
+<tr>
+<td>그래디언트</td>
+<td>모든 편미분을 모은 벡터</td>
+</tr>
+<tr>
+<td>그래디언트 방향</td>
+<td>손실이 가장 빨리 증가하는 방향</td>
+</tr>
+<tr>
+<td>경사하강법</td>
+<td>그래디언트의 반대 방향으로 움직이는 방법</td>
+</tr>
+<tr>
+<td>순전파</td>
+<td>입력에서 손실까지 계산하는 과정</td>
+</tr>
+<tr>
+<td>역전파</td>
+<td>손실에서 각 파라미터의 그래디언트를 계산하는 과정</td>
+</tr>
+</tbody>
+</table>
+<h2 id="확인-질문">확인 질문</h2>
+<ul>
+<li>편미분은 보통 미분과 무엇이 다른가?</li>
+<li>그래디언트는 왜 벡터인가?</li>
+<li>그래디언트 방향으로 움직이면 손실은 커지는가, 작아지는가?</li>
+<li>경사하강법은 왜 그래디언트의 반대 방향으로 움직이는가?</li>
+<li><code>y_hat = wx + b</code>에서 <code>dy_hat/db</code>는 왜
+1인가?</li>
+<li>PyTorch에서 <code>loss.backward()</code>는 무엇을 계산하는가?</li>
+<li>역전파와 chain rule은 어떤 관계인가?</li>
+</ul>
+<h2 id="오늘의-정리">오늘의 정리</h2>
+<p>편미분은 파라미터 하나씩 손실에 주는 영향을 계산하는 방법이다.
+그래디언트는 그 편미분들을 모은 벡터다. 역전파는 손실에서 출발해 각
+파라미터의 그래디언트를 뒤로 전달하며 계산하는 과정이고, 본질은 chain
+rule의 반복 적용이다.</p>
+<p>다음 노트: 07_경사하강법 (준비 중)</p>
+<script src="../assets/protect.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", function(){ if (window.mermaid) mermaid.initialize({ startOnLoad: true }); });</script>
+</body>
+</html>

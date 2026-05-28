@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430">
+  <rect width="760" height="430" fill="#ffffff"/>
+  <text x="58" y="50" font-family="Arial, sans-serif" font-size="28" fill="#111">편미분 = 하나만 움직이고 나머지는 고정</text>
+  <rect x="90" y="120" width="260" height="180" rx="8" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="132" y="165" font-family="Arial, sans-serif" font-size="24">L(w, b)</text>
+  <text x="122" y="205" font-family="Arial, sans-serif" font-size="18" fill="#444">손실은 w와 b에 의해 결정</text>
+  <text x="122" y="250" font-family="Arial, sans-serif" font-size="20" fill="#111">w를 바꾸면?</text>
+  <text x="122" y="280" font-family="Arial, sans-serif" font-size="20" fill="#111">b를 바꾸면?</text>
+  <rect x="440" y="105" width="230" height="90" rx="8" fill="#ffffff" stroke="#0f7b5f" stroke-width="3"/>
+  <text x="475" y="158" font-family="Arial, sans-serif" font-size="24">∂L/∂w</text>
+  <text x="545" y="158" font-family="Arial, sans-serif" font-size="18" fill="#444">b 고정</text>
+  <rect x="440" y="235" width="230" height="90" rx="8" fill="#ffffff" stroke="#b42318" stroke-width="3"/>
+  <text x="475" y="288" font-family="Arial, sans-serif" font-size="24">∂L/∂b</text>
+  <text x="545" y="288" font-family="Arial, sans-serif" font-size="18" fill="#444">w 고정</text>
+  <line x1="350" y1="190" x2="438" y2="150" stroke="#0f7b5f" stroke-width="4"/>
+  <line x1="350" y1="230" x2="438" y2="280" stroke="#b42318" stroke-width="4"/>
+  <text x="120" y="370" font-family="Arial, sans-serif" font-size="20" fill="#444">파라미터가 여러 개면 각 파라미터별로 손실의 민감도를 따로 계산한다.</text>
+</svg>
