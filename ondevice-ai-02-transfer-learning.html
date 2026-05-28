@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Ondevice AI 강좌 02: 전이학습으로 성능 높이기 - ResNet과 Tiny YOLO</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Ondevice AI 강좌 02: 전이학습으로 성능 높이기 -
+ResNet과 Tiny YOLO</h1>
+</header>
+<h1
+id="ondevice-ai-강좌-02-전이학습으로-성능-높이기---resnet과-tiny-yolo">Ondevice
+AI 강좌 02: 전이학습으로 성능 높이기 - ResNet과 Tiny YOLO</h1>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
+<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
+가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
+<a href="ondevice-ai-03-lightweighting.html">03
+경량화</a></p>
+<h2 id="오늘-배울-것">오늘 배울 것</h2>
+<p>가위바위보 인식 모델이 어느 정도 동작하면 다음 질문이 생긴다.</p>
+<pre class="text"><code>조명이 바뀌면 왜 틀릴까?
+손이 작게 보이면 왜 못 맞힐까?
+배경이 복잡하면 왜 헷갈릴까?
+성능을 더 올리려면 처음부터 큰 모델을 학습해야 할까?</code></pre>
+<p>답은 <strong>전이학습</strong>이다.</p>
+<p>전이학습은 이미 많은 이미지를 보고 배운 모델을 가져와서, 내 문제에
+맞게 마지막 부분만 다시 학습하는 방법이다.</p>
+<h2 id="전이학습을-비유로-이해하기">전이학습을 비유로 이해하기</h2>
+<p>처음부터 모델을 학습시키는 것은 초등학생에게 사진이 무엇인지부터
+가르치는 것과 비슷하다.</p>
+<p>전이학습은 이미 사진을 많이 본 학생에게 이렇게 말하는 것과 같다.</p>
+<pre class="text"><code>&quot;너는 이미 선, 색, 모양, 물체의 윤곽을 알고 있지?
+이제 손 모양 중에서 가위, 바위, 보만 구분해 보자.&quot;</code></pre>
+<p>그래서 데이터가 적어도 성능을 높일 수 있다.</p>
+<h2 id="resnet으로-분류-성능-높이기">ResNet으로 분류 성능 높이기</h2>
+<p>ResNet은 이미지 분류에서 많이 쓰이는 CNN 구조다. 핵심 아이디어는
+<strong>깊은 신경망도 학습이 잘 되도록 shortcut 연결을 넣은
+것</strong>이다.</p>
+<p>쉽게 말하면, 정보가 깊은 층을 지나가다가 사라지지 않도록 우회도로를
+만들어 준다.</p>
+<pre class="text"><code>입력 이미지
+→ ResNet feature extractor
+→ 새 classification head
+→ scissors / rock / paper</code></pre>
+<h2 id="resnet-전이학습-절차">ResNet 전이학습 절차</h2>
+<ol type="1">
+<li>ImageNet으로 학습된 ResNet을 불러온다.</li>
+<li>앞부분 feature extractor는 대부분 유지한다.</li>
+<li>마지막 분류층을 3개 클래스로 바꾼다.</li>
+<li>가위바위보 데이터로 다시 학습한다.</li>
+<li>TFLite로 변환해 라즈베리파이에 올린다.</li>
+</ol>
+<p>개념 코드는 다음과 같다.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> tf.keras.applications.ResNet50(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    include_top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    weights<span class="op">=</span><span class="st">&quot;imagenet&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    input_shape<span class="op">=</span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    base,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.GlobalAveragePooling2D(),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">128</span>, activation<span class="op">=</span><span class="st">&quot;relu&quot;</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dropout(<span class="fl">0.3</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">3</span>, activation<span class="op">=</span><span class="st">&quot;softmax&quot;</span>),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span><span class="st">&quot;adam&quot;</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>수업에서는 이 코드를 외우게 하기보다 구조를 이해시키는 것이
+중요하다.</p>
+<pre class="text"><code>이미지 특징을 뽑는 부분은 빌려오고
+가위바위보를 판단하는 마지막 부분만 새로 붙인다.</code></pre>
+<h2 id="데이터-보강이-중요한-이유">데이터 보강이 중요한 이유</h2>
+<p>라즈베리파이 카메라 환경은 매번 다르다.</p>
+<pre class="text"><code>밝은 조명
+어두운 조명
+손이 가까움
+손이 멂
+배경이 단순함
+배경이 복잡함
+손이 조금 기울어짐</code></pre>
+<p>그래서 학습 때 일부러 이미지를 조금씩 바꿔 보여준다. 이것을 data
+augmentation이라고 한다.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_augmentation <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomFlip(<span class="st">&quot;horizontal&quot;</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomRotation(<span class="fl">0.08</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomZoom(<span class="fl">0.1</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomContrast(<span class="fl">0.2</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div>
+<p>데이터 보강의 목적은 모델에게 이렇게 가르치는 것이다.</p>
+<blockquote>
+<p>손이 조금 돌아가거나 조명이 바뀌어도 같은 가위바위보로 봐야 한다.</p>
+</blockquote>
+<h2 id="resnet과-tiny-yolo의-차이">ResNet과 Tiny YOLO의 차이</h2>
+<p>ResNet은 분류 모델이다.</p>
+<pre class="text"><code>이미지 전체를 보고
+&quot;이 이미지는 rock입니다&quot;</code></pre>
+<p>Tiny YOLO는 객체탐지 모델이다.</p>
+<pre class="text"><code>이미지 안에서 손 위치를 찾고
+&quot;여기 있는 손은 rock입니다&quot;</code></pre>
+<p>차이는 매우 중요하다.</p>
+<table>
+<thead>
+<tr>
+<th>모델</th>
+<th>답하는 질문</th>
+<th>출력</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ResNet</td>
+<td>이 이미지가 무엇인가?</td>
+<td>class label</td>
+</tr>
+<tr>
+<td>Tiny YOLO</td>
+<td>어디에 무엇이 있는가?</td>
+<td>box + class</td>
+</tr>
+</tbody>
+</table>
+<h2 id="언제-tiny-yolo가-필요한가">언제 Tiny YOLO가 필요한가?</h2>
+<p>다음 상황에서는 분류 모델보다 객체탐지 모델이 유리하다.</p>
+<pre class="text"><code>손이 화면 일부에만 작게 보일 때
+배경에 다른 물체가 많을 때
+여러 사람이 동시에 손을 낼 때
+손 위치까지 표시하고 싶을 때</code></pre>
+<p>Tiny YOLO는 다음과 같은 결과를 낸다.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;class&quot;</span><span class="fu">:</span> <span class="st">&quot;paper&quot;</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.88</span><span class="fu">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;box&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">105</span><span class="ot">,</span> <span class="dv">42</span><span class="ot">,</span> <span class="dv">210</span><span class="ot">,</span> <span class="dv">180</span><span class="ot">]</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>여기서 <code>box</code>는 손이 있는 위치다.</p>
+<h2 id="tiny-yolo-전이학습-절차">Tiny YOLO 전이학습 절차</h2>
+<ol type="1">
+<li>손 이미지에 bounding box를 표시한다.</li>
+<li>각 box에 <code>scissors</code>, <code>rock</code>,
+<code>paper</code> 라벨을 붙인다.</li>
+<li>Tiny YOLO 사전학습 모델을 불러온다.</li>
+<li>마지막 탐지 head를 내 클래스 수에 맞게 바꾼다.</li>
+<li>학습 후 TFLite 또는 ONNX 계열로 변환한다.</li>
+<li>라즈베리파이에서 속도를 측정한다.</li>
+</ol>
+<p>객체탐지는 분류보다 데이터 준비가 어렵다. 하지만 실제 환경에서는 더
+강하다.</p>
+<h2 id="성능을-높이는-체크리스트">성능을 높이는 체크리스트</h2>
+<table>
+<thead>
+<tr>
+<th>문제</th>
+<th>해결 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>조명 바뀌면 틀림</td>
+<td>밝기/대비 augmentation 추가</td>
+</tr>
+<tr>
+<td>손이 작으면 틀림</td>
+<td>다양한 거리의 이미지 추가</td>
+</tr>
+<tr>
+<td>배경에 약함</td>
+<td>다양한 배경 데이터 추가</td>
+</tr>
+<tr>
+<td>특정 사람 손만 잘 맞힘</td>
+<td>여러 사람 손 데이터 추가</td>
+</tr>
+<tr>
+<td>가위와 보를 헷갈림</td>
+<td>헷갈리는 클래스 데이터 추가</td>
+</tr>
+<tr>
+<td>실시간 속도 느림</td>
+<td>입력 크기 축소, 경량 모델 사용</td>
+</tr>
+</tbody>
+</table>
+<h2 id="좋은-데이터셋의-기준">좋은 데이터셋의 기준</h2>
+<p>좋은 데이터셋은 예쁜 사진 모음이 아니다. 실제 사용할 환경을 잘
+대표해야 한다.</p>
+<pre class="text"><code>라즈베리파이 카메라로 찍은 데이터
+교실 조명에서 찍은 데이터
+학생 여러 명의 손
+다양한 배경
+틀리기 쉬운 각도</code></pre>
+<p>모델 성능은 모델 구조보다 데이터 품질에 더 크게 좌우되는 경우가
+많다.</p>
+<h2 id="실습-과제">실습 과제</h2>
+<ol type="1">
+<li>기존 TFLite 모델이 틀리는 이미지를 30장 모은다.</li>
+<li>왜 틀렸는지 원인을 적는다.</li>
+<li>ResNet 전이학습용 데이터셋을 만든다.</li>
+<li>augmentation 전후 정확도를 비교한다.</li>
+<li>손 위치까지 찾고 싶다면 Tiny YOLO용 bounding box 데이터를 만들어
+본다.</li>
+</ol>
+<h2 id="오늘의-핵심-정리">오늘의 핵심 정리</h2>
+<pre class="text"><code>전이학습은 이미 배운 모델을 내 문제에 맞게 다시 사용하는 방법이다.
+ResNet은 이미지 전체를 분류하는 데 적합하다.
+Tiny YOLO는 이미지 안에서 손 위치와 손 모양을 함께 찾는 데 적합하다.
+성능 개선의 출발점은 모델 변경보다 오인식 데이터 분석이다.</code></pre>
+<script src="assets/protect.js" defer></script>
+</body>
+</html>

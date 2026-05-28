@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Ondevice AI 강좌 01: TFLite로 실시간 가위바위보 인식하기</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Ondevice AI 강좌 01: TFLite로 실시간 가위바위보
+인식하기</h1>
+</header>
+<h1
+id="ondevice-ai-강좌-01-tflite로-실시간-가위바위보-인식하기">Ondevice AI
+강좌 01: TFLite로 실시간 가위바위보 인식하기</h1>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
+<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
+가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
+<a href="ondevice-ai-03-lightweighting.html">03
+경량화</a></p>
+<h2 id="오늘-배울-것">오늘 배울 것</h2>
+<p>이번 시간에는 라즈베리파이에서 카메라 영상을 받아 <strong>가위, 바위,
+보</strong>를 실시간으로 분류한다.</p>
+<p>핵심 흐름은 다음과 같다.</p>
+<pre class="text"><code>카메라 프레임 1장
+→ 64 x 64 이미지로 줄이기
+→ TFLite 모델에 넣기
+→ scissors / rock / paper 중 하나 출력
+→ 화면에 결과 표시</code></pre>
+<h2 id="왜-tflite를-쓰는가">왜 TFLite를 쓰는가?</h2>
+<p>일반 TensorFlow 모델은 학습과 연구에는 좋지만 라즈베리파이 같은 작은
+장치에는 무거울 수 있다.</p>
+<p>TFLite는 작은 장치에서 실행하기 쉽게 만든 형식이다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>일반 딥러닝 모델</th>
+<th>TFLite 모델</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>목적</td>
+<td>학습, 실험</td>
+<td>추론, 배포</td>
+</tr>
+<tr>
+<td>실행 환경</td>
+<td>PC, GPU 서버</td>
+<td>라즈베리파이, 스마트폰, 엣지 장치</td>
+</tr>
+<tr>
+<td>장점</td>
+<td>유연함</td>
+<td>가볍고 빠름</td>
+</tr>
+</tbody>
+</table>
+<h2 id="준비물">준비물</h2>
+<pre class="text"><code>Raspberry Pi 5
+카메라 또는 USB 웹캠
+RPS_PreTrained_DenseNet.tflite
+Python
+OpenCV
+tflite_runtime</code></pre>
+<p>설치 예시는 다음과 같다.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> python3-opencv</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy tflite-runtime</span></code></pre></div>
+<p>환경에 따라 패키지 이름은 조금 다를 수 있다. 중요한 것은 Python에서
+<code>cv2</code>, <code>numpy</code>, <code>tflite_runtime</code>이
+import 되는지 확인하는 것이다.</p>
+<h2 id="모델-입력과-출력-이해하기">모델 입력과 출력 이해하기</h2>
+<p>가위바위보 모델은 이미지를 입력으로 받고 숫자 3개를 출력한다.</p>
+<p>예를 들어 출력이 다음과 같다고 하자.</p>
+<pre class="text"><code>[0.05, 0.90, 0.05]</code></pre>
+<p>이 값은 세 클래스에 대한 점수다.</p>
+<pre class="text"><code>0번: scissors
+1번: rock
+2번: paper</code></pre>
+<p>가장 큰 값은 1번이므로 결과는 <code>rock</code>이다.</p>
+<h2 id="기본-코드-구조">기본 코드 구조</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tflite_runtime.interpreter <span class="im">as</span> tflite</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> <span class="st">&quot;RPS_PreTrained_DenseNet.tflite&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>interpreter <span class="op">=</span> tflite.Interpreter(model_path<span class="op">=</span>model_path)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>interpreter.allocate_tensors()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>input_details <span class="op">=</span> interpreter.get_input_details()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>output_details <span class="op">=</span> interpreter.get_output_details()</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>input_dtype <span class="op">=</span> input_details[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>: <span class="st">&quot;scissors&quot;</span>, <span class="dv">1</span>: <span class="st">&quot;rock&quot;</span>, <span class="dv">2</span>: <span class="st">&quot;paper&quot;</span>}</span></code></pre></div>
+<p>이 부분은 모델을 메모리에 올리는 과정이다. 수업에서는 이것을
+<strong>AI 엔진을 켜는 단계</strong>라고 설명하면 쉽다.</p>
+<h2 id="한-장-이미지-분류하기">한 장 이미지 분류하기</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(frame):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> cv2.resize(frame, (<span class="dv">64</span>, <span class="dv">64</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.expand_dims(image, <span class="dv">0</span>).astype(input_dtype)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    interpreter.set_tensor(input_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>], image)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    interpreter.invoke()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> interpreter.get_tensor(output_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>])[<span class="dv">0</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="bu">int</span>(np.argmax(scores))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> labels[index], <span class="bu">float</span>(scores[index])</span></code></pre></div>
+<p>여기서 가장 중요한 줄은 두 개다.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>interpreter.invoke()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>np.argmax(scores)</span></code></pre></div>
+<p><code>interpreter.invoke()</code>는 모델을 실행하는 명령이고,
+<code>np.argmax(scores)</code>는 가장 높은 점수를 가진 클래스를 고르는
+명령이다.</p>
+<h2 id="실시간-카메라와-연결하기">실시간 카메라와 연결하기</h2>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_WIDTH, <span class="dv">320</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_HEIGHT, <span class="dv">240</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> cap.isOpened():</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> ret:</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    label, confidence <span class="op">=</span> predict(frame)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    cv2.putText(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        frame,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>confidence<span class="sc">:.2f}</span><span class="ss">&quot;</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">20</span>, <span class="dv">50</span>),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        cv2.FONT_HERSHEY_PLAIN,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>),</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    cv2.imshow(<span class="st">&quot;RPS&quot;</span>, frame)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv2.waitKey(<span class="dv">10</span>) <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&quot;q&quot;</span>):</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>cap.release()</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>cv2.destroyAllWindows()</span></code></pre></div>
+<p>이제 라즈베리파이가 카메라를 보고 가위바위보를 판단한다.</p>
+<h2 id="실시간-인식에서-꼭-필요한-안정화">실시간 인식에서 꼭 필요한
+안정화</h2>
+<p>카메라 영상은 매 프레임 조금씩 흔들린다. 그래서 모델 결과도 흔들릴 수
+있다.</p>
+<pre class="text"><code>rock → rock → paper → rock → rock</code></pre>
+<p>이런 경우 바로 결과를 확정하면 게임이 이상해진다. 그래서 보통 다음
+규칙을 둔다.</p>
+<pre class="text"><code>같은 결과가 8프레임 연속 나오면 확정
+confidence가 0.75 이상일 때만 인정
+한 번 판정한 뒤 1.5초 쉬기</code></pre>
+<p>이것을 후처리라고 한다.</p>
+<h2 id="json-이벤트로-연결하기">JSON 이벤트로 연결하기</h2>
+<p>화면에 글자만 표시하면 다른 시스템과 연결하기 어렵다. 그래서 결과를
+JSON으로 내보내면 좋다.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user&quot;</span><span class="fu">:</span> <span class="st">&quot;rock&quot;</span><span class="fu">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;computer&quot;</span><span class="fu">:</span> <span class="st">&quot;scissors&quot;</span><span class="fu">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;win&quot;</span><span class="fu">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.91</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>이렇게 만들면 웹 서버, 게임 화면, LED, 스피커, 데이터 저장 시스템과
+쉽게 연결할 수 있다.</p>
+<h2 id="실습-과제">실습 과제</h2>
+<ol type="1">
+<li>카메라 화면에 <code>scissors</code>, <code>rock</code>,
+<code>paper</code>가 표시되게 한다.</li>
+<li>confidence가 0.75보다 낮으면 <code>uncertain</code>으로
+표시한다.</li>
+<li>같은 손동작이 여러 프레임 유지될 때만 결과를 확정한다.</li>
+<li>컴퓨터가 랜덤으로 가위바위보를 내고 승패를 계산하게 한다.</li>
+<li>결과를 JSON으로 출력한다.</li>
+</ol>
+<h2 id="오늘의-핵심-정리">오늘의 핵심 정리</h2>
+<pre class="text"><code>TFLite 모델은 작은 장치에서 빠르게 추론하기 위한 모델 형식이다.
+라즈베리파이에서는 큰 범용 모델보다 작은 전용 모델이 실용적이다.
+실시간 AI는 모델뿐 아니라 카메라, 전처리, 후처리, 출력 연결이 모두 중요하다.</code></pre>
+<script src="assets/protect.js" defer></script>
+</body>
+</html>

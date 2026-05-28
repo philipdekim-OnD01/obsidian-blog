@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Ondevice AI 강좌 00: 라즈베리파이로 배우는 전체 지도</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Ondevice AI 강좌 00: 라즈베리파이로 배우는 전체
+지도</h1>
+</header>
+<h1 id="ondevice-ai-강좌-00-라즈베리파이로-배우는-전체-지도">Ondevice AI
+강좌 00: 라즈베리파이로 배우는 전체 지도</h1>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
+<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
+가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
+<a href="ondevice-ai-03-lightweighting.html">03
+경량화</a></p>
+<h2 id="이-강좌의-목표">이 강좌의 목표</h2>
+<p>이 강좌는 라즈베리파이 5와 카메라를 이용해 <strong>AI 모델이 실제
+장치에서 어떻게 동작하는지</strong> 배우는 실습형 강좌다.</p>
+<p>중심 예제는 가위바위보 인식이다.</p>
+<pre class="text"><code>카메라 입력
+→ 이미지 전처리
+→ TFLite 모델 추론
+→ 가위/바위/보 판정
+→ 게임 로직 또는 외부 장치와 연결</code></pre>
+<p>학생이 꼭 가져가야 할 메시지는 하나다.</p>
+<blockquote>
+<p>AI 모델은 노트북 안에서 정확도만 찍는 것이 아니라, 카메라, 센서, 출력
+장치, 네트워크와 연결될 때 실제 시스템이 된다.</p>
+</blockquote>
+<h2 id="강좌-구성">강좌 구성</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>회차</th>
+<th>제목</th>
+<th>핵심 질문</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td>TFLite로 실시간 가위바위보 인식하기</td>
+<td>작은 모델을 라즈베리파이에서 어떻게 실행할까?</td>
+</tr>
+<tr>
+<td>02</td>
+<td>전이학습으로 성능 높이기: ResNet과 Tiny YOLO</td>
+<td>데이터가 적을 때 성능을 어떻게 올릴까?</td>
+</tr>
+<tr>
+<td>03</td>
+<td>경량화: Quantization과 Pruning</td>
+<td>모델을 더 작고 빠르게 만들려면 무엇을 줄여야 할까?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="먼저-알아둘-용어">먼저 알아둘 용어</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>용어</th>
+<th>쉬운 뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On-device AI</td>
+<td>서버가 아니라 라즈베리파이, 스마트폰, MCU 같은 장치 안에서 직접 AI를
+실행하는 방식</td>
+</tr>
+<tr>
+<td>CNN</td>
+<td>이미지를 잘 인식하는 신경망 구조</td>
+</tr>
+<tr>
+<td>TFLite</td>
+<td>TensorFlow 모델을 모바일/임베디드 장치에서 실행하기 위한 가벼운
+형식</td>
+</tr>
+<tr>
+<td>Inference</td>
+<td>학습이 끝난 모델에 새 이미지를 넣고 답을 얻는 과정</td>
+</tr>
+<tr>
+<td>Transfer Learning</td>
+<td>이미 학습된 모델을 가져와 내 문제에 맞게 조금만 다시 학습하는
+방법</td>
+</tr>
+<tr>
+<td>Quantization</td>
+<td>32비트 실수 모델을 8비트 정수처럼 더 작은 숫자 표현으로 바꾸는
+경량화 방법</td>
+</tr>
+<tr>
+<td>Pruning</td>
+<td>중요하지 않은 연결이나 가중치를 제거해 모델을 가볍게 만드는
+방법</td>
+</tr>
+</tbody>
+</table>
+<h2 id="실습-환경">실습 환경</h2>
+<p>권장 장비는 다음과 같다.</p>
+<pre class="text"><code>Raspberry Pi 5
+카메라 모듈 또는 USB 웹캠
+Python
+OpenCV
+tflite_runtime 또는 TensorFlow Lite
+가위바위보 TFLite 모델</code></pre>
+<p>라즈베리파이 5 2GB에서도 작은 CNN/TFLite 모델은 충분히 실습 가능하다.
+다만 VLM 같은 큰 멀티모달 모델은 메모리와 속도 때문에 직접 실행하기
+어렵다.</p>
+<h2 id="왜-가위바위보인가">왜 가위바위보인가?</h2>
+<p>가위바위보는 교육용 예제로 매우 좋다.</p>
+<ol type="1">
+<li>클래스가 3개라 이해하기 쉽다.</li>
+<li>카메라 입력을 바로 사용할 수 있다.</li>
+<li>결과가 즉시 보이기 때문에 학생이 흥미를 느낀다.</li>
+<li>분류, 전이학습, 객체탐지, 경량화까지 확장하기 쉽다.</li>
+</ol>
+<h2 id="전체-시스템-그림">전체 시스템 그림</h2>
+<pre class="text"><code>+------------+      +-------------+      +---------------+
+|  Camera    | ---&gt; | Preprocess  | ---&gt; | TFLite Model  |
++------------+      +-------------+      +---------------+
+                                                |
+                                                v
+                                      +-------------------+
+                                      | rock/paper/scissors|
+                                      +-------------------+
+                                                |
+                                                v
+                                      +-------------------+
+                                      | Game / GPIO / Web |
+                                      +-------------------+</code></pre>
+<h2 id="수업-운영-팁">수업 운영 팁</h2>
+<p>처음부터 정확도를 너무 강조하지 않는다. 첫 목표는 <strong>한 장치
+안에서 입력, 모델, 출력이 연결되는 경험</strong>이다.</p>
+<p>좋은 수업 순서는 다음과 같다.</p>
+<ol type="1">
+<li>카메라가 켜지는지 확인한다.</li>
+<li>모델이 한 장 이미지를 분류하는지 확인한다.</li>
+<li>실시간 영상에 결과를 표시한다.</li>
+<li>오인식 사례를 모은다.</li>
+<li>전이학습과 데이터 보강으로 개선한다.</li>
+<li>Quantization과 Pruning으로 속도와 크기를 줄인다.</li>
+</ol>
+<h2 id="강좌의-마지막-목표">강좌의 마지막 목표</h2>
+<p>최종 결과물은 단순한 분류 코드가 아니다.</p>
+<pre class="text"><code>라즈베리파이가 카메라로 손 모양을 보고
+가위/바위/보를 판단하고
+게임 결과를 JSON으로 내보내거나
+LED, 스피커, 웹 화면과 연결하는 작은 AI 시스템</code></pre>
+<p>이 흐름을 이해하면 음식 분류, 불량 검출, 안전모 착용 여부 확인,
+간단한 제스처 인터페이스 같은 다른 온디바이스 AI 프로젝트로 확장할 수
+있다.</p>
+<script src="assets/protect.js" defer></script>
+</body>
+</html>
