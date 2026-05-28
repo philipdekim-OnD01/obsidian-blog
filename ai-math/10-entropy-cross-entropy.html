@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10-entropy-cross-entropy</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/ai-math.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">10-entropy-cross-entropy</h1>
+</header>
+<nav class="site-nav">
+<a href="../index.html">블로그 홈</a><a href="index.html">AI와 수학
+목차</a><a href="ai-math-foundations.html">전체 로드맵</a>
+</nav>
+<h1 id="entropy와crossentropy">10_Entropy와CrossEntropy</h1>
+<h2 id="한-문장-요약">한 문장 요약</h2>
+<p>Entropy는 불확실성의 크기이고, cross entropy는 모델이 정답에 얼마나
+높은 확률을 줬는지 평가하는 손실함수다.</p>
+<h2 id="왜-ai에-필요한가">왜 AI에 필요한가</h2>
+<p>분류 모델은 softmax를 통해 확률분포를 만든다.</p>
+<pre class="text"><code>고양이: 0.66
+개: 0.24
+자동차: 0.10</code></pre>
+<p>그다음 필요한 질문은 이것이다.</p>
+<pre class="text"><code>이 확률분포가 정답과 얼마나 잘 맞는가?</code></pre>
+<p>이 질문에 답하는 대표 손실함수가 cross entropy다.</p>
+<h2 id="정보량">정보량</h2>
+<p>정보량은 놀라움의 크기라고 생각할 수 있다.</p>
+<p>매일 해가 뜨는 것은 별로 놀랍지 않다. 정보량이 작다.</p>
+<pre class="text"><code>해가 떴다.</code></pre>
+<p>반대로 매우 드문 일이 일어나면 놀랍다. 정보량이 크다.</p>
+<pre class="text"><code>한여름에 눈이 왔다.</code></pre>
+<p>확률이 낮은 사건일수록 일어났을 때 정보량이 크다.</p>
+<h2 id="entropy">Entropy</h2>
+<p>Entropy는 확률분포 전체의 불확실성이다.</p>
+<p>동전이 공정하면 앞면과 뒷면이 반반이다.</p>
+<pre class="text"><code>[0.5, 0.5]</code></pre>
+<p>결과를 예측하기 어렵다. entropy가 높다.</p>
+<p>반대로 동전이 거의 항상 앞면이면,</p>
+<pre class="text"><code>[0.99, 0.01]</code></pre>
+<p>결과를 예측하기 쉽다. entropy가 낮다.</p>
+<h2 id="cross-entropy">Cross Entropy</h2>
+<p>Cross entropy는 정답 분포와 모델 예측 분포가 얼마나 다른지
+측정한다.</p>
+<p>분류 문제에서는 보통 정답이 one-hot이다.</p>
+<pre class="text"><code>정답: 고양이
+정답 분포: [1, 0, 0]</code></pre>
+<p>모델 예측이 다음과 같으면 좋은 예측이다.</p>
+<pre class="text"><code>[0.90, 0.08, 0.02]</code></pre>
+<p>모델 예측이 다음과 같으면 나쁜 예측이다.</p>
+<pre class="text"><code>[0.10, 0.80, 0.10]</code></pre>
+<figure>
+<img src="assets/10_cross_entropy.svg" alt="10_cross_entropy.svg" />
+<figcaption aria-hidden="true">10_cross_entropy.svg</figcaption>
+</figure>
+<h2 id="핵심-공식">핵심 공식</h2>
+<p>정답 클래스에 모델이 준 확률을 <code>p</code>라고 하면 cross entropy
+loss는 단순하게 이렇게 볼 수 있다.</p>
+<pre class="text"><code>loss = -log(p)</code></pre>
+<p>정답에 높은 확률을 주면 loss가 작다.</p>
+<pre class="text"><code>p = 0.9 -&gt; -log(0.9) 작음</code></pre>
+<p>정답에 낮은 확률을 주면 loss가 크다.</p>
+<pre class="text"><code>p = 0.1 -&gt; -log(0.1) 큼</code></pre>
+<h2 id="왜-log를-쓸까">왜 log를 쓸까</h2>
+<p>log는 낮은 확률에 큰 벌점을 준다.</p>
+<p>예를 들어 정답 확률이 0.9에서 0.8로 떨어지는 것보다, 0.2에서 0.1로
+떨어지는 것이 더 심각하다.</p>
+<p>모델이 정답을 거의 아니라고 말하면 강하게 벌을 줘야 한다.</p>
+<pre class="text"><code>정답 확률이 낮을수록 loss가 급격히 커진다.</code></pre>
+<h2 id="언어모델과-cross-entropy">언어모델과 Cross Entropy</h2>
+<p>언어모델은 다음 토큰의 확률분포를 예측한다.</p>
+<p>문장이 다음과 같다고 하자.</p>
+<pre class="text"><code>오늘 날씨가</code></pre>
+<p>정답 다음 토큰이 <code>좋다</code>라면, 모델이 <code>좋다</code>에
+높은 확률을 줘야 한다.</p>
+<pre class="text"><code>P(좋다 | 오늘 날씨가) = 0.8  -&gt; 좋은 예측
+P(좋다 | 오늘 날씨가) = 0.05 -&gt; 나쁜 예측</code></pre>
+<p>언어모델 학습은 수많은 위치에서 다음 토큰의 cross entropy를 줄이는
+과정이다.</p>
+<h2 id="mse와-cross-entropy-차이">MSE와 Cross Entropy 차이</h2>
+<table>
+<thead>
+<tr>
+<th>손실함수</th>
+<th>주로 쓰는 문제</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSE</td>
+<td>회귀, 숫자 예측</td>
+</tr>
+<tr>
+<td>Cross Entropy</td>
+<td>분류, 확률분포 예측</td>
+</tr>
+</tbody>
+</table>
+<p>집값처럼 숫자를 맞추는 문제는 MSE가 자연스럽다.</p>
+<pre class="text"><code>예측 집값과 실제 집값의 차이</code></pre>
+<p>고양이/개/자동차처럼 클래스를 맞추는 문제는 cross entropy가
+자연스럽다.</p>
+<pre class="text"><code>정답 클래스에 얼마나 높은 확률을 줬는가</code></pre>
+<h2 id="코드-예제">코드 예제</h2>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>p_good <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>p_bad <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="op">-</span>math.log(p_good))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="op">-</span>math.log(p_bad))</span></code></pre></div>
+<p>PyTorch 예제:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>logits <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>, <span class="fl">1.0</span>, <span class="fl">0.1</span> (준비 중))</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> torch.tensor([<span class="dv">0</span>])  <span class="co"># 정답: 0번 클래스</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> F.cross_entropy(logits, target)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(loss)</span></code></pre></div>
+<p>PyTorch의 <code>cross_entropy</code>는 내부에서 softmax와 log 계산을
+안정적으로 처리한다. 그래서 보통 softmax 결과가 아니라 logits를 직접
+넣는다.</p>
+<h2 id="자주-헷갈리는-점">자주 헷갈리는 점</h2>
+<table>
+<thead>
+<tr>
+<th>헷갈리는 말</th>
+<th>쉽게 풀어쓴 말</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entropy</td>
+<td>확률분포의 불확실성</td>
+</tr>
+<tr>
+<td>Cross Entropy</td>
+<td>정답에 낮은 확률을 주면 커지는 손실</td>
+</tr>
+<tr>
+<td>one-hot</td>
+<td>정답만 1이고 나머지는 0인 표현</td>
+</tr>
+<tr>
+<td>logits</td>
+<td>softmax 전 모델 점수</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>숫자 차이를 재는 손실</td>
+</tr>
+</tbody>
+</table>
+<h2 id="확인-질문">확인 질문</h2>
+<ul>
+<li>entropy가 높다는 것은 무슨 뜻인가?</li>
+<li>cross entropy는 무엇을 벌점으로 삼는가?</li>
+<li>정답 확률이 0.9일 때와 0.1일 때 어느 쪽 loss가 큰가?</li>
+<li>PyTorch <code>F.cross_entropy</code>에는 softmax 후 확률을 넣는가,
+logits를 넣는가?</li>
+<li>MSE와 cross entropy는 각각 어떤 문제에 주로 쓰는가?</li>
+</ul>
+<h2 id="오늘의-정리">오늘의 정리</h2>
+<p>Entropy는 불확실성을 나타내고, cross entropy는 모델의 확률분포가
+정답과 얼마나 잘 맞는지 평가한다. 분류 문제와 언어모델 학습에서는 정답
+클래스 또는 정답 토큰에 높은 확률을 주도록 cross entropy loss를
+줄인다.</p>
+<p>다음 노트: <a
+href="11-attention-equation.html">11_Attention수식읽기</a></p>
+<script src="../assets/protect.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", function(){ if (window.mermaid) mermaid.initialize({ startOnLoad: true }); });</script>
+</body>
+</html>

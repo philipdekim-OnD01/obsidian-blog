@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="450" viewBox="0 0 840 450">
+  <rect width="840" height="450" fill="#ffffff"/>
+  <text x="58" y="52" font-family="Arial, sans-serif" font-size="28" fill="#111">Cross Entropy = 정답에 얼마나 높은 확률을 줬는가</text>
+  <rect x="95" y="125" width="285" height="220" rx="8" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="150" y="165" font-family="Arial, sans-serif" font-size="24">좋은 예측</text>
+  <text x="140" y="220" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">정답 고양이: 0.90</text>
+  <text x="140" y="260" font-family="Arial, sans-serif" font-size="22" fill="#444">개: 0.08</text>
+  <text x="140" y="300" font-family="Arial, sans-serif" font-size="22" fill="#444">자동차: 0.02</text>
+  <rect x="465" y="125" width="285" height="220" rx="8" fill="#fff5f4" stroke="#b42318" stroke-width="3"/>
+  <text x="520" y="165" font-family="Arial, sans-serif" font-size="24">나쁜 예측</text>
+  <text x="510" y="220" font-family="Arial, sans-serif" font-size="22" fill="#b42318">정답 고양이: 0.10</text>
+  <text x="510" y="260" font-family="Arial, sans-serif" font-size="22" fill="#444">개: 0.80</text>
+  <text x="510" y="300" font-family="Arial, sans-serif" font-size="22" fill="#444">자동차: 0.10</text>
+  <text x="170" y="395" font-family="Arial, sans-serif" font-size="20" fill="#444">정답 클래스에 높은 확률을 줄수록 cross entropy loss는 작다.</text>
+</svg>

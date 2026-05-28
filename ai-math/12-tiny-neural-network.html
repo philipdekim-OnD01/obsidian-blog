@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>12-tiny-neural-network</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/ai-math.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">12-tiny-neural-network</h1>
+</header>
+<nav class="site-nav">
+<a href="../index.html">블로그 홈</a><a href="index.html">AI와 수학
+목차</a><a href="ai-math-foundations.html">전체 로드맵</a>
+</nav>
+<h1 id="작은신경망직접구현">12_작은신경망직접구현</h1>
+<h2 id="한-문장-요약">한 문장 요약</h2>
+<p>지금까지 배운 함수, 벡터, 행렬, 미분, 그래디언트, 손실함수를 연결해
+작은 신경망 학습 과정을 직접 구현한다.</p>
+<h2 id="왜-ai에-필요한가">왜 AI에 필요한가</h2>
+<p>수학 개념을 따로 배우는 것만으로는 부족하다. AI 학습은 이 개념들이 한
+루프 안에서 함께 움직인다.</p>
+<pre class="text"><code>예측 -&gt; 손실 계산 -&gt; 그래디언트 계산 -&gt; 파라미터 업데이트</code></pre>
+<p>이 과정을 작은 예제로 직접 구현하면 딥러닝 학습의 전체 구조가
+보인다.</p>
+<figure>
+<img src="assets/12_tiny_network.svg" alt="12_tiny_network.svg" />
+<figcaption aria-hidden="true">12_tiny_network.svg</figcaption>
+</figure>
+<h2 id="목표">목표</h2>
+<p>가장 단순한 선형 모델을 학습시킨다.</p>
+<pre class="text"><code>y_hat = wx + b</code></pre>
+<p>데이터는 다음 규칙을 따른다고 하자.</p>
+<pre class="text"><code>y = 2x + 1</code></pre>
+<p>학습 목표는 모델이 스스로 <code>w = 2</code>, <code>b = 1</code>에
+가까운 값을 찾게 하는 것이다.</p>
+<h2 id="데이터">데이터</h2>
+<p>작은 데이터셋을 만든다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">9</td>
+</tr>
+</tbody>
+</table>
+<p>이 데이터는 다음 규칙을 따른다.</p>
+<pre class="text"><code>y = 2x + 1</code></pre>
+<h2 id="모델">모델</h2>
+<p>모델은 다음과 같다.</p>
+<pre class="text"><code>y_hat = wx + b</code></pre>
+<p>처음에는 <code>w</code>, <code>b</code>를 틀린 값으로 시작한다.</p>
+<pre class="text"><code>w = 0
+b = 0</code></pre>
+<p>처음 예측은 좋지 않다.</p>
+<pre class="text"><code>x = 2
+y_hat = 0*2 + 0 = 0
+실제 y = 5</code></pre>
+<h2 id="손실함수">손실함수</h2>
+<p>평균제곱오차 MSE를 사용한다.</p>
+<pre class="text"><code>loss = 평균((y_hat - y)^2)</code></pre>
+<p>예측이 실제값과 가까울수록 loss는 작아진다.</p>
+<h2 id="그래디언트">그래디언트</h2>
+<p>데이터 하나에 대해 손실은 다음과 같다.</p>
+<pre class="text"><code>L = (y_hat - y)^2
+y_hat = wx + b</code></pre>
+<p>미분은 다음과 같다.</p>
+<pre class="text"><code>∂L/∂w = 2(y_hat - y)x
+∂L/∂b = 2(y_hat - y)</code></pre>
+<p>데이터가 여러 개이면 각 데이터의 그래디언트를 평균내면 된다.</p>
+<h2 id="직접-구현-코드">직접 구현 코드</h2>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> [<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>, <span class="fl">4.0</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ys <span class="op">=</span> [<span class="fl">3.0</span>, <span class="fl">5.0</span>, <span class="fl">7.0</span>, <span class="fl">9.0</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">200</span>):</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    grad_w <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    grad_b <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x, y <span class="kw">in</span> <span class="bu">zip</span>(xs, ys):</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        y_hat <span class="op">=</span> w <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        error <span class="op">=</span> y_hat <span class="op">-</span> y</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> error <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        total_loss <span class="op">+=</span> loss</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        grad_w <span class="op">+=</span> <span class="dv">2</span> <span class="op">*</span> error <span class="op">*</span> x</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        grad_b <span class="op">+=</span> <span class="dv">2</span> <span class="op">*</span> error</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(xs)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">/=</span> n</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    grad_w <span class="op">/=</span> n</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    grad_b <span class="op">/=</span> n</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    w <span class="op">-=</span> lr <span class="op">*</span> grad_w</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    b <span class="op">-=</span> lr <span class="op">*</span> grad_b</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">20</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(epoch, total_loss, w, b)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;final:&quot;</span>, w, b)</span></code></pre></div>
+<p>학습이 잘 되면 <code>w</code>는 2에, <code>b</code>는 1에
+가까워진다.</p>
+<h2 id="pytorch-구현">PyTorch 구현</h2>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.tensor([[<span class="fl">1.0</span>], [<span class="fl">2.0</span>], [<span class="fl">3.0</span>], [<span class="fl">4.0</span>]])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.tensor([[<span class="fl">3.0</span>], [<span class="fl">5.0</span>], [<span class="fl">7.0</span>], [<span class="fl">9.0</span>]])</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> torch.nn.Linear(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> torch.optim.SGD(model.parameters(), lr<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>loss_fn <span class="op">=</span> torch.nn.MSELoss()</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">200</span>):</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    y_hat <span class="op">=</span> model(x)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> loss_fn(y_hat, y)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    loss.backward()</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">20</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(epoch, <span class="bu">float</span>(loss))</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">list</span>(model.parameters()))</span></code></pre></div>
+<p>이 코드는 직접 구현한 루프와 같은 일을 한다.</p>
+<table>
+<thead>
+<tr>
+<th>직접 구현</th>
+<th>PyTorch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y_hat = w*x + b</code></td>
+<td><code>model(x)</code></td>
+</tr>
+<tr>
+<td>손실 직접 계산</td>
+<td><code>loss_fn(y_hat, y)</code></td>
+</tr>
+<tr>
+<td>미분 직접 계산</td>
+<td><code>loss.backward()</code></td>
+</tr>
+<tr>
+<td>직접 업데이트</td>
+<td><code>optimizer.step()</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="전체-연결">전체 연결</h2>
+<p>지금까지 배운 내용은 모두 이 루프에 들어간다.</p>
+<table>
+<thead>
+<tr>
+<th>배운 개념</th>
+<th>여기서 하는 역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>함수</td>
+<td><code>y_hat = wx + b</code></td>
+</tr>
+<tr>
+<td>벡터/행렬</td>
+<td>여러 데이터를 한 번에 표현</td>
+</tr>
+<tr>
+<td>미분</td>
+<td>손실의 변화율 계산</td>
+</tr>
+<tr>
+<td>그래디언트</td>
+<td>w, b를 바꿀 방향</td>
+</tr>
+<tr>
+<td>경사하강법</td>
+<td>파라미터 업데이트</td>
+</tr>
+<tr>
+<td>통계</td>
+<td>데이터 스케일과 평가</td>
+</tr>
+<tr>
+<td>확률/손실</td>
+<td>분류 모델로 확장할 때 필요</td>
+</tr>
+</tbody>
+</table>
+<h2 id="확인-질문">확인 질문</h2>
+<ul>
+<li><code>y_hat = wx + b</code>에서 학습되는 값은 무엇인가?</li>
+<li>MSE는 무엇을 측정하는가?</li>
+<li><code>∂L/∂w</code>는 무엇을 의미하는가?</li>
+<li><code>optimizer.zero_grad()</code>는 왜 필요한가?</li>
+<li>직접 구현과 PyTorch 구현은 어떤 부분이 대응되는가?</li>
+</ul>
+<h2 id="오늘의-정리">오늘의 정리</h2>
+<p>작은 신경망 학습은 예측, 손실 계산, 그래디언트 계산, 업데이트의
+반복이다. PyTorch는 이 과정을 자동화하지만, 내부에서는 지금까지 배운
+수학이 그대로 작동한다. 이 작은 예제를 이해하면 더 큰 딥러닝 모델도 같은
+원리의 확장으로 볼 수 있다.</p>
+<p>다음 학습: CNN, Transformer, 생성 모델 수식을 실제 논문과 코드에서
+읽기</p>
+<script src="../assets/protect.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js" defer></script>
+<script>document.addEventListener("DOMContentLoaded", function(){ if (window.mermaid) mermaid.initialize({ startOnLoad: true }); });</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="450" viewBox="0 0 820 450">
+  <rect width="820" height="450" fill="#ffffff"/>
+  <text x="58" y="52" font-family="Arial, sans-serif" font-size="28" fill="#111">정규화 = 서로 다른 크기의 특징을 비슷한 기준으로 맞춘다</text>
+  <rect x="85" y="120" width="280" height="220" rx="8" fill="#fffdf8" stroke="#cbbf9f" stroke-width="3"/>
+  <text x="135" y="160" font-family="Arial, sans-serif" font-size="24">정규화 전</text>
+  <text x="125" y="215" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">키: 170</text>
+  <text x="125" y="255" font-family="Arial, sans-serif" font-size="22" fill="#b42318">나이: 20</text>
+  <text x="125" y="295" font-family="Arial, sans-serif" font-size="18" fill="#444">큰 숫자가 더 중요해 보일 수 있음</text>
+  <rect x="455" y="120" width="280" height="220" rx="8" fill="#eff4fb" stroke="#2556a2" stroke-width="3"/>
+  <text x="505" y="160" font-family="Arial, sans-serif" font-size="24">정규화 후</text>
+  <text x="495" y="215" font-family="Arial, sans-serif" font-size="22" fill="#2556a2">키: 0.4</text>
+  <text x="495" y="255" font-family="Arial, sans-serif" font-size="22" fill="#b42318">나이: -0.2</text>
+  <text x="495" y="295" font-family="Arial, sans-serif" font-size="18" fill="#444">평균과 분산 기준으로 비교 가능</text>
+  <text x="210" y="400" font-family="Arial, sans-serif" font-size="20" fill="#444">AI는 숫자 크기 차이에 민감하므로 스케일을 맞추는 일이 중요하다.</text>
+</svg>
