@@ -33,12 +33,10 @@
 </header>
 <h1 id="ondevice-ai-강좌-00-라즈베리파이로-배우는-전체-지도">Ondevice AI
 강좌 00: 라즈베리파이로 배우는 전체 지도</h1>
-<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
-<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
-가위바위보</a> · <a
-href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
-<a href="ondevice-ai-03-lightweighting.html">03
-경량화</a></p>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> · <a
+href="ondevice-ai-01-rps-tflite.html">01 TFLite 가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> · <a
+href="ondevice-ai-03-lightweighting.html">03 경량화</a></p>
 <h2 id="이-강좌의-목표">이 강좌의 목표</h2>
 <p>이 강좌는 라즈베리파이 5와 카메라를 이용해 <strong>AI 모델이 실제
 장치에서 어떻게 동작하는지</strong> 배우는 실습형 강좌다.</p>
@@ -53,6 +51,45 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 <p>AI 모델은 노트북 안에서 정확도만 찍는 것이 아니라, 카메라, 센서, 출력
 장치, 네트워크와 연결될 때 실제 시스템이 된다.</p>
 </blockquote>
+<h2 id="수업을-시작하기-전에-잡아야-할-관점">수업을 시작하기 전에 잡아야
+할 관점</h2>
+<p>온디바이스 AI 수업에서 학생들이 가장 자주 오해하는 부분은 “모델만
+있으면 된다”는 생각이다. 실제 장치에서는 모델보다 주변 조건이 더 큰
+문제를 만든다.</p>
+<pre class="text"><code>카메라가 어두우면 입력이 흔들린다.
+입력 크기가 맞지 않으면 모델이 실행되지 않는다.
+추론이 1초 이상 걸리면 실시간 게임이 되지 않는다.
+confidence가 높아도 같은 손동작이 계속 유지되는지 확인해야 한다.</code></pre>
+<p>그래서 이 강좌는 모델 구조를 깊게 파는 수업이 아니라, <strong>AI
+모델을 작은 컴퓨터 안에서 안정적으로 작동시키는 전체 흐름</strong>을
+배우는 수업이다.</p>
+<p>수업 중에는 다음 질문을 계속 던지면 좋다.</p>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>확인하려는 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>입력은 모델이 기대하는 형태인가?</td>
+<td>이미지 크기, 색상 채널, dtype</td>
+</tr>
+<tr>
+<td>출력은 바로 믿어도 되는가?</td>
+<td>confidence, 연속 프레임 안정성</td>
+</tr>
+<tr>
+<td>장치에서 충분히 빠른가?</td>
+<td>평균 추론 시간, FPS</td>
+</tr>
+<tr>
+<td>틀린 경우를 기록했는가?</td>
+<td>조명, 거리, 배경, 손 모양</td>
+</tr>
+</tbody>
+</table>
 <h2 id="강좌-구성">강좌 구성</h2>
 <table>
 <colgroup>
@@ -85,6 +122,62 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 </tr>
 </tbody>
 </table>
+<h2 id="학생용-코드와-데이터">학생용 코드와 데이터</h2>
+<p>강의에 사용하는 코드와 가위바위보 이미지 데이터셋은 GitHub에 올려
+둔다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>자료</th>
+<th>링크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전체 코드 저장소</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2.CNN02">RP2.CNN02
+GitHub repo</a></td>
+</tr>
+<tr>
+<td>가위바위보 이미지 데이터셋</td>
+<td><a
+href="https://github.com/philipdekim-OnD01/RP2.CNN02/tree/main/RPS_Dataset">RPS_Dataset</a></td>
+</tr>
+<tr>
+<td>기본 RPS 분류 노트북</td>
+<td><a
+href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/03_CNN_Based_On-Device_AI/EX_03_RPS_Classification.ipynb">EX_03_RPS_Classification.ipynb</a></td>
+</tr>
+<tr>
+<td>데이터 보강 RPS 노트북</td>
+<td><a
+href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/03_CNN_Based_On-Device_AI/EX_06_RPS_Classification_Augmentation.ipynb">EX_06_RPS_Classification_Augmentation.ipynb</a></td>
+</tr>
+<tr>
+<td>Dynamic Range Quantization</td>
+<td><a
+href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/04_Lightweighting/EX_05_PTQ_Dynamic_Range.ipynb">EX_05_PTQ_Dynamic_Range.ipynb</a></td>
+</tr>
+<tr>
+<td>Full INT8 Quantization</td>
+<td><a
+href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/04_Lightweighting/EX_06_PTQ_INT8.ipynb">EX_06_PTQ_INT8.ipynb</a></td>
+</tr>
+</tbody>
+</table>
+<p>학생은 먼저 블로그 설명을 읽고, GitHub 저장소에서 노트북과 데이터를
+내려받아 실습하면 된다.</p>
+<p>각 회차는 독립된 지식이 아니라 하나의 개선 과정으로 이어진다.</p>
+<pre class="text"><code>01회차: 일단 돌아가는 시스템을 만든다.
+02회차: 틀리는 이유를 분석하고 데이터와 모델을 개선한다.
+03회차: 개선한 모델을 실제 장치에서 빠르게 돌릴 수 있게 줄인다.</code></pre>
+<p>즉, 좋은 수업 흐름은 “정확한 모델 만들기”가 아니라 <strong>작동하는
+모델을 만들고, 실패를 관찰하고, 장치 제약 안에서
+개선하기</strong>다.</p>
 <h2 id="먼저-알아둘-용어">먼저 알아둘 용어</h2>
 <table>
 <colgroup>
@@ -144,6 +237,46 @@ tflite_runtime 또는 TensorFlow Lite
 <p>라즈베리파이 5 2GB에서도 작은 CNN/TFLite 모델은 충분히 실습 가능하다.
 다만 VLM 같은 큰 멀티모달 모델은 메모리와 속도 때문에 직접 실행하기
 어렵다.</p>
+<p>처음 실습을 시작할 때는 다음 네 가지를 먼저 확인한다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>확인 항목</th>
+<th>확인 방법</th>
+<th>문제가 생기면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>카메라 인식</td>
+<td>OpenCV로 한 프레임 읽기</td>
+<td>카메라 번호 0, 1을 바꿔 본다</td>
+</tr>
+<tr>
+<td>모델 파일 위치</td>
+<td>Python에서 파일 경로 확인</td>
+<td>코드와 같은 폴더에 두거나 절대경로를 쓴다</td>
+</tr>
+<tr>
+<td>패키지 import</td>
+<td><code>import cv2</code>, <code>import numpy</code> 실행</td>
+<td>가상환경과 설치 위치를 확인한다</td>
+</tr>
+<tr>
+<td>화면 출력</td>
+<td><code>cv2.imshow()</code> 실행</td>
+<td>SSH 환경이면 모니터 연결 또는 웹 출력으로 바꾼다</td>
+</tr>
+</tbody>
+</table>
+<p>특히 라즈베리파이에서 원격 접속으로 수업할 때는
+<code>cv2.imshow()</code> 창이 안 뜨는 경우가 있다. 이때는 모델이 틀린
+것이 아니라 화면 출력 환경 문제일 수 있다.</p>
 <h2 id="왜-가위바위보인가">왜 가위바위보인가?</h2>
 <p>가위바위보는 교육용 예제로 매우 좋다.</p>
 <ol type="1">
@@ -152,6 +285,40 @@ tflite_runtime 또는 TensorFlow Lite
 <li>결과가 즉시 보이기 때문에 학생이 흥미를 느낀다.</li>
 <li>분류, 전이학습, 객체탐지, 경량화까지 확장하기 쉽다.</li>
 </ol>
+<p>가위바위보 예제는 단순해 보이지만 실제 AI 시스템의 핵심 문제를 모두
+포함한다.</p>
+<table>
+<thead>
+<tr>
+<th>실제 문제</th>
+<th>가위바위보에서의 모습</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>입력 품질</td>
+<td>조명, 카메라 흔들림, 손과 카메라 거리</td>
+</tr>
+<tr>
+<td>클래스 구분</td>
+<td>가위와 보가 비슷하게 보이는 순간</td>
+</tr>
+<tr>
+<td>실시간성</td>
+<td>화면이 끊기지 않는 FPS</td>
+</tr>
+<tr>
+<td>사용자 경험</td>
+<td>판정이 너무 빨라도, 너무 늦어도 불편함</td>
+</tr>
+<tr>
+<td>시스템 연결</td>
+<td>결과를 게임, LED, 웹 화면으로 보내기</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 이 예제는 장난감 프로젝트가 아니라 작은 형태의 실제 엣지 AI
+프로젝트라고 볼 수 있다.</p>
 <h2 id="전체-시스템-그림">전체 시스템 그림</h2>
 <pre class="text"><code>+------------+      +-------------+      +---------------+
 |  Camera    | ---&gt; | Preprocess  | ---&gt; | TFLite Model  |
@@ -178,6 +345,49 @@ tflite_runtime 또는 TensorFlow Lite
 <li>전이학습과 데이터 보강으로 개선한다.</li>
 <li>Quantization과 Pruning으로 속도와 크기를 줄인다.</li>
 </ol>
+<p>수업 중 디버깅 순서는 반드시 단순한 것부터 확인한다.</p>
+<pre class="text"><code>1. 카메라가 켜졌는가?
+2. 프레임의 shape이 예상과 같은가?
+3. resize 후 입력 shape이 모델 입력과 같은가?
+4. 모델 출력 배열 길이가 3인가?
+5. label 순서가 모델 학습 순서와 같은가?
+6. confidence 기준이 너무 높거나 낮지 않은가?</code></pre>
+<p>초보자는 모델이 틀렸다고 바로 판단하지만, 실제로는 label 순서가
+바뀌었거나 입력 dtype이 맞지 않는 경우가 많다. 수업에서는 이 과정을 보여
+주는 것이 중요하다.</p>
+<h2 id="평가-기준">평가 기준</h2>
+<p>최종 과제는 정확도 하나로만 평가하지 않는다. 온디바이스 AI에서는 다음
+항목을 함께 본다.</p>
+<table>
+<thead>
+<tr>
+<th>평가 항목</th>
+<th>좋은 결과의 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>동작 완성도</td>
+<td>카메라 입력부터 결과 출력까지 끊기지 않는다</td>
+</tr>
+<tr>
+<td>안정성</td>
+<td>같은 손동작을 여러 프레임 확인한 뒤 판정한다</td>
+</tr>
+<tr>
+<td>설명 가능성</td>
+<td>틀린 사례의 원인을 말할 수 있다</td>
+</tr>
+<tr>
+<td>장치 적합성</td>
+<td>라즈베리파이에서 실시간에 가깝게 동작한다</td>
+</tr>
+<tr>
+<td>확장성</td>
+<td>JSON, GPIO, 웹 화면 중 하나와 연결할 수 있다</td>
+</tr>
+</tbody>
+</table>
 <h2 id="강좌의-마지막-목표">강좌의 마지막 목표</h2>
 <p>최종 결과물은 단순한 분류 코드가 아니다.</p>
 <pre class="text"><code>라즈베리파이가 카메라로 손 모양을 보고
@@ -187,6 +397,5 @@ LED, 스피커, 웹 화면과 연결하는 작은 AI 시스템</code></pre>
 <p>이 흐름을 이해하면 음식 분류, 불량 검출, 안전모 착용 여부 확인,
 간단한 제스처 인터페이스 같은 다른 온디바이스 AI 프로젝트로 확장할 수
 있다.</p>
-<script src="assets/protect.js" defer></script>
 </body>
 </html>

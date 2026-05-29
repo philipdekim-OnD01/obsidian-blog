@@ -99,12 +99,10 @@
 <h1
 id="ondevice-ai-강좌-01-tflite로-실시간-가위바위보-인식하기">Ondevice AI
 강좌 01: TFLite로 실시간 가위바위보 인식하기</h1>
-<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
-<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
-가위바위보</a> · <a
-href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
-<a href="ondevice-ai-03-lightweighting.html">03
-경량화</a></p>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> · <a
+href="ondevice-ai-01-rps-tflite.html">01 TFLite 가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> · <a
+href="ondevice-ai-03-lightweighting.html">03 경량화</a></p>
 <h2 id="오늘-배울-것">오늘 배울 것</h2>
 <p>이번 시간에는 라즈베리파이에서 카메라 영상을 받아 <strong>가위, 바위,
 보</strong>를 실시간으로 분류한다.</p>
@@ -144,6 +142,16 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 </tr>
 </tbody>
 </table>
+<p>여기서 중요한 차이는 <strong>학습용 모델</strong>과 <strong>배포용
+모델</strong>의 역할이다.</p>
+<p>학습용 모델은 여러 실험을 하기 좋게 만들어져 있다. 레이어를 바꾸고,
+손실 함수를 바꾸고, 중간 결과를 확인하기 쉽다. 반면 라즈베리파이에서
+필요한 것은 이미 학습이 끝난 모델을 빠르게 실행하는 것이다.</p>
+<pre class="text"><code>학습 단계: 정확도를 높이는 것이 중요하다.
+배포 단계: 작게, 빠르게, 안정적으로 실행하는 것이 중요하다.</code></pre>
+<p>TFLite는 두 번째 목적에 맞춘 형식이다. 그래서 수업에서는 “TFLite는
+학습을 위한 도구가 아니라 장치에서 추론을 실행하기 위한 도구”라고
+설명하면 이해가 쉽다.</p>
 <h2 id="준비물">준비물</h2>
 <pre class="text"><code>Raspberry Pi 5
 카메라 또는 USB 웹캠
@@ -152,15 +160,58 @@ Python
 OpenCV
 tflite_runtime</code></pre>
 <p>설치 예시는 다음과 같다.</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> python3-opencv</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy tflite-runtime</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> python3-opencv</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy tflite-runtime</span></code></pre></div>
 <p>환경에 따라 패키지 이름은 조금 다를 수 있다. 중요한 것은 Python에서
 <code>cv2</code>, <code>numpy</code>, <code>tflite_runtime</code>이
 import 되는지 확인하는 것이다.</p>
 <h2 id="모델-입력과-출력-이해하기">모델 입력과 출력 이해하기</h2>
 <p>가위바위보 모델은 이미지를 입력으로 받고 숫자 3개를 출력한다.</p>
+<p>먼저 모델이 기대하는 입력 모양을 확인해야 한다.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(input_details[<span class="dv">0</span>][<span class="st">&quot;shape&quot;</span>])</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(input_details[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>])</span></code></pre></div>
+<p>예를 들어 다음처럼 나온다면,</p>
+<pre class="text"><code>[ 1 64 64 3]
+uint8</code></pre>
+<p>의미는 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>값</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>한 번에 이미지 1장을 넣는다</td>
+</tr>
+<tr>
+<td>64</td>
+<td>세로 픽셀 수</td>
+</tr>
+<tr>
+<td>64</td>
+<td>가로 픽셀 수</td>
+</tr>
+<tr>
+<td>3</td>
+<td>RGB 또는 BGR 색상 채널</td>
+</tr>
+<tr>
+<td>uint8</td>
+<td>0부터 255 사이의 정수 이미지</td>
+</tr>
+</tbody>
+</table>
+<p>입력 shape을 확인하지 않고 코드를 작성하면 가장 흔한 오류가
+발생한다.</p>
+<pre class="text"><code>ValueError: Cannot set tensor: Dimension mismatch</code></pre>
+<p>이 오류는 모델이 틀렸다는 뜻이 아니라, 모델이 기대하는 입력 크기와
+코드에서 넣은 이미지 크기가 다르다는 뜻이다.</p>
 <p>예를 들어 출력이 다음과 같다고 하자.</p>
 <pre class="text"><code>[0.05, 0.90, 0.05]</code></pre>
 <p>이 값은 세 클래스에 대한 점수다.</p>
@@ -168,71 +219,461 @@ import 되는지 확인하는 것이다.</p>
 1번: rock
 2번: paper</code></pre>
 <p>가장 큰 값은 1번이므로 결과는 <code>rock</code>이다.</p>
+<h2 id="이미지-데이터셋-구조-이해하기">이미지 데이터셋 구조
+이해하기</h2>
+<p>Desktop에서 확인한 실습 데이터는 다음 구조를 사용한다.</p>
+<pre class="text"><code>RPS_Dataset/
+  0/
+    scissors_0.png
+    scissors_1.png
+    ...
+  1/
+    rock_0.png
+    rock_1.png
+    ...
+  2/
+    paper_0.png
+    paper_1.png
+    ...</code></pre>
+<p>클래스 번호는 다음처럼 해석한다.</p>
+<table>
+<thead>
+<tr>
+<th>폴더</th>
+<th style="text-align: right;">라벨 번호</th>
+<th>클래스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td style="text-align: right;">0</td>
+<td>scissors</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td style="text-align: right;">1</td>
+<td>rock</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td style="text-align: right;">2</td>
+<td>paper</td>
+</tr>
+</tbody>
+</table>
+<p>현재 데이터 개수는 대략 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>클래스</th>
+<th style="text-align: right;">이미지 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scissors</td>
+<td style="text-align: right;">903</td>
+</tr>
+<tr>
+<td>rock</td>
+<td style="text-align: right;">907</td>
+</tr>
+<tr>
+<td>paper</td>
+<td style="text-align: right;">907</td>
+</tr>
+<tr>
+<td>합계</td>
+<td style="text-align: right;">2717</td>
+</tr>
+</tbody>
+</table>
+<p>이처럼 클래스별 이미지 수가 거의 비슷하면 모델이 특정 클래스에 치우칠
+가능성이 줄어든다.</p>
+<p>데이터 개수를 코드로 확인하는 방법은 다음과 같다.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>DATASET_DIR <span class="op">=</span> Path(<span class="st">&quot;RPS_Dataset&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>LABELS <span class="op">=</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>: <span class="st">&quot;scissors&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span>: <span class="st">&quot;rock&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span>: <span class="st">&quot;paper&quot;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label_id, label_name <span class="kw">in</span> LABELS.items():</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    image_paths <span class="op">=</span> <span class="bu">list</span>((DATASET_DIR <span class="op">/</span> <span class="bu">str</span>(label_id)).glob(<span class="st">&quot;*.*&quot;</span>))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="bu">len</span>(image_paths)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> count</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label_id, label_name, count)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;total:&quot;</span>, total)</span></code></pre></div>
+<p>수업에서는 이 단계가 중요하다. 모델을 만들기 전에 데이터가 실제로
+있는지, 클래스별 개수가 균형적인지 먼저 확인해야 한다.</p>
+<h2 id="이미지-파일을-배열로-읽기">이미지 파일을 배열로 읽기</h2>
+<p>기존 실습 코드의 핵심은 OpenCV로 이미지를 읽고, RGB로 바꾸고, 64 x
+64로 줄이는 것이다.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> glob</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>files_path <span class="op">=</span> <span class="st">&quot;RPS_Dataset&quot;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>IMG_SIZE <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> []</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>train_labels <span class="op">=</span> []</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> []</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>test_labels <span class="op">=</span> []</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label_id <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    pattern <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>files_path<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>label_id<span class="sc">}</span><span class="ss">/*.*&quot;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    files <span class="op">=</span> glob.glob(pattern)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(pattern, <span class="bu">len</span>(files))</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    images <span class="op">=</span> []</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> []</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> file_path <span class="kw">in</span> files:</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.imread(file_path, cv2.IMREAD_COLOR)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> image <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">&quot;skip broken image:&quot;</span>, file_path)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.cvtColor(image, cv2.COLOR_BGR2RGB)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.resize(image, (IMG_SIZE, IMG_SIZE))</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        images.append(image)</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        labels.append(label_id)</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    images <span class="op">=</span> np.array(images)</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> np.array(labels)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    xtrain, xtest, ytrain, ytest <span class="op">=</span> train_test_split(</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>        images,</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>        labels,</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>        test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">123</span>,</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>        shuffle<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    train_data.append(xtrain)</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    train_labels.append(ytrain)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    test_data.append(xtest)</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    test_labels.append(ytest)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> np.concatenate(train_data)</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>train_labels <span class="op">=</span> np.concatenate(train_labels)</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> np.concatenate(test_data)</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>test_labels <span class="op">=</span> np.concatenate(test_labels)</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;train_data:&quot;</span>, train_data.shape)</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;train_labels:&quot;</span>, train_labels.shape)</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;test_data:&quot;</span>, test_data.shape)</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;test_labels:&quot;</span>, test_labels.shape)</span></code></pre></div>
+<p>출력 shape은 보통 다음과 비슷하다.</p>
+<pre class="text"><code>train_data: (약 2170, 64, 64, 3)
+train_labels: (약 2170,)
+test_data: (약 547, 64, 64, 3)
+test_labels: (약 547,)</code></pre>
+<p>여기서 <code>64, 64, 3</code>은 모델에 들어갈 이미지 한 장의
+모양이다.</p>
+<pre class="text"><code>64: 세로 픽셀
+64: 가로 픽셀
+3: RGB 색상 채널</code></pre>
+<h2 id="bgr을-rgb로-바꾸는-이유">BGR을 RGB로 바꾸는 이유</h2>
+<p>OpenCV는 이미지를 기본적으로 BGR 순서로 읽는다.</p>
+<pre class="text"><code>OpenCV 읽기 결과: B, G, R
+일반 딥러닝 모델 기대: R, G, B</code></pre>
+<p>그래서 다음 줄이 필요하다.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> cv2.cvtColor(image, cv2.COLOR_BGR2RGB)</span></code></pre></div>
+<p>이 줄을 빼도 코드는 실행된다. 하지만 빨간색과 파란색 채널이 뒤바뀐
+이미지가 모델에 들어가므로 학습과 추론 결과가 나빠질 수 있다.</p>
+<h2 id="이미지-샘플-확인하기">이미지 샘플 확인하기</h2>
+<p>데이터를 배열로 만든 뒤에는 반드시 눈으로 몇 장 확인한다.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>LABEL_NAMES <span class="op">=</span> [<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;rock&quot;</span>, <span class="st">&quot;paper&quot;</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">3</span>, <span class="dv">4</span>, i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    plt.imshow(train_data[i])</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    plt.title(LABEL_NAMES[<span class="bu">int</span>(train_labels[i])])</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">&quot;off&quot;</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>이 확인을 하지 않으면 다음 문제를 놓치기 쉽다.</p>
+<pre class="text"><code>이미지가 깨져 있음
+라벨이 잘못 붙어 있음
+RGB/BGR 색상이 뒤바뀜
+resize 후 손 모양이 너무 작아짐</code></pre>
+<h2 id="학습용-데이터-저장하기">학습용 데이터 저장하기</h2>
+<p>이미지 파일을 매번 다시 읽으면 시간이 걸린다. 한 번 전처리한 데이터를
+<code>.npz</code> 파일로 저장해 두면 다음 실습에서 바로 불러올 수
+있다.</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>np.savez_compressed(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;rps_64_dataset.npz&quot;</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    train_data<span class="op">=</span>train_data,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    train_labels<span class="op">=</span>train_labels,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    test_data<span class="op">=</span>test_data,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    test_labels<span class="op">=</span>test_labels,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>다시 불러오는 코드는 다음과 같다.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> np.load(<span class="st">&quot;rps_64_dataset.npz&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> dataset[<span class="st">&quot;train_data&quot;</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>train_labels <span class="op">=</span> dataset[<span class="st">&quot;train_labels&quot;</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> dataset[<span class="st">&quot;test_data&quot;</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>test_labels <span class="op">=</span> dataset[<span class="st">&quot;test_labels&quot;</span>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(train_data.shape, train_labels.shape)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(test_data.shape, test_labels.shape)</span></code></pre></div>
+<p>이 방식은 수업 시간이 짧을 때 유용하다. 첫 시간에는 이미지 파일에서
+배열을 만드는 과정을 보여 주고, 다음 시간부터는 <code>.npz</code>를
+불러와 바로 학습할 수 있다.</p>
 <h2 id="기본-코드-구조">기본 코드 구조</h2>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tflite_runtime.interpreter <span class="im">as</span> tflite</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> <span class="st">&quot;RPS_PreTrained_DenseNet.tflite&quot;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>interpreter <span class="op">=</span> tflite.Interpreter(model_path<span class="op">=</span>model_path)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>interpreter.allocate_tensors()</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>input_details <span class="op">=</span> interpreter.get_input_details()</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>output_details <span class="op">=</span> interpreter.get_output_details()</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>input_dtype <span class="op">=</span> input_details[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>]</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>: <span class="st">&quot;scissors&quot;</span>, <span class="dv">1</span>: <span class="st">&quot;rock&quot;</span>, <span class="dv">2</span>: <span class="st">&quot;paper&quot;</span>}</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tflite_runtime.interpreter <span class="im">as</span> tflite</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> <span class="st">&quot;RPS_PreTrained_DenseNet.tflite&quot;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>interpreter <span class="op">=</span> tflite.Interpreter(model_path<span class="op">=</span>model_path)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>interpreter.allocate_tensors()</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>input_details <span class="op">=</span> interpreter.get_input_details()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>output_details <span class="op">=</span> interpreter.get_output_details()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>input_dtype <span class="op">=</span> input_details[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>]</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>: <span class="st">&quot;scissors&quot;</span>, <span class="dv">1</span>: <span class="st">&quot;rock&quot;</span>, <span class="dv">2</span>: <span class="st">&quot;paper&quot;</span>}</span></code></pre></div>
 <p>이 부분은 모델을 메모리에 올리는 과정이다. 수업에서는 이것을
 <strong>AI 엔진을 켜는 단계</strong>라고 설명하면 쉽다.</p>
+<p>모델이 실제로 어떤 입력과 출력을 기대하는지 먼저 출력해 보면 디버깅이
+쉬워진다.</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Input details&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> input_details:</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(item)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Output details&quot;</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> output_details:</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(item)</span></code></pre></div>
+<p>예상 출력은 모델마다 다르지만 보통 다음 정보를 확인한다.</p>
+<pre class="text"><code>shape: [1, 64, 64, 3]
+dtype: uint8 또는 float32
+index: 입력 텐서 번호</code></pre>
+<p>수업에서는 학생에게 “모델 설명서를 코드로 읽는 단계”라고 설명하면
+좋다.</p>
 <h2 id="한-장-이미지-분류하기">한 장 이미지 분류하기</h2>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(frame):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> cv2.resize(frame, (<span class="dv">64</span>, <span class="dv">64</span>))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.expand_dims(image, <span class="dv">0</span>).astype(input_dtype)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    interpreter.set_tensor(input_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>], image)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    interpreter.invoke()</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> interpreter.get_tensor(output_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>])[<span class="dv">0</span>]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="bu">int</span>(np.argmax(scores))</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> labels[index], <span class="bu">float</span>(scores[index])</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(frame):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> cv2.resize(frame, (<span class="dv">64</span>, <span class="dv">64</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.expand_dims(image, <span class="dv">0</span>).astype(input_dtype)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    interpreter.set_tensor(input_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>], image)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    interpreter.invoke()</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> interpreter.get_tensor(output_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>])[<span class="dv">0</span>]</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="bu">int</span>(np.argmax(scores))</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> labels[index], <span class="bu">float</span>(scores[index])</span></code></pre></div>
 <p>여기서 가장 중요한 줄은 두 개다.</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>interpreter.invoke()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>np.argmax(scores)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>interpreter.invoke()</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>np.argmax(scores)</span></code></pre></div>
 <p><code>interpreter.invoke()</code>는 모델을 실행하는 명령이고,
 <code>np.argmax(scores)</code>는 가장 높은 점수를 가진 클래스를 고르는
 명령이다.</p>
+<p>코드를 조금 더 안전하게 만들려면 전처리 과정을 함수로 분리한다.</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess(frame):</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> cv2.resize(frame, (<span class="dv">64</span>, <span class="dv">64</span>))</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.expand_dims(image, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> image.astype(input_dtype)</span></code></pre></div>
+<p>수업에서는 이 부분을 다음처럼 설명하면 좋다.</p>
+<pre class="text"><code>카메라 이미지는 사람이 보기 위한 이미지다.
+preprocess는 그 이미지를 모델이 읽을 수 있는 모양으로 바꾸는 번역기다.</code></pre>
+<p>만약 모델이 float32 입력을 기대한다면 보통 0부터 1 사이로 정규화해야
+한다.</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> input_dtype <span class="op">==</span> np.float32:</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> image.astype(np.float32) <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> image.astype(input_dtype)</span></code></pre></div>
+<p>반대로 uint8 모델인데 0부터 1 사이의 float 값을 넣으면 결과가
+이상해질 수 있다. 입력 dtype과 정규화 여부를 함께 확인해야 한다.</p>
+<p>한 장 이미지 파일로 먼저 테스트하는 코드는 다음과 같다.</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>test_image <span class="op">=</span> cv2.imread(<span class="st">&quot;test_rock.jpg&quot;</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> test_image <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="st">&quot;test_rock.jpg 파일을 찾을 수 없습니다.&quot;</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>label, confidence <span class="op">=</span> predict(test_image)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;prediction:&quot;</span>, label)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;confidence:&quot;</span>, confidence)</span></code></pre></div>
+<p>실시간 카메라로 바로 넘어가기 전에 이미지 한 장으로 확인하면 문제를
+더 빨리 찾을 수 있다.</p>
+<pre class="text"><code>한 장 이미지도 안 된다 → 모델 입력/출력 또는 파일 경로 문제
+한 장 이미지는 된다 → 카메라, 실시간 처리, 후처리 문제</code></pre>
+<h2 id="전체-실행-예제">전체 실행 예제</h2>
+<p>아래 코드는 한 파일로 저장해서 실행할 수 있는 최소 예제다.</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tflite_runtime.interpreter <span class="im">as</span> tflite</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>MODEL_PATH <span class="op">=</span> <span class="st">&quot;RPS_PreTrained_DenseNet.tflite&quot;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>LABELS <span class="op">=</span> {<span class="dv">0</span>: <span class="st">&quot;scissors&quot;</span>, <span class="dv">1</span>: <span class="st">&quot;rock&quot;</span>, <span class="dv">2</span>: <span class="st">&quot;paper&quot;</span>}</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>CONFIDENCE_THRESHOLD <span class="op">=</span> <span class="fl">0.75</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>interpreter <span class="op">=</span> tflite.Interpreter(model_path<span class="op">=</span>MODEL_PATH)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>interpreter.allocate_tensors()</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>input_details <span class="op">=</span> interpreter.get_input_details()</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>output_details <span class="op">=</span> interpreter.get_output_details()</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>input_shape <span class="op">=</span> input_details[<span class="dv">0</span>][<span class="st">&quot;shape&quot;</span>]</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>input_dtype <span class="op">=</span> input_details[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>]</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>height <span class="op">=</span> <span class="bu">int</span>(input_shape[<span class="dv">1</span>])</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="bu">int</span>(input_shape[<span class="dv">2</span>])</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess(frame):</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> cv2.resize(frame, (width, height))</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.expand_dims(image, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> input_dtype <span class="op">==</span> np.float32:</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> image.astype(np.float32) <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> image.astype(input_dtype)</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> image</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(frame):</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> preprocess(frame)</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>    interpreter.set_tensor(input_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>], image)</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>    interpreter.invoke()</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> interpreter.get_tensor(output_details[<span class="dv">0</span>][<span class="st">&quot;index&quot;</span>])[<span class="dv">0</span>]</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="bu">int</span>(np.argmax(scores))</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>    confidence <span class="op">=</span> <span class="bu">float</span>(scores[index])</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> LABELS[index], confidence</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> cap.isOpened():</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="st">&quot;카메라를 열 수 없습니다.&quot;</span>)</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_WIDTH, <span class="dv">320</span>)</span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_HEIGHT, <span class="dv">240</span>)</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>    ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> ret:</span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a>    label, confidence <span class="op">=</span> predict(frame)</span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>    display_label <span class="op">=</span> label <span class="cf">if</span> confidence <span class="op">&gt;=</span> CONFIDENCE_THRESHOLD <span class="cf">else</span> <span class="st">&quot;uncertain&quot;</span></span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a>    cv2.putText(</span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a>        frame,</span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>display_label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>confidence<span class="sc">:.2f}</span><span class="ss">&quot;</span>,</span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">20</span>, <span class="dv">45</span>),</span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>        cv2.FONT_HERSHEY_SIMPLEX,</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.9</span>,</span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>),</span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a>    cv2.imshow(<span class="st">&quot;RPS TFLite&quot;</span>, frame)</span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv2.waitKey(<span class="dv">1</span>) <span class="op">&amp;</span> <span class="bn">0xFF</span> <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&quot;q&quot;</span>):</span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a>cap.release()</span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>cv2.destroyAllWindows()</span></code></pre></div>
+<p>이 전체 코드는 다음 네 덩어리로 읽으면 된다.</p>
+<table>
+<thead>
+<tr>
+<th>코드 영역</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모델 로드</td>
+<td><code>.tflite</code> 파일을 메모리에 올림</td>
+</tr>
+<tr>
+<td><code>preprocess()</code></td>
+<td>카메라 이미지를 모델 입력 형식으로 변환</td>
+</tr>
+<tr>
+<td><code>predict()</code></td>
+<td>모델을 실행하고 가장 높은 점수의 클래스를 선택</td>
+</tr>
+<tr>
+<td>카메라 루프</td>
+<td>프레임을 계속 읽고 화면에 결과 표시</td>
+</tr>
+</tbody>
+</table>
 <h2 id="실시간-카메라와-연결하기">실시간 카메라와 연결하기</h2>
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_WIDTH, <span class="dv">320</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_HEIGHT, <span class="dv">240</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> cap.isOpened():</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    ret, frame <span class="op">=</span> cap.read()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> ret:</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    label, confidence <span class="op">=</span> predict(frame)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    cv2.putText(</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        frame,</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>confidence<span class="sc">:.2f}</span><span class="ss">&quot;</span>,</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">20</span>, <span class="dv">50</span>),</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        cv2.FONT_HERSHEY_PLAIN,</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>),</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    cv2.imshow(<span class="st">&quot;RPS&quot;</span>, frame)</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv2.waitKey(<span class="dv">10</span>) <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&quot;q&quot;</span>):</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>cap.release()</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>cv2.destroyAllWindows()</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_WIDTH, <span class="dv">320</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_HEIGHT, <span class="dv">240</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> cap.isOpened():</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> ret:</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    label, confidence <span class="op">=</span> predict(frame)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    cv2.putText(</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        frame,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>label<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>confidence<span class="sc">:.2f}</span><span class="ss">&quot;</span>,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">20</span>, <span class="dv">50</span>),</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>        cv2.FONT_HERSHEY_PLAIN,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>        (<span class="dv">0</span>, <span class="dv">255</span>, <span class="dv">0</span>),</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>,</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>    cv2.imshow(<span class="st">&quot;RPS&quot;</span>, frame)</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> cv2.waitKey(<span class="dv">10</span>) <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&quot;q&quot;</span>):</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>cap.release()</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>cv2.destroyAllWindows()</span></code></pre></div>
 <p>이제 라즈베리파이가 카메라를 보고 가위바위보를 판단한다.</p>
+<p>실습 중 카메라가 열리지 않으면 먼저 다음 코드를 넣어 원인을
+분리한다.</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> cap.isOpened():</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="st">&quot;카메라를 열 수 없습니다. 카메라 번호와 연결 상태를 확인하세요.&quot;</span>)</span></code></pre></div>
+<p>USB 웹캠을 여러 개 연결했거나 Pi Camera와 USB 카메라가 함께 있으면
+<code>0</code> 대신 <code>1</code>을 써야 할 수 있다.</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">1</span>)</span></code></pre></div>
+<p>프레임 속도가 너무 느리면 처음에는 해상도를 낮춘다.</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_WIDTH, <span class="dv">320</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>cap.<span class="bu">set</span>(cv2.CAP_PROP_FRAME_HEIGHT, <span class="dv">240</span>)</span></code></pre></div>
+<p>실시간 AI에서는 큰 화면보다 일정한 속도가 더 중요하다. 화면이 조금
+작아도 FPS가 안정적이면 사용자 경험이 더 좋다.</p>
 <h2 id="실시간-인식에서-꼭-필요한-안정화">실시간 인식에서 꼭 필요한
 안정화</h2>
 <p>카메라 영상은 매 프레임 조금씩 흔들린다. 그래서 모델 결과도 흔들릴 수
@@ -244,18 +685,181 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a hr
 confidence가 0.75 이상일 때만 인정
 한 번 판정한 뒤 1.5초 쉬기</code></pre>
 <p>이것을 후처리라고 한다.</p>
+<p>간단한 안정화 코드는 다음처럼 만들 수 있다.</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>last_label <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>stable_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_stable_label(label, confidence):</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> last_label, stable_count</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> confidence <span class="op">&lt;</span> <span class="fl">0.75</span>:</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>        last_label <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;uncertain&quot;</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> label <span class="op">==</span> last_label:</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>        last_label <span class="op">=</span> label</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> stable_count <span class="op">&gt;=</span> <span class="dv">8</span>:</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> label</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;waiting&quot;</span></span></code></pre></div>
+<p>이 코드는 학생들에게 “모델 출력”과 “최종 판정”이 다르다는 점을 보여
+주기에 좋다.</p>
+<pre class="text"><code>모델 출력: 지금 프레임 하나를 보고 낸 답
+최종 판정: 여러 프레임을 보고 시스템이 확정한 답</code></pre>
+<p>실제 제품에서도 이 차이가 중요하다. 매 프레임의 결과를 바로 행동으로
+연결하면 화면이 흔들릴 때마다 시스템도 흔들린다.</p>
 <h2 id="json-이벤트로-연결하기">JSON 이벤트로 연결하기</h2>
 <p>화면에 글자만 표시하면 다른 시스템과 연결하기 어렵다. 그래서 결과를
 JSON으로 내보내면 좋다.</p>
-<div class="sourceCode" id="cb12"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user&quot;</span><span class="fu">:</span> <span class="st">&quot;rock&quot;</span><span class="fu">,</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;computer&quot;</span><span class="fu">:</span> <span class="st">&quot;scissors&quot;</span><span class="fu">,</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;win&quot;</span><span class="fu">,</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.91</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user&quot;</span><span class="fu">:</span> <span class="st">&quot;rock&quot;</span><span class="fu">,</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;computer&quot;</span><span class="fu">:</span> <span class="st">&quot;scissors&quot;</span><span class="fu">,</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="st">&quot;win&quot;</span><span class="fu">,</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.91</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>이렇게 만들면 웹 서버, 게임 화면, LED, 스피커, 데이터 저장 시스템과
 쉽게 연결할 수 있다.</p>
+<p>Python에서는 다음처럼 만들 수 있다.</p>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> judge(user, computer):</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> user <span class="op">==</span> computer:</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;draw&quot;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (user, computer) <span class="kw">in</span> [</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;rock&quot;</span>, <span class="st">&quot;scissors&quot;</span>),</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;paper&quot;</span>),</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;paper&quot;</span>, <span class="st">&quot;rock&quot;</span>),</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    ]:</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;win&quot;</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;lose&quot;</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>computer <span class="op">=</span> random.choice([<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;rock&quot;</span>, <span class="st">&quot;paper&quot;</span>])</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>event <span class="op">=</span> {</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;user&quot;</span>: label,</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;computer&quot;</span>: computer,</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;result&quot;</span>: judge(label, computer),</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;confidence&quot;</span>: <span class="bu">round</span>(confidence, <span class="dv">3</span>),</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(json.dumps(event, ensure_ascii<span class="op">=</span><span class="va">False</span>))</span></code></pre></div>
+<p>이렇게 출력 형식을 정해 두면 나중에 웹 화면이나 서버를 붙일 때 코드를
+크게 바꾸지 않아도 된다.</p>
+<p>아래는 안정화, 승패 계산, JSON 출력을 한 번에 넣은 예제다.</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>WIN_CASES <span class="op">=</span> {</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;rock&quot;</span>, <span class="st">&quot;scissors&quot;</span>),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;paper&quot;</span>),</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;paper&quot;</span>, <span class="st">&quot;rock&quot;</span>),</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>last_label <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>stable_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>last_event_time <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> judge(user, computer):</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> user <span class="op">==</span> computer:</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;draw&quot;</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (user, computer) <span class="kw">in</span> WIN_CASES:</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;win&quot;</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;lose&quot;</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_stable_label(label, confidence, required_count<span class="op">=</span><span class="dv">8</span>):</span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> last_label, stable_count</span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> confidence <span class="op">&lt;</span> <span class="fl">0.75</span>:</span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>        last_label <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> label <span class="op">==</span> last_label:</span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>        last_label <span class="op">=</span> label</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>        stable_count <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> stable_count <span class="op">&gt;=</span> required_count:</span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> label</span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_event(user_label, confidence):</span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a>    computer <span class="op">=</span> random.choice([<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;rock&quot;</span>, <span class="st">&quot;paper&quot;</span>])</span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;timestamp&quot;</span>: time.time(),</span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user&quot;</span>: user_label,</span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;computer&quot;</span>: computer,</span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;result&quot;</span>: judge(user_label, computer),</span>
+<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;confidence&quot;</span>: <span class="bu">round</span>(confidence, <span class="dv">3</span>),</span>
+<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a><span class="co"># 카메라 루프 안에서 사용</span></span>
+<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a>stable_label <span class="op">=</span> get_stable_label(label, confidence)</span>
+<span id="cb42-56"><a href="#cb42-56" aria-hidden="true" tabindex="-1"></a>now <span class="op">=</span> time.time()</span>
+<span id="cb42-57"><a href="#cb42-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-58"><a href="#cb42-58" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> stable_label <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> now <span class="op">-</span> last_event_time <span class="op">&gt;</span> <span class="fl">1.5</span>:</span>
+<span id="cb42-59"><a href="#cb42-59" aria-hidden="true" tabindex="-1"></a>    event <span class="op">=</span> make_event(stable_label, confidence)</span>
+<span id="cb42-60"><a href="#cb42-60" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(json.dumps(event, ensure_ascii<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb42-61"><a href="#cb42-61" aria-hidden="true" tabindex="-1"></a>    last_event_time <span class="op">=</span> now</span></code></pre></div>
+<p>핵심은 <code>stable_label</code>이 <code>None</code>일 때는 아직
+판정하지 않는다는 점이다. 모델은 매 프레임 답을 내지만, 게임은 안정된
+답이 나왔을 때만 진행한다.</p>
+<h2 id="자주-생기는-문제와-해결">자주 생기는 문제와 해결</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>증상</th>
+<th>가능한 원인</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>항상 같은 클래스로 나옴</td>
+<td>label 순서가 모델과 다름</td>
+<td>학습 때 클래스 순서 확인</td>
+</tr>
+<tr>
+<td>confidence가 낮음</td>
+<td>조명, 거리, 배경 문제</td>
+<td>손 위치를 고정하고 밝기 확보</td>
+</tr>
+<tr>
+<td>실행은 되지만 느림</td>
+<td>해상도나 모델이 큼</td>
+<td>카메라 해상도와 입력 크기 축소</td>
+</tr>
+<tr>
+<td><code>Dimension mismatch</code></td>
+<td>입력 shape 불일치</td>
+<td><code>input_details[0]["shape"]</code> 확인</td>
+</tr>
+<tr>
+<td>카메라 창이 안 뜸</td>
+<td>원격 접속 또는 GUI 문제</td>
+<td>모니터 연결 또는 웹 출력 사용</td>
+</tr>
+</tbody>
+</table>
 <h2 id="실습-과제">실습 과제</h2>
 <ol type="1">
 <li>카메라 화면에 <code>scissors</code>, <code>rock</code>,
@@ -266,10 +870,15 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href=
 <li>컴퓨터가 랜덤으로 가위바위보를 내고 승패를 계산하게 한다.</li>
 <li>결과를 JSON으로 출력한다.</li>
 </ol>
+<p>추가 과제는 다음과 같다.</p>
+<ol type="1">
+<li>손이 화면 중앙에 있을 때만 판정하도록 ROI 영역을 만든다.</li>
+<li>최근 30프레임의 평균 FPS를 화면에 표시한다.</li>
+<li>틀린 결과가 나왔을 때 해당 프레임을 이미지 파일로 저장한다.</li>
+</ol>
 <h2 id="오늘의-핵심-정리">오늘의 핵심 정리</h2>
 <pre class="text"><code>TFLite 모델은 작은 장치에서 빠르게 추론하기 위한 모델 형식이다.
 라즈베리파이에서는 큰 범용 모델보다 작은 전용 모델이 실용적이다.
 실시간 AI는 모델뿐 아니라 카메라, 전처리, 후처리, 출력 연결이 모두 중요하다.</code></pre>
-<script src="assets/protect.js" defer></script>
 </body>
 </html>

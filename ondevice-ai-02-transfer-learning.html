@@ -99,12 +99,10 @@ ResNet과 Tiny YOLO</h1>
 <h1
 id="ondevice-ai-강좌-02-전이학습으로-성능-높이기---resnet과-tiny-yolo">Ondevice
 AI 강좌 02: 전이학습으로 성능 높이기 - ResNet과 Tiny YOLO</h1>
-<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> ·
-<a href="ondevice-ai-01-rps-tflite.html">01 TFLite
-가위바위보</a> · <a
-href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
-<a href="ondevice-ai-03-lightweighting.html">03
-경량화</a></p>
+<p>시리즈: <a href="ondevice-ai-00-overview.html">00 전체지도</a> · <a
+href="ondevice-ai-01-rps-tflite.html">01 TFLite 가위바위보</a> · <a
+href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> · <a
+href="ondevice-ai-03-lightweighting.html">03 경량화</a></p>
 <h2 id="오늘-배울-것">오늘 배울 것</h2>
 <p>가위바위보 인식 모델이 어느 정도 동작하면 다음 질문이 생긴다.</p>
 <pre class="text"><code>조명이 바뀌면 왜 틀릴까?
@@ -114,6 +112,46 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 <p>답은 <strong>전이학습</strong>이다.</p>
 <p>전이학습은 이미 많은 이미지를 보고 배운 모델을 가져와서, 내 문제에
 맞게 마지막 부분만 다시 학습하는 방법이다.</p>
+<p>하지만 전이학습을 바로 적용하기 전에 먼저 해야 할 일이 있다. 모델이
+틀린 이미지를 모으고, 왜 틀렸는지 분류하는 것이다.</p>
+<table>
+<thead>
+<tr>
+<th>오인식 원인</th>
+<th>예시</th>
+<th>개선 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>조명</td>
+<td>역광, 어두운 교실</td>
+<td>밝기/대비 보강 데이터 추가</td>
+</tr>
+<tr>
+<td>거리</td>
+<td>손이 너무 작음</td>
+<td>다양한 거리 데이터 추가</td>
+</tr>
+<tr>
+<td>배경</td>
+<td>책상 물건과 손이 겹침</td>
+<td>복잡한 배경 데이터 추가</td>
+</tr>
+<tr>
+<td>포즈</td>
+<td>손가락 각도가 애매함</td>
+<td>헷갈리는 사례를 더 수집</td>
+</tr>
+<tr>
+<td>사람 차이</td>
+<td>특정 학생 손만 잘 맞힘</td>
+<td>여러 사람 데이터 추가</td>
+</tr>
+</tbody>
+</table>
+<p>전이학습은 마법처럼 성능을 올리는 기술이 아니다. <strong>오인식
+원인을 데이터에 반영할 때</strong> 효과가 커진다.</p>
 <h2 id="전이학습을-비유로-이해하기">전이학습을 비유로 이해하기</h2>
 <p>처음부터 모델을 학습시키는 것은 초등학생에게 사진이 무엇인지부터
 가르치는 것과 비슷하다.</p>
@@ -131,6 +169,17 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 → ResNet feature extractor
 → 새 classification head
 → scissors / rock / paper</code></pre>
+<p>여기서 feature extractor는 이미지에서 쓸 만한 특징을 뽑는
+부분이다.</p>
+<pre class="text"><code>초기 층: 선, 모서리, 색 변화
+중간 층: 질감, 손가락 일부, 윤곽
+깊은 층: 손 모양에 가까운 복합 특징</code></pre>
+<p>마지막 classification head는 이 특징을 보고 내 수업의 세 클래스 중
+하나로 바꾸는 부분이다.</p>
+<pre class="text"><code>feature extractor: 이미 배운 눈
+classification head: 우리 문제에 맞춘 판단 기준</code></pre>
+<p>데이터가 많지 않은 수업 환경에서는 앞부분을 고정하고 마지막 부분만
+학습하는 방식이 안정적이다.</p>
 <h2 id="resnet-전이학습-절차">ResNet 전이학습 절차</h2>
 <ol type="1">
 <li>ImageNet으로 학습된 ResNet을 불러온다.</li>
@@ -140,33 +189,438 @@ href="ondevice-ai-02-transfer-learning.html">02 전이학습</a> ·
 <li>TFLite로 변환해 라즈베리파이에 올린다.</li>
 </ol>
 <p>개념 코드는 다음과 같다.</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> tf.keras.applications.ResNet50(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    include_top<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    weights<span class="op">=</span><span class="st">&quot;imagenet&quot;</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    input_shape<span class="op">=</span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Sequential([</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    base,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.GlobalAveragePooling2D(),</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">128</span>, activation<span class="op">=</span><span class="st">&quot;relu&quot;</span>),</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dropout(<span class="fl">0.3</span>),</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">3</span>, activation<span class="op">=</span><span class="st">&quot;softmax&quot;</span>),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span><span class="st">&quot;adam&quot;</span>,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> tf.keras.applications.ResNet50(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    include_top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    weights<span class="op">=</span><span class="st">&quot;imagenet&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    input_shape<span class="op">=</span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    base,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.GlobalAveragePooling2D(),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">128</span>, activation<span class="op">=</span><span class="st">&quot;relu&quot;</span>),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dropout(<span class="fl">0.3</span>),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.Dense(<span class="dv">3</span>, activation<span class="op">=</span><span class="st">&quot;softmax&quot;</span>),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span><span class="st">&quot;adam&quot;</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>수업에서는 이 코드를 외우게 하기보다 구조를 이해시키는 것이
 중요하다.</p>
 <pre class="text"><code>이미지 특징을 뽑는 부분은 빌려오고
 가위바위보를 판단하는 마지막 부분만 새로 붙인다.</code></pre>
+<p>처음에는 <code>base.trainable = False</code>로 두고 학습한다. 이렇게
+하면 ResNet의 기존 지식은 유지하고 새로 붙인 분류층만 학습한다.</p>
+<p>성능이 어느 정도 나온 뒤에는 마지막 몇 개 층만 풀어서 미세 조정할 수
+있다.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> layer <span class="kw">in</span> base.layers[:<span class="op">-</span><span class="dv">20</span>]:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    layer.trainable <span class="op">=</span> <span class="va">False</span></span></code></pre></div>
+<p>이것을 fine-tuning이라고 한다. 단, 데이터가 적을 때 너무 많은 층을
+학습시키면 기존 지식이 깨지고 과적합될 수 있다.</p>
+<h2 id="resnet-학습-전체-예제">ResNet 학습 전체 예제</h2>
+<p>아래 코드는 폴더형 데이터셋을 읽고 ResNet 전이학습을 수행하는 기본
+예제다.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>DATA_DIR <span class="op">=</span> <span class="st">&quot;rps_dataset&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>IMG_SIZE <span class="op">=</span> (<span class="dv">224</span>, <span class="dv">224</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>train_ds <span class="op">=</span> tf.keras.utils.image_dataset_from_directory(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f&quot;</span><span class="sc">{</span>DATA_DIR<span class="sc">}</span><span class="ss">/train&quot;</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    image_size<span class="op">=</span>IMG_SIZE,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span>BATCH_SIZE,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>val_ds <span class="op">=</span> tf.keras.utils.image_dataset_from_directory(</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f&quot;</span><span class="sc">{</span>DATA_DIR<span class="sc">}</span><span class="ss">/val&quot;</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    image_size<span class="op">=</span>IMG_SIZE,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span>BATCH_SIZE,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span>SEED,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>class_names <span class="op">=</span> train_ds.class_names</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;class names:&quot;</span>, class_names)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>AUTOTUNE <span class="op">=</span> tf.data.AUTOTUNE</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>train_ds <span class="op">=</span> train_ds.cache().shuffle(<span class="dv">500</span>).prefetch(AUTOTUNE)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>val_ds <span class="op">=</span> val_ds.cache().prefetch(AUTOTUNE)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>data_augmentation <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomFlip(<span class="st">&quot;horizontal&quot;</span>),</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomRotation(<span class="fl">0.08</span>),</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomZoom(<span class="fl">0.1</span>),</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomContrast(<span class="fl">0.2</span>),</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> tf.keras.applications.ResNet50(</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    include_top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    weights<span class="op">=</span><span class="st">&quot;imagenet&quot;</span>,</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    input_shape<span class="op">=</span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>),</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> tf.keras.Input(shape<span class="op">=</span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>))</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> data_augmentation(inputs)</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.applications.resnet50.preprocess_input(x)</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> base(x, training<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.layers.GlobalAveragePooling2D()(x)</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.3</span>)(x)</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> tf.keras.layers.Dense(<span class="bu">len</span>(class_names), activation<span class="op">=</span><span class="st">&quot;softmax&quot;</span>)(x)</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Model(inputs, outputs)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span>tf.keras.optimizers.Adam(learning_rate<span class="op">=</span><span class="fl">1e-3</span>),</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> model.fit(</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    train_ds,</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    validation_data<span class="op">=</span>val_ds,</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">&quot;rps_resnet_saved_model&quot;</span>)</span></code></pre></div>
+<p>이 코드에서 중요한 부분은 세 곳이다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>코드</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base.trainable = False</code></td>
+<td>ResNet의 기존 지식은 고정</td>
+</tr>
+<tr>
+<td><code>preprocess_input()</code></td>
+<td>ResNet이 학습될 때 쓰던 입력 방식으로 변환</td>
+</tr>
+<tr>
+<td><code>Dense(len(class_names))</code></td>
+<td>내 데이터셋의 클래스 수에 맞게 출력층 생성</td>
+</tr>
+</tbody>
+</table>
+<p>학습이 끝난 뒤에는 클래스 순서를 반드시 저장한다.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;labels.txt&quot;</span>, <span class="st">&quot;w&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> name <span class="kw">in</span> class_names:</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        f.write(name <span class="op">+</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<p>TFLite 추론 코드에서 label 순서가 다르면 모델은 맞게 예측했는데
+화면에는 다른 이름이 표시될 수 있다.</p>
+<h2 id="fine-tuning-예제">Fine-tuning 예제</h2>
+<p>처음 학습 후 검증 정확도가 더 올라갈 여지가 있으면 마지막 일부 층만
+풀어 fine-tuning을 한다.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>base.trainable <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> layer <span class="kw">in</span> base.layers[:<span class="op">-</span><span class="dv">20</span>]:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    layer.trainable <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span>tf.keras.optimizers.Adam(learning_rate<span class="op">=</span><span class="fl">1e-5</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>fine_history <span class="op">=</span> model.fit(</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    train_ds,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    validation_data<span class="op">=</span>val_ds,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">&quot;rps_resnet_finetuned_saved_model&quot;</span>)</span></code></pre></div>
+<p>fine-tuning에서는 learning rate를 작게 잡는다. 이미 배운 특징을 크게
+흔들지 않고, 가위바위보 데이터에 조금만 맞추기 위해서다.</p>
+<h2 id="데이터셋-폴더-구조">데이터셋 폴더 구조</h2>
+<p>분류 모델 학습에서는 폴더 구조를 클래스 이름과 맞추면 관리가
+쉽다.</p>
+<pre class="text"><code>rps_dataset/
+  train/
+    scissors/
+    rock/
+    paper/
+  val/
+    scissors/
+    rock/
+    paper/</code></pre>
+<p>학습 데이터와 검증 데이터는 반드시 나눈다.</p>
+<pre class="text"><code>train: 모델이 공부하는 데이터
+val: 모델이 처음 보는 시험 데이터</code></pre>
+<p>검증 데이터를 따로 두지 않으면 모델이 외운 것인지 실제로 일반화한
+것인지 알 수 없다.</p>
+<p>이미지가 한 폴더에 섞여 있다면 다음처럼 간단히 폴더를 나눌 수
+있다.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>SOURCE_DIR <span class="op">=</span> Path(<span class="st">&quot;raw_rps&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>TARGET_DIR <span class="op">=</span> Path(<span class="st">&quot;rps_dataset&quot;</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>VAL_RATIO <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> class_dir <span class="kw">in</span> SOURCE_DIR.iterdir():</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> class_dir.is_dir():</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    images <span class="op">=</span> <span class="bu">list</span>(class_dir.glob(<span class="st">&quot;*.jpg&quot;</span>)) <span class="op">+</span> <span class="bu">list</span>(class_dir.glob(<span class="st">&quot;*.png&quot;</span>))</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    random.shuffle(images)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    val_count <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(images) <span class="op">*</span> VAL_RATIO)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    val_images <span class="op">=</span> <span class="bu">set</span>(images[:val_count])</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> image_path <span class="kw">in</span> images:</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        split <span class="op">=</span> <span class="st">&quot;val&quot;</span> <span class="cf">if</span> image_path <span class="kw">in</span> val_images <span class="cf">else</span> <span class="st">&quot;train&quot;</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        out_dir <span class="op">=</span> TARGET_DIR <span class="op">/</span> split <span class="op">/</span> class_dir.name</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        out_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        shutil.copy2(image_path, out_dir <span class="op">/</span> image_path.name)</span></code></pre></div>
+<p>수업에서는 데이터셋을 나눌 때 같은 사진을 train과 val에 동시에 넣으면
+안 된다는 점을 강조한다.</p>
+<h2 id="현재-rps-데이터셋을-그대로-학습하기">현재 RPS 데이터셋을 그대로
+학습하기</h2>
+<p>Desktop에서 확인한 실습 코드는 <code>RPS_Dataset/0</code>,
+<code>RPS_Dataset/1</code>, <code>RPS_Dataset/2</code>처럼 숫자 폴더를
+그대로 라벨로 사용한다. 이 구조는
+<code>image_dataset_from_directory()</code>보다 OpenCV와
+<code>train_test_split()</code>을 쓰는 방식이 더 직접적이다.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> glob</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>DATASET_DIR <span class="op">=</span> <span class="st">&quot;RPS_Dataset&quot;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>IMG_SIZE <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>LABEL_NAMES <span class="op">=</span> [<span class="st">&quot;scissors&quot;</span>, <span class="st">&quot;rock&quot;</span>, <span class="st">&quot;paper&quot;</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>all_train_x <span class="op">=</span> []</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>all_train_y <span class="op">=</span> []</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>all_val_x <span class="op">=</span> []</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>all_val_y <span class="op">=</span> []</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label_id, label_name <span class="kw">in</span> <span class="bu">enumerate</span>(LABEL_NAMES):</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    files <span class="op">=</span> glob.glob(<span class="ss">f&quot;</span><span class="sc">{</span>DATASET_DIR<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>label_id<span class="sc">}</span><span class="ss">/*.*&quot;</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label_id, label_name, <span class="bu">len</span>(files))</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> []</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> []</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> path <span class="kw">in</span> files:</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.imread(path, cv2.IMREAD_COLOR)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> image <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.cvtColor(image, cv2.COLOR_BGR2RGB)</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> cv2.resize(image, (IMG_SIZE, IMG_SIZE))</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>        x.append(image)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        y.append(label_id)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.array(x, dtype<span class="op">=</span>np.uint8)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.array(y, dtype<span class="op">=</span>np.int64)</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    x_train, x_val, y_train, y_val <span class="op">=</span> train_test_split(</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>        x,</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>        y,</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>        test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">123</span>,</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>        shuffle<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    all_train_x.append(x_train)</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    all_train_y.append(y_train)</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>    all_val_x.append(x_val)</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>    all_val_y.append(y_val)</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> np.concatenate(all_train_x)</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>train_labels <span class="op">=</span> np.concatenate(all_train_y)</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>val_data <span class="op">=</span> np.concatenate(all_val_x)</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>val_labels <span class="op">=</span> np.concatenate(all_val_y)</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(train_data.shape, train_labels.shape)</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(val_data.shape, val_labels.shape)</span></code></pre></div>
+<p>이 코드의 장점은 학생이 이미지가 어떻게 배열로 바뀌는지 직접 볼 수
+있다는 점이다.</p>
+<pre class="text"><code>이미지 파일 경로
+→ cv2.imread()
+→ BGR을 RGB로 변환
+→ 64 x 64 resize
+→ NumPy 배열
+→ train/validation 분리</code></pre>
+<h2 id="densenet-전이학습-코드">DenseNet 전이학습 코드</h2>
+<p>기존 실습 노트북은 DenseNet121을 사용한다. ResNet 대신 DenseNet을
+써도 전이학습의 핵심 구조는 같다.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>dense_net <span class="op">=</span> tf.keras.applications.DenseNet121(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    weights<span class="op">=</span><span class="st">&quot;imagenet&quot;</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    include_top<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    input_shape<span class="op">=</span>(IMG_SIZE, IMG_SIZE, <span class="dv">3</span>),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> tf.keras.Input(shape<span class="op">=</span>(IMG_SIZE, IMG_SIZE, <span class="dv">3</span>))</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.applications.densenet.preprocess_input(inputs)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> dense_net(x, training<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.layers.GlobalAveragePooling2D()(x)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.2</span>)(x)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">3</span>, activation<span class="op">=</span><span class="st">&quot;softmax&quot;</span>)(x)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Model(inputs, outputs)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span>tf.keras.optimizers.Adam(learning_rate<span class="op">=</span><span class="fl">0.0005</span>),</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">&quot;sparse_categorical_crossentropy&quot;</span>,</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>],</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code></pre></div>
+<p>여기서 <code>preprocess_input()</code>은 DenseNet이 ImageNet으로
+학습될 때 사용한 입력 스케일에 맞춰 이미지를 바꿔 준다. 그래서 이
+코드에서는 <code>train_data = train_data / 255.0</code>을 하지
+않는다.</p>
+<p>학습 코드는 다음과 같다.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>checkpoint <span class="op">=</span> tf.keras.callbacks.ModelCheckpoint(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;RPS_PreTrained_DenseNet.keras&quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    save_best_only<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    monitor<span class="op">=</span><span class="st">&quot;val_accuracy&quot;</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">&quot;max&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> model.fit(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    train_data,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    train_labels,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">30</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    validation_data<span class="op">=</span>(val_data, val_labels),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    callbacks<span class="op">=</span>[checkpoint],</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>가장 좋은 모델을 다시 불러와 평가한다.</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> tf.keras.models.load_model(<span class="st">&quot;RPS_PreTrained_DenseNet.keras&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>loss, accuracy <span class="op">=</span> best_model.evaluate(val_data, val_labels, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;validation loss:&quot;</span>, loss)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;validation accuracy:&quot;</span>, accuracy)</span></code></pre></div>
+<p>예측 결과를 눈으로 확인하는 코드도 넣어 두면 좋다.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>pred <span class="op">=</span> best_model.predict(val_data)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>pred_labels <span class="op">=</span> np.argmax(pred, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">7</span>))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">2</span>, <span class="dv">5</span>, i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    plt.imshow(val_data[i])</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    true_name <span class="op">=</span> LABEL_NAMES[<span class="bu">int</span>(val_labels[i])]</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    pred_name <span class="op">=</span> LABEL_NAMES[<span class="bu">int</span>(pred_labels[i])]</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f&quot;true: </span><span class="sc">{</span>true_name<span class="sc">}</span><span class="ch">\n</span><span class="ss">pred: </span><span class="sc">{</span>pred_name<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">&quot;off&quot;</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>수업에서는 정확도 숫자만 보지 말고, 틀린 이미지를 직접 확인하게 해야
+한다. 어떤 각도와 배경에서 틀리는지를 봐야 다음 데이터 수집 방향이
+나온다.</p>
+<h2 id="imagedatagenerator로-데이터-보강하기">ImageDataGenerator로
+데이터 보강하기</h2>
+<p>기존 augmentation 실습 코드는 <code>ImageDataGenerator</code>를
+사용한다.</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>img_gen_train <span class="op">=</span> tf.keras.preprocessing.image.ImageDataGenerator(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    horizontal_flip<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    rotation_range<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    width_shift_range<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    height_shift_range<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    brightness_range<span class="op">=</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    zoom_range<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>train_gen <span class="op">=</span> img_gen_train.flow(</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    train_data,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    train_labels,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    seed<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>보강된 이미지를 눈으로 확인하는 코드는 다음과 같다.</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>batch_x, batch_y <span class="op">=</span> <span class="bu">next</span>(train_gen)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">3</span>, <span class="dv">4</span>, i <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    plt.imshow(batch_x[i].astype(<span class="st">&quot;uint8&quot;</span>))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    plt.title(LABEL_NAMES[<span class="bu">int</span>(batch_y[i])])</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">&quot;off&quot;</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>augmentation을 적용한 학습은 다음처럼 진행한다.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>checkpoint_aug <span class="op">=</span> tf.keras.callbacks.ModelCheckpoint(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;RPS_PreTrained_DenseNet_Augmentation.keras&quot;</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    save_best_only<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    monitor<span class="op">=</span><span class="st">&quot;val_accuracy&quot;</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">&quot;max&quot;</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>history_aug <span class="op">=</span> model.fit(</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    train_gen,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    validation_data<span class="op">=</span>(val_data, val_labels),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    callbacks<span class="op">=</span>[checkpoint_aug],</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>여기서 <code>train_gen</code>은 매 epoch마다 조금씩 다른 이미지를
+만들어 낸다. 원본 데이터 개수는 그대로지만, 모델은 회전, 이동, 밝기
+변화가 들어간 다양한 손 이미지를 보게 된다.</p>
+<h2 id="학습한-모델을-tflite로-저장하기">학습한 모델을 TFLite로
+저장하기</h2>
+<p>라즈베리파이에서 쓰려면 Keras 모델을 TFLite로 변환한다.</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> tf.keras.models.load_model(<span class="st">&quot;RPS_PreTrained_DenseNet_Augmentation.keras&quot;</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(best_model)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter.convert()</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;RPS_PreTrained_DenseNet_Augmentation.tflite&quot;</span>, <span class="st">&quot;wb&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    f.write(tflite_model)</span></code></pre></div>
+<p>변환 후에는 TFLite 모델을 다시 열어서 입력 shape을 확인한다.</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>interpreter <span class="op">=</span> tf.lite.Interpreter(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    model_path<span class="op">=</span><span class="st">&quot;RPS_PreTrained_DenseNet_Augmentation.tflite&quot;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>interpreter.allocate_tensors()</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(interpreter.get_input_details()[<span class="dv">0</span>][<span class="st">&quot;shape&quot;</span>])</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(interpreter.get_input_details()[<span class="dv">0</span>][<span class="st">&quot;dtype&quot;</span>])</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(interpreter.get_output_details()[<span class="dv">0</span>][<span class="st">&quot;shape&quot;</span>])</span></code></pre></div>
+<p>이 정보가 01회차의 실시간 추론 코드에서 사용하는
+<code>IMG_SIZE</code>, <code>input_dtype</code>, label 순서와 맞아야
+한다.</p>
 <h2 id="데이터-보강이-중요한-이유">데이터 보강이 중요한 이유</h2>
 <p>라즈베리파이 카메라 환경은 매번 다르다.</p>
 <pre class="text"><code>밝은 조명
@@ -178,17 +632,57 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a hr
 손이 조금 기울어짐</code></pre>
 <p>그래서 학습 때 일부러 이미지를 조금씩 바꿔 보여준다. 이것을 data
 augmentation이라고 한다.</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_augmentation <span class="op">=</span> tf.keras.Sequential([</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomFlip(<span class="st">&quot;horizontal&quot;</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomRotation(<span class="fl">0.08</span>),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomZoom(<span class="fl">0.1</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomContrast(<span class="fl">0.2</span>),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>data_augmentation <span class="op">=</span> tf.keras.Sequential([</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomFlip(<span class="st">&quot;horizontal&quot;</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomRotation(<span class="fl">0.08</span>),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomZoom(<span class="fl">0.1</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    tf.keras.layers.RandomContrast(<span class="fl">0.2</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div>
 <p>데이터 보강의 목적은 모델에게 이렇게 가르치는 것이다.</p>
 <blockquote>
 <p>손이 조금 돌아가거나 조명이 바뀌어도 같은 가위바위보로 봐야 한다.</p>
 </blockquote>
+<p>다만 보강을 무조건 많이 넣는 것이 좋은 것은 아니다. 실제 상황에서
+일어나지 않는 변형은 오히려 학습을 방해한다.</p>
+<table>
+<thead>
+<tr>
+<th>보강</th>
+<th>가위바위보에 적합한가?</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>좌우 반전</td>
+<td>대체로 적합</td>
+<td>왼손/오른손 차이에 대응</td>
+</tr>
+<tr>
+<td>약한 회전</td>
+<td>적합</td>
+<td>손이 조금 기울 수 있음</td>
+</tr>
+<tr>
+<td>약한 줌</td>
+<td>적합</td>
+<td>카메라와 거리 변화</td>
+</tr>
+<tr>
+<td>강한 색 왜곡</td>
+<td>주의</td>
+<td>실제 카메라 색과 너무 달라질 수 있음</td>
+</tr>
+<tr>
+<td>상하 반전</td>
+<td>부적합</td>
+<td>뒤집힌 손은 일반 상황이 아님</td>
+</tr>
+</tbody>
+</table>
+<p>수업에서는 “현실에서 생길 만한 변화만 넣는다”는 기준을 강조하면
+된다.</p>
 <h2 id="resnet과-tiny-yolo의-차이">ResNet과 Tiny YOLO의 차이</h2>
 <p>ResNet은 분류 모델이다.</p>
 <pre class="text"><code>이미지 전체를 보고
@@ -218,6 +712,15 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 </tr>
 </tbody>
 </table>
+<p>학생들이 헷갈리지 않도록 다음 예시를 들면 좋다.</p>
+<pre class="text"><code>카메라 화면에 손 하나가 크게 보이고 배경이 단순하다.
+→ ResNet 같은 분류 모델로 충분할 가능성이 높다.
+
+카메라 화면에 손이 작게 보이고 주변 물체가 많다.
+→ 먼저 손 위치를 찾아야 하므로 Tiny YOLO 같은 탐지 모델이 유리하다.</code></pre>
+<p>즉, 모델 선택은 더 유명한 모델을 고르는 문제가 아니라 <strong>입력
+화면에서 답을 내기 위해 어떤 정보가 필요한가</strong>를 판단하는
+문제다.</p>
 <h2 id="언제-tiny-yolo가-필요한가">언제 Tiny YOLO가 필요한가?</h2>
 <p>다음 상황에서는 분류 모델보다 객체탐지 모델이 유리하다.</p>
 <pre class="text"><code>손이 화면 일부에만 작게 보일 때
@@ -225,12 +728,12 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 여러 사람이 동시에 손을 낼 때
 손 위치까지 표시하고 싶을 때</code></pre>
 <p>Tiny YOLO는 다음과 같은 결과를 낸다.</p>
-<div class="sourceCode" id="cb11"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;class&quot;</span><span class="fu">:</span> <span class="st">&quot;paper&quot;</span><span class="fu">,</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.88</span><span class="fu">,</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;box&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">105</span><span class="ot">,</span> <span class="dv">42</span><span class="ot">,</span> <span class="dv">210</span><span class="ot">,</span> <span class="dv">180</span><span class="ot">]</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;class&quot;</span><span class="fu">:</span> <span class="st">&quot;paper&quot;</span><span class="fu">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;confidence&quot;</span><span class="fu">:</span> <span class="fl">0.88</span><span class="fu">,</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;box&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">105</span><span class="ot">,</span> <span class="dv">42</span><span class="ot">,</span> <span class="dv">210</span><span class="ot">,</span> <span class="dv">180</span><span class="ot">]</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>여기서 <code>box</code>는 손이 있는 위치다.</p>
 <h2 id="tiny-yolo-전이학습-절차">Tiny YOLO 전이학습 절차</h2>
 <ol type="1">
@@ -244,6 +747,57 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href=
 </ol>
 <p>객체탐지는 분류보다 데이터 준비가 어렵다. 하지만 실제 환경에서는 더
 강하다.</p>
+<p>객체탐지 데이터에서는 라벨 하나만 붙이는 것이 아니라 손의 위치까지
+표시해야 한다.</p>
+<pre class="text"><code>분류 데이터: 이 사진은 paper다.
+탐지 데이터: 이 사진의 (x1, y1, x2, y2) 영역에 paper 손이 있다.</code></pre>
+<p>bounding box 품질이 나쁘면 좋은 모델을 써도 성능이 잘 나오지 않는다.
+손보다 박스를 너무 크게 잡으면 배경까지 같이 학습하고, 너무 작게 잡으면
+손가락 일부가 빠진다.</p>
+<p>수업용으로는 처음부터 Tiny YOLO를 학습시키기보다, ResNet 분류 실습 후
+“왜 탐지가 필요한가”를 이해시키는 확장 주제로 다루는 편이 좋다.</p>
+<p>탐지 결과를 사용하는 코드는 보통 다음 형태가 된다.</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>detections <span class="op">=</span> [</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">&quot;class&quot;</span>: <span class="st">&quot;paper&quot;</span>, <span class="st">&quot;confidence&quot;</span>: <span class="fl">0.88</span>, <span class="st">&quot;box&quot;</span>: [<span class="dv">105</span>, <span class="dv">42</span>, <span class="dv">210</span>, <span class="dv">180</span>]},</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">&quot;class&quot;</span>: <span class="st">&quot;rock&quot;</span>, <span class="st">&quot;confidence&quot;</span>: <span class="fl">0.61</span>, <span class="st">&quot;box&quot;</span>: [<span class="dv">20</span>, <span class="dv">60</span>, <span class="dv">90</span>, <span class="dv">150</span>]},</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>best <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> det <span class="kw">in</span> detections:</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> det[<span class="st">&quot;confidence&quot;</span>] <span class="op">&lt;</span> <span class="fl">0.75</span>:</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> best <span class="kw">is</span> <span class="va">None</span> <span class="kw">or</span> det[<span class="st">&quot;confidence&quot;</span>] <span class="op">&gt;</span> best[<span class="st">&quot;confidence&quot;</span>]:</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        best <span class="op">=</span> det</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> best <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    label <span class="op">=</span> best[<span class="st">&quot;class&quot;</span>]</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    x1, y1, x2, y2 <span class="op">=</span> best[<span class="st">&quot;box&quot;</span>]</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label, x1, y1, x2, y2)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;no reliable hand detected&quot;</span>)</span></code></pre></div>
+<p>분류 모델은 이미지 전체에서 하나의 답을 고르지만, 탐지 모델은 여러
+후보 중 confidence가 높은 박스를 골라야 한다.</p>
+<h2 id="tflite-변환-예제">TFLite 변환 예제</h2>
+<p>학습한 SavedModel을 라즈베리파이에서 쓰려면 TFLite로 변환한다.</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_saved_model(<span class="st">&quot;rps_resnet_finetuned_saved_model&quot;</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter.convert()</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;rps_resnet_dynamic.tflite&quot;</span>, <span class="st">&quot;wb&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    f.write(tflite_model)</span></code></pre></div>
+<p>변환 후에는 파일 크기를 확인한다.</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>size_mb <span class="op">=</span> Path(<span class="st">&quot;rps_resnet_dynamic.tflite&quot;</span>).stat().st_size <span class="op">/</span> <span class="dv">1024</span> <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;TFLite model size: </span><span class="sc">{</span>size_mb<span class="sc">:.2f}</span><span class="ss"> MB&quot;</span>)</span></code></pre></div>
+<p>라즈베리파이에 올릴 모델은 정확도뿐 아니라 파일 크기와 추론 속도까지
+같이 봐야 한다.</p>
 <h2 id="성능을-높이는-체크리스트">성능을 높이는 체크리스트</h2>
 <table>
 <thead>
@@ -279,6 +833,10 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href=
 </tr>
 </tbody>
 </table>
+<p>개선 실험은 한 번에 하나씩 바꿔야 한다.</p>
+<pre class="text"><code>나쁜 실험: 모델도 바꾸고, 데이터도 바꾸고, 입력 크기도 바꾼다.
+좋은 실험: 데이터 보강만 추가하고 결과를 비교한다.</code></pre>
+<p>그래야 성능이 좋아졌을 때 무엇 때문에 좋아졌는지 설명할 수 있다.</p>
 <h2 id="좋은-데이터셋의-기준">좋은 데이터셋의 기준</h2>
 <p>좋은 데이터셋은 예쁜 사진 모음이 아니다. 실제 사용할 환경을 잘
 대표해야 한다.</p>
@@ -289,6 +847,40 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href=
 틀리기 쉬운 각도</code></pre>
 <p>모델 성능은 모델 구조보다 데이터 품질에 더 크게 좌우되는 경우가
 많다.</p>
+<p>데이터를 모을 때는 최소한 다음 정보를 같이 기록하면 좋다.</p>
+<table>
+<thead>
+<tr>
+<th>기록 항목</th>
+<th>이유</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>촬영 장소</td>
+<td>배경과 조명 차이 확인</td>
+</tr>
+<tr>
+<td>촬영 사람</td>
+<td>특정 사람에게만 맞는지 확인</td>
+</tr>
+<tr>
+<td>손동작 라벨</td>
+<td>클래스 균형 확인</td>
+</tr>
+<tr>
+<td>오인식 여부</td>
+<td>개선 데이터 선별</td>
+</tr>
+<tr>
+<td>confidence</td>
+<td>애매한 사례 분석</td>
+</tr>
+</tbody>
+</table>
+<p>특히 <code>scissors</code>, <code>rock</code>, <code>paper</code>
+데이터 수가 크게 다르면 모델이 많은 클래스 쪽으로 치우칠 수 있다. 세
+클래스의 이미지 수를 비슷하게 맞추는 것이 기본이다.</p>
 <h2 id="실습-과제">실습 과제</h2>
 <ol type="1">
 <li>기존 TFLite 모델이 틀리는 이미지를 30장 모은다.</li>
@@ -298,11 +890,18 @@ class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href=
 <li>손 위치까지 찾고 싶다면 Tiny YOLO용 bounding box 데이터를 만들어
 본다.</li>
 </ol>
+<p>보고서에는 다음 항목을 포함한다.</p>
+<ol type="1">
+<li>기존 모델이 틀린 대표 이미지 5장과 원인</li>
+<li>추가로 수집한 데이터의 클래스별 개수</li>
+<li>augmentation 적용 전후의 검증 정확도</li>
+<li>라즈베리파이에서 실행 가능한지에 대한 판단</li>
+<li>다음 개선 방향</li>
+</ol>
 <h2 id="오늘의-핵심-정리">오늘의 핵심 정리</h2>
 <pre class="text"><code>전이학습은 이미 배운 모델을 내 문제에 맞게 다시 사용하는 방법이다.
 ResNet은 이미지 전체를 분류하는 데 적합하다.
 Tiny YOLO는 이미지 안에서 손 위치와 손 모양을 함께 찾는 데 적합하다.
 성능 개선의 출발점은 모델 변경보다 오인식 데이터 분석이다.</code></pre>
-<script src="assets/protect.js" defer></script>
 </body>
 </html>
