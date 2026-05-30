@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-label="Cerebras WSE-3 structure and yield management">
+  <rect width="1200" height="680" rx="20" fill="#f8fafc"/>
+
+  <text x="44" y="58" fill="#111827" font-size="30" font-weight="800">Cerebras WSE-3 구조와 수율 관리</text>
+  <text x="44" y="92" fill="#52616f" font-size="18">12인치 웨이퍼 전체를 하나의 컴퓨터처럼 쓰되, 결함을 허용하고 우회하는 설계가 핵심이다.</text>
+
+  <circle cx="365" cy="338" r="190" fill="#ffffff" stroke="#0b63ce" stroke-width="4"/>
+  <circle cx="365" cy="338" r="156" fill="#eef4ff" stroke="#93c5fd" stroke-width="2"/>
+  <circle cx="365" cy="338" r="104" fill="#ffffff" stroke="#dbeafe" stroke-width="2"/>
+
+  <rect x="300" y="250" width="130" height="176" rx="16" fill="#fff7ed" stroke="#d97706" stroke-width="3"/>
+  <text x="365" y="307" fill="#b45309" font-size="22" font-weight="800" text-anchor="middle">온칩 SRAM</text>
+  <text x="365" y="337" fill="#334155" font-size="17" text-anchor="middle">로컬 메모리</text>
+  <text x="365" y="362" fill="#334155" font-size="17" text-anchor="middle">메모리 계층</text>
+  <text x="365" y="387" fill="#334155" font-size="17" text-anchor="middle">핵심 축</text>
+
+  <g fill="#dbeafe" stroke="#0b63ce" stroke-width="1.5">
+    <rect x="246" y="170" width="34" height="24" rx="4"/>
+    <rect x="294" y="170" width="34" height="24" rx="4"/>
+    <rect x="342" y="170" width="34" height="24" rx="4"/>
+    <rect x="390" y="170" width="34" height="24" rx="4"/>
+    <rect x="438" y="170" width="34" height="24" rx="4"/>
+
+    <rect x="240" y="468" width="34" height="24" rx="4"/>
+    <rect x="288" y="468" width="34" height="24" rx="4"/>
+    <rect x="336" y="468" width="34" height="24" rx="4"/>
+    <rect x="384" y="468" width="34" height="24" rx="4"/>
+    <rect x="432" y="468" width="34" height="24" rx="4"/>
+
+    <rect x="186" y="224" width="34" height="24" rx="4"/>
+    <rect x="186" y="272" width="34" height="24" rx="4"/>
+    <rect x="186" y="320" width="34" height="24" rx="4"/>
+    <rect x="186" y="368" width="34" height="24" rx="4"/>
+
+    <rect x="510" y="224" width="34" height="24" rx="4"/>
+    <rect x="510" y="272" width="34" height="24" rx="4"/>
+    <rect x="510" y="320" width="34" height="24" rx="4"/>
+    <rect x="510" y="368" width="34" height="24" rx="4"/>
+  </g>
+
+  <g fill="#bfdbfe" stroke="#0b63ce" stroke-width="1.5">
+    <rect x="248" y="210" width="32" height="22" rx="4"/>
+    <rect x="292" y="210" width="32" height="22" rx="4"/>
+    <rect x="336" y="210" width="32" height="22" rx="4"/>
+    <rect x="380" y="210" width="32" height="22" rx="4"/>
+    <rect x="424" y="210" width="32" height="22" rx="4"/>
+
+    <rect x="248" y="438" width="32" height="22" rx="4"/>
+    <rect x="292" y="438" width="32" height="22" rx="4"/>
+    <rect x="336" y="438" width="32" height="22" rx="4"/>
+    <rect x="380" y="438" width="32" height="22" rx="4"/>
+    <rect x="424" y="438" width="32" height="22" rx="4"/>
+  </g>
+
+  <g fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.4">
+    <rect x="224" y="244" width="28" height="20" rx="4"/>
+    <rect x="224" y="286" width="28" height="20" rx="4"/>
+    <rect x="224" y="328" width="28" height="20" rx="4"/>
+    <rect x="224" y="370" width="28" height="20" rx="4"/>
+    <rect x="486" y="244" width="28" height="20" rx="4"/>
+    <rect x="486" y="286" width="28" height="20" rx="4"/>
+    <rect x="486" y="328" width="28" height="20" rx="4"/>
+    <rect x="486" y="370" width="28" height="20" rx="4"/>
+  </g>
+
+  <g>
+    <rect x="462" y="178" width="26" height="20" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="208" y="412" width="26" height="20" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="498" y="188" width="26" height="20" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="162" y="404" width="26" height="20" rx="4" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+    <line x1="162" y1="404" x2="188" y2="424" stroke="#dc2626" stroke-width="2"/>
+    <line x1="188" y1="404" x2="162" y2="424" stroke="#dc2626" stroke-width="2"/>
+    <line x1="208" y1="412" x2="234" y2="432" stroke="#dc2626" stroke-width="2"/>
+    <line x1="234" y1="412" x2="208" y2="432" stroke="#dc2626" stroke-width="2"/>
+  </g>
+
+  <rect x="708" y="148" width="430" height="216" rx="14" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+  <text x="736" y="188" fill="#111827" font-size="24" font-weight="800">수율 관리 방식</text>
+
+  <g fill="#334155" font-size="18">
+    <text x="736" y="230">1. redundant compute cores</text>
+    <text x="736" y="266">2. redundant routing</text>
+    <text x="736" y="302">3. fail-in-place architecture</text>
+    <text x="736" y="338">4. 결함 블록 비활성화와 우회</text>
+  </g>
+
+  <rect x="708" y="392" width="214" height="112" rx="12" fill="#e8f1ff" stroke="#0b63ce" stroke-width="2.5"/>
+  <text x="815" y="435" fill="#0b63ce" font-size="22" font-weight="800" text-anchor="middle">GPU</text>
+  <text x="815" y="463" fill="#334155" font-size="16" text-anchor="middle">여러 칩 + 외부 HBM</text>
+
+  <rect x="934" y="392" width="204" height="112" rx="12" fill="#fff7ed" stroke="#d97706" stroke-width="2.5"/>
+  <text x="1036" y="435" fill="#b45309" font-size="22" font-weight="800" text-anchor="middle">Cerebras</text>
+  <text x="1036" y="463" fill="#334155" font-size="16" text-anchor="middle">단일 웨이퍼 + 온칩 SRAM</text>
+
+  <text x="44" y="616" fill="#52616f" font-size="16">그림: 본문 설명을 위해 자체 작성. 웨이퍼 내부의 일부 결함은 비활성화되어 실제 동작 가능한 칩으로 사용된다.</text>
+</svg>

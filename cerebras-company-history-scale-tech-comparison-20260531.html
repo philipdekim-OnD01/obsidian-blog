@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Cerebras 회사 이력, 규모 전망, 기술력 비교 리포트</title>
+  <link rel="stylesheet" href="assets/report.css">
+  <style>
+    .hero-note{margin:0 0 28px;padding:22px 24px;background:#fff;border:1px solid #d9e2ec;border-radius:10px;box-shadow:0 10px 24px rgba(16,24,40,.05)}
+    .eyebrow{margin:0 0 8px;color:#0b63ce;font-size:.92rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .lead{color:#374151;font-size:1.05rem}
+    .meta,.source-note{color:#64748b;font-size:.95rem}
+    .insight-box{margin:28px 0;padding:20px 22px;background:#eef4ff;border:1px solid #bfdbfe;border-radius:10px}
+    .insight-box strong{color:#1d4ed8}
+    .chart-panel{margin:28px 0 34px;padding:18px;background:#fff;border:1px solid #d9e2ec;border-radius:10px}
+    .chart-panel img{display:block;width:100%;height:auto}
+    .source-note a{color:#0b63ce}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero-note">
+      <p class="eyebrow">AI Chip Report · 2026-05-31</p>
+      <h1>Cerebras 회사 이력, 규모 전망, 기술력 비교 리포트</h1>
+      <p class="lead">wafer-scale computing을 상용화한 Cerebras를 기준으로 회사 이력, 성장 규모, WSE-3 구조, 수율 관리와 경쟁사 대비 포지션을 정리한다.</p>
+      <p class="meta">정리 대상: Cerebras, NVIDIA, Groq, SambaNova</p>
+    </section>
+
+    <div class="chart-panel">
+      <img src="assets/cerebras-wse3-structure-yield-20260531.svg" alt="Cerebras WSE-3 structure and yield management diagram">
+      <p class="source-note">그림: 본문 설명을 위해 자체 작성. 12인치 웨이퍼 전체에 로직과 온칩 SRAM을 배치하고, 결함 블록은 우회한다.</p>
+    </div>
+
+    <h2>핵심 결론</h2>
+    <p>Cerebras는 GPU 대체를 직접 주장하는 회사가 아니라, AI 추론과 대형 모델 학습에서 분산 컴퓨팅 복잡성 자체를 줄이려는 wafer-scale 컴퓨팅 회사다. Andrew Feldman은 공동창업자이자 CEO이며, 과거 SeaMicro CEO 경력이 공개 자료로 확인된다.</p>
+    <div class="insight-box">
+      <strong>핵심 인사이트:</strong> Cerebras는 기술적으로 매우 독특하지만, 사업적으로는 고객 집중도와 자본집약, 제조와 데이터센터 확장 의존도가 큰 성장주다.
+    </div>
+
+    <h2>회사 이력</h2>
+    <table>
+      <thead><tr><th>시점</th><th>내용</th><th>의미</th></tr></thead>
+      <tbody>
+        <tr><td>2015</td><td>Andrew Feldman, Gary Lauterbach, Michael James, Sean Lie, Jean-Philippe Fricker가 창업</td><td>wafer-scale computing 상용화 출발점</td></tr>
+        <tr><td>2019</td><td>WSE-1, CS-1 출시</td><td>데이터센터 시장 진입</td></tr>
+        <tr><td>2021</td><td>WSE-2, CS-2 출시</td><td>초대형 단일 칩 전략 현실화</td></tr>
+        <tr><td>2023</td><td>G42와 Condor Galaxy 네트워크 발표</td><td>대형 슈퍼컴퓨팅 네트워크 구축</td></tr>
+        <tr><td>2024</td><td>WSE-3, CS-3 출시</td><td>현 세대 성능 도약</td></tr>
+        <tr><td>2025~2026</td><td>OpenAI, MBZUAI, AWS, G42 관련 확장</td><td>inference 중심 성장 가속</td></tr>
+      </tbody>
+    </table>
+
+    <h2>규모 전망</h2>
+    <p>SEC S-1 기준 Cerebras의 2025년 말 직원 수는 708명, 2025년 매출은 약 $509.991m로 2024년 대비 76% 증가했다. 다만 고객 집중도와 자본투입을 함께 봐야 하며, 회계상 이익과 실제 영업 현금흐름은 분리해 읽어야 한다.</p>
+
+    <h2>기술력의 핵심</h2>
+    <p>WSE-3는 12인치 웨이퍼 전체를 거의 하나의 컴퓨터처럼 쓰는 설계다. 공식 페이지 기준 46,225 mm², 4조 트랜지스터, 90만 코어, 125 petaflops를 내세우며, 로직과 온칩 SRAM이 함께 들어간다. 일반적인 GPU처럼 외부 HBM을 붙이는 구조와는 다르다.</p>
+    <p>수율 관리는 redundant compute cores, redundant routing, fail-in-place architecture로 처리한다. 즉, 완벽한 웨이퍼를 전제로 하지 않고 결함 블록을 비활성화하고 우회하는 방식이다.</p>
+
+    <h2>비교표</h2>
+    <table>
+      <thead><tr><th>회사</th><th>핵심 아키텍처</th><th>주력 워크로드</th><th>강점</th><th>약점/리스크</th></tr></thead>
+      <tbody>
+        <tr><td>Cerebras</td><td>Wafer-scale engine</td><td>대형 학습, 고속 추론</td><td>분산 복잡성 축소</td><td>고객 집중도, 자본집약</td></tr>
+        <tr><td>NVIDIA</td><td>범용 GPU + 소프트웨어 생태계</td><td>학습, 추론, 로보틱스, 엣지</td><td>생태계와 범용성</td><td>가격과 공급 제약</td></tr>
+        <tr><td>Groq</td><td>LPU</td><td>초저지연 추론</td><td>예측 가능한 실행, 빠른 응답</td><td>학습보다는 추론 중심</td></tr>
+        <tr><td>SambaNova</td><td>Dataflow RDU</td><td>대형 추론, on-prem AI factory</td><td>기업용 배포 용이성</td><td>GPU 대비 생태계 제한</td></tr>
+      </tbody>
+    </table>
+
+    <h2>해석</h2>
+    <p>Cerebras는 NVIDIA를 정면 대체하기보다, inference 병목이 심한 특정 구간의 대안으로 보는 것이 맞다. Groq는 초저지연 추론, SambaNova는 enterprise on-prem deployment에 더 가까운 포지션이다.</p>
+
+    <h2>출처</h2>
+    <ul>
+      <li><a href="https://www.cerebras.ai/company" target="_blank" rel="noreferrer">Cerebras Company</a></li>
+      <li><a href="https://www.cerebras.ai/chip" target="_blank" rel="noreferrer">Cerebras WSE-3 Product Page</a></li>
+      <li><a href="https://www.cerebras.ai/press-release/cerebras-announces-third-generation-wafer-scale-engine" target="_blank" rel="noreferrer">Cerebras WSE-3 Press Release</a></li>
+      <li><a href="https://www.sec.gov/Archives/edgar/data/2021728/000162828026025762/cerebras-sx1april2026.htm" target="_blank" rel="noreferrer">Cerebras SEC S-1</a></li>
+      <li><a href="https://www.sec.gov/Archives/edgar/data/2021728/000162828026029503/cerebras-sx1amay2026.htm" target="_blank" rel="noreferrer">Cerebras SEC S-1/A</a></li>
+    </ul>
+  </main>
+  <script src="assets/protect.js" defer></script>
+</body>
+</html>
