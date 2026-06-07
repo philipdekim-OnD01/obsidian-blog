@@ -31,6 +31,11 @@
 </thead>
 <tbody>
 <tr>
+<td>지난주 실습</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab/blob/main/notebooks/RPS_Classification_DenseNet121_%EC%A7%80%EB%82%9C%EC%A3%BC%EC%8B%A4%EC%8A%B5.ipynb">DenseNet121 기본 RPS 분류</a></td>
+<td>QAT 적용 전 기본 전이학습 모델을 실행해 오늘 실습 결과와 비교</td>
+</tr>
+<tr>
 <td>기본 권장</td>
 <td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab/blob/main/notebooks/RPS_QAT_DenseNet121_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%9A%A9.ipynb">DenseNet121 초보자용 QAT</a></td>
 <td>가위바위보 분류 모델을 DenseNet121 기반으로 학습하고 QAT 후 TFLite로 변환</td>
@@ -115,7 +120,12 @@ python -m pip install jupyter ipykernel tensorflow tensorflow-model-optimization
 
 <h2>6. 노트북 열기</h2>
 
-<p>기본 실습은 DenseNet121 버전을 사용한다.</p>
+<p>지난주 기본 실습은 QAT 적용 전 DenseNet121 버전을 사용한다.</p>
+
+<pre><code>notebooks/
+  RPS_Classification_DenseNet121_지난주실습.ipynb</code></pre>
+
+<p>오늘 기본 실습은 DenseNet121 QAT 버전을 사용한다.</p>
 
 <pre><code>notebooks/
   RPS_QAT_DenseNet121_초보자용.ipynb</code></pre>
@@ -166,7 +176,12 @@ test_labels: (545,)</code></pre>
 
 <h2>10. 학습 결과물</h2>
 
-<p>DenseNet121 버전은 다음 파일을 만든다.</p>
+<p>지난주 기본 DenseNet121 버전은 다음 파일을 만든다.</p>
+
+<pre><code>RPS_PreTrained_DenseNet.keras
+RPS_PreTrained_DenseNet.tflite</code></pre>
+
+<p>오늘 DenseNet121 QAT 버전은 다음 파일을 만든다.</p>
 
 <pre><code>RPS_PreTrained_DenseNet_Augmentation_QAT.h5
 RPS_PreTrained_DenseNet_Augmentation_QAT.tflite</code></pre>
