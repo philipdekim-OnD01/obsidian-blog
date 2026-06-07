@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>GCP GPU Server + VSCode RPS QAT 실습 안내</title>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">GCP GPU Server + VSCode RPS QAT 실습 안내</h1>
+</header>
+
+<h1>GCP GPU Server + VSCode RPS QAT 실습 안내</h1>
+
+<p>이번 실습은 학생 각자가 GitHub 저장소를 fork하고, GCP GPU 서버에 VSCode로 접속한 뒤, 가위바위보 이미지 분류 모델을 학습하고 TFLite 모델로 변환하는 흐름이다.</p>
+
+<blockquote>
+<p>핵심 목표는 “GitHub 코드 → GPU 서버 학습 → QAT 적용 → TFLite 변환 → 라즈베리파이 배포 준비” 과정을 직접 경험하는 것이다.</p>
+</blockquote>
+
+<h2>오늘 실습에서 사용할 코드</h2>
+
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>노트북</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기본 권장</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/04_Lightweighting/EX_12_RPS_Classification_Augmentation_QAT_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%A3%BC%EC%84%9D.ipynb">DenseNet121 초보자용 QAT</a></td>
+<td>가위바위보 분류 모델을 DenseNet121 기반으로 학습하고 QAT 후 TFLite로 변환</td>
+</tr>
+<tr>
+<td>비교 실습</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2.CNN02/blob/main/examples%28COLAB%29/04_Lightweighting/EX_12_RPS_Classification_Augmentation_QAT_ResNet50_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%A3%BC%EC%84%9D.ipynb">ResNet50 초보자용 QAT</a></td>
+<td>같은 데이터셋을 ResNet50으로 학습해 모델 크기와 속도 차이를 비교</td>
+</tr>
+</tbody>
+</table>
+
+<h2>전체 실습 흐름</h2>
+
+<pre><code>1. GitHub에서 원본 저장소 fork
+2. GCP GPU 서버 생성 또는 접속
+3. VSCode Remote SSH로 GPU 서버 연결
+4. 자신의 fork 저장소 clone
+5. 노트북 실행
+6. RPS_Dataset 자동 인식 또는 clone
+7. QAT 학습
+8. TFLite 모델 생성
+9. 결과를 자신의 GitHub에 push</code></pre>
+
+<h2>1. GitHub 저장소 fork</h2>
+
+<p>먼저 수업 저장소를 자신의 GitHub 계정으로 fork한다.</p>
+
+<p><a href="https://github.com/philipdekim-OnD01/RP2.CNN02">RP2.CNN02 원본 저장소</a></p>
+
+<ol>
+<li>위 링크로 이동한다.</li>
+<li>오른쪽 위 <code>Fork</code> 버튼을 누른다.</li>
+<li>자신의 GitHub 계정에 <code>RP2.CNN02</code> 저장소가 생겼는지 확인한다.</li>
+</ol>
+
+<p>fork 후 자신의 저장소 주소는 보통 다음 형태다.</p>
+
+<pre><code>https://github.com/학생아이디/RP2.CNN02.git</code></pre>
+
+<h2>2. GCP GPU 서버에 접속</h2>
+
+<p>GCP GPU 서버에 SSH로 접속한다. 서버 접속 방식은 수업에서 제공한 계정 또는 GCP VM 설정에 따른다.</p>
+
+<p>접속 후 GPU가 보이는지 확인한다.</p>
+
+<pre><code>nvidia-smi</code></pre>
+
+<p>정상이라면 GPU 이름, 드라이버 버전, CUDA 사용 상태가 출력된다.</p>
+
+<h2>3. VSCode에서 GPU 서버 연결</h2>
+
+<ol>
+<li>VSCode를 연다.</li>
+<li>Remote SSH 확장을 사용해 GCP GPU 서버에 접속한다.</li>
+<li>서버 터미널을 열어 작업 폴더를 만든다.</li>
+</ol>
+
+<pre><code>mkdir -p ~/workspace
+cd ~/workspace</code></pre>
+
+<h2>4. 자신의 fork 저장소 clone</h2>
+
+<p>학생 본인의 GitHub fork 주소를 사용한다.</p>
+
+<pre><code>git clone https://github.com/학생아이디/RP2.CNN02.git
+cd RP2.CNN02
+code .</code></pre>
+
+<p>만약 서버 안의 VSCode에서 이미 접속 중이면 <code>code .</code> 대신 VSCode의 <code>File → Open Folder</code>로 <code>RP2.CNN02</code> 폴더를 열어도 된다.</p>
+
+<h2>5. Python 환경 준비</h2>
+
+<p>가상환경 사용을 권장한다.</p>
+
+<pre><code>python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install jupyter ipykernel tensorflow tensorflow-model-optimization opencv-python-headless scikit-learn matplotlib</code></pre>
+
+<p>VSCode에서 노트북을 열 때 커널을 <code>.venv</code>로 선택한다.</p>
+
+<h2>6. 노트북 열기</h2>
+
+<p>기본 실습은 DenseNet121 버전을 사용한다.</p>
+
+<pre><code>examples(COLAB)/04_Lightweighting/
+  EX_12_RPS_Classification_Augmentation_QAT_초보자주석.ipynb</code></pre>
+
+<p>ResNet50 비교 실습은 다음 파일을 사용한다.</p>
+
+<pre><code>examples(COLAB)/04_Lightweighting/
+  EX_12_RPS_Classification_Augmentation_QAT_ResNet50_초보자주석.ipynb</code></pre>
+
+<h2>7. 데이터는 어떻게 읽어 오나?</h2>
+
+<p>노트북에는 GCP GPU 서버와 VSCode 환경을 위한 데이터 탐색 코드가 들어 있다.</p>
+
+<p>실행 순서는 다음과 같다.</p>
+
+<ol>
+<li>현재 노트북이 Git 저장소 안에서 실행 중인지 확인한다.</li>
+<li><code>git rev-parse --show-toplevel</code>로 저장소 루트를 찾는다.</li>
+<li>저장소 루트의 <code>RPS_Dataset</code> 폴더를 사용한다.</li>
+<li>데이터셋을 못 찾으면 GitHub 저장소를 자동으로 clone해서 데이터를 준비한다.</li>
+</ol>
+
+<p>따라서 학생이 자신의 fork를 정상적으로 clone했다면 보통 별도 데이터 다운로드가 필요 없다.</p>
+
+<h2>8. 자신의 fork를 자동 clone 대상으로 쓰고 싶을 때</h2>
+
+<p>노트북 안의 다음 변수를 자신의 GitHub 주소로 바꾸면 된다.</p>
+
+<pre><code>GITHUB_REPO_URL = "https://github.com/학생아이디/RP2.CNN02.git"</code></pre>
+
+<p>다만 fork 저장소를 이미 clone해서 그 안에서 노트북을 실행하는 경우에는 이 값을 바꾸지 않아도 <code>git root</code> 기준으로 데이터셋을 찾는다.</p>
+
+<h2>9. 실습 중 확인할 출력</h2>
+
+<p>데이터셋 셀에서 다음과 비슷한 출력이 나와야 한다.</p>
+
+<pre><code>Working directory: ...
+Git root: .../RP2.CNN02
+RPS dataset path: .../RP2.CNN02/RPS_Dataset
+Class folders: ['0', '1', '2']</code></pre>
+
+<p>데이터 shape은 다음과 비슷하게 나온다.</p>
+
+<pre><code>train_data: (2172, 64, 64, 3)
+train_labels: (2172,)
+test_data: (545, 64, 64, 3)
+test_labels: (545,)</code></pre>
+
+<h2>10. 학습 결과물</h2>
+
+<p>DenseNet121 버전은 다음 파일을 만든다.</p>
+
+<pre><code>RPS_PreTrained_DenseNet_Augmentation_QAT.h5
+RPS_PreTrained_DenseNet_Augmentation_QAT.tflite</code></pre>
+
+<p>ResNet50 버전은 다음 파일을 만든다.</p>
+
+<pre><code>RPS_PreTrained_ResNet50_Augmentation_QAT.h5
+RPS_PreTrained_ResNet50_Augmentation_QAT.tflite</code></pre>
+
+<p><code>.tflite</code> 파일이 라즈베리파이에서 사용할 최종 모델이다.</p>
+
+<h2>11. 결과를 자신의 GitHub에 push</h2>
+
+<p>실습 후 자신이 수정한 노트북이나 README를 저장소에 올린다.</p>
+
+<pre><code>git status
+git add .
+git commit -m "Run RPS QAT training on GCP GPU"
+git push origin main</code></pre>
+
+<p>대용량 모델 파일은 무조건 올리지 않는다. <code>.h5</code>, <code>.keras</code>, 큰 데이터 zip은 GitHub 용량 제한과 저장소 관리 문제를 만들 수 있다. 수업에서 지정한 파일만 올린다.</p>
+
+<h2>12. 자주 생기는 문제</h2>
+
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>원인</th>
+<th>해결</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nvidia-smi</code>가 안 됨</td>
+<td>GPU 서버가 아니거나 드라이버 문제</td>
+<td>GPU VM 여부와 드라이버 설치 상태 확인</td>
+</tr>
+<tr>
+<td><code>RPS_Dataset</code>을 못 찾음</td>
+<td>저장소 루트가 아닌 곳에서 실행</td>
+<td>VSCode에서 <code>RP2.CNN02</code> 폴더를 열고 다시 실행</td>
+</tr>
+<tr>
+<td>패키지 설치 오류</td>
+<td>커널과 터미널 Python이 다름</td>
+<td>VSCode 노트북 커널을 <code>.venv</code>로 선택</td>
+</tr>
+<tr>
+<td>학습이 너무 느림</td>
+<td>GPU 미사용 또는 ResNet50이 무거움</td>
+<td>TensorFlow GPU 인식 확인, DenseNet121 버전 먼저 실행</td>
+</tr>
+<tr>
+<td>Git push 실패</td>
+<td>fork가 아니거나 권한 없음</td>
+<td>자신의 GitHub 계정 저장소 URL인지 확인</td>
+</tr>
+</tbody>
+</table>
+
+<h2>13. 오늘 제출 또는 확인할 것</h2>
+
+<ul>
+<li>자신의 fork 저장소 URL</li>
+<li>GCP GPU 서버에서 <code>nvidia-smi</code>가 실행된 화면</li>
+<li>노트북에서 <code>RPS_Dataset</code> 경로가 정상 출력된 화면</li>
+<li>학습 accuracy와 validation accuracy 결과</li>
+<li>생성된 <code>.tflite</code> 파일명</li>
+<li>수정한 노트북 또는 README를 push한 commit URL</li>
+</ul>
+
+<h2>핵심 정리</h2>
+
+<blockquote>
+<p>학생은 자신의 GitHub fork를 GCP GPU 서버에 clone하고, VSCode에서 노트북을 실행한다. 노트북은 저장소 안의 RPS_Dataset을 자동으로 찾고, QAT 학습 후 라즈베리파이에서 사용할 TFLite 모델을 만든다.</p>
+</blockquote>
+
+</body>
+</html>
