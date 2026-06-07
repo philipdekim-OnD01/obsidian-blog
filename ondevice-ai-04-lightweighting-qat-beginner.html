@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OnDevice AI 경량화 강의: RPS QAT 초보자용 코드</title>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">OnDevice AI 경량화 강의: RPS QAT 초보자용 코드</h1>
+</header>
+
+<h1>OnDevice AI 경량화 강의: RPS QAT 초보자용 코드</h1>
+
+<p>이 강의자료는 <code>RPS_QAT_DenseNet121_초보자용.ipynb</code>를 기준으로, 라즈베리파이 같은 온디바이스 환경에서 왜 모델 경량화가 필요한지와 QAT가 어떤 역할을 하는지를 설명한다.</p>
+
+<blockquote>
+<p>핵심 목표는 “정확도 높은 CNN 모델을 작은 장치에서 실행 가능한 TFLite 모델로 바꾸는 과정”을 이해하는 것이다.</p>
+</blockquote>
+
+<h2>실습 코드</h2>
+
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>링크</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>학생용 저장소</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab">RP2-RPS-QAT-Lab</a></td>
+<td>노트북과 RPS 이미지 데이터셋만 포함한 실습 저장소</td>
+</tr>
+<tr>
+<td>오늘 코드</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab/blob/main/notebooks/RPS_QAT_DenseNet121_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%9A%A9.ipynb">RPS_QAT_DenseNet121_초보자용.ipynb</a></td>
+<td>DenseNet121 기반 RPS 분류 + 데이터 보강 + QAT + TFLite 변환</td>
+</tr>
+</tbody>
+</table>
+
+<h2>1. 경량화가 필요한 이유</h2>
+
+<p>PC나 GPU 서버에서는 큰 CNN 모델도 실행할 수 있다. 하지만 라즈베리파이, 마이크로컨트롤러, 카메라 모듈 같은 온디바이스 환경에서는 조건이 다르다.</p>
+
+<ul>
+<li>메모리가 작다.</li>
+<li>CPU 성능이 제한적이다.</li>
+<li>배터리 또는 발열 제약이 있다.</li>
+<li>네트워크 없이 로컬에서 추론해야 할 수 있다.</li>
+<li>실시간 반응 속도가 중요하다.</li>
+</ul>
+
+<p>그래서 온디바이스 AI에서는 “정확한 모델”만으로는 부족하다. 모델 크기, 추론 속도, 메모리 사용량까지 같이 봐야 한다.</p>
+
+<h2>2. 오늘 코드의 전체 흐름</h2>
+
+<pre><code>1. RPS_Dataset 자동 로딩
+2. 이미지를 64 x 64 x 3 배열로 변환
+3. ImageDataGenerator로 데이터 보강
+4. ImageNet 사전학습 DenseNet121 불러오기
+5. 가위/바위/보 3개 클래스로 분류기 변경
+6. QAT 적용
+7. 가장 좋은 모델 저장
+8. TFLite 모델로 변환
+9. 라즈베리파이 배포용 .tflite 파일 생성</code></pre>
+
+<h2>3. 데이터 로딩</h2>
+
+<p>학생용 노트북은 Google Drive나 zip 파일을 사용하지 않는다. 저장소 안의 <code>RPS_Dataset</code> 폴더를 자동으로 찾는다.</p>
+
+<pre><code>RP2-RPS-QAT-Lab/
+  RPS_Dataset/
+    0/ scissors
+    1/ rock
+    2/ paper
+  notebooks/
+    RPS_QAT_DenseNet121_초보자용.ipynb</code></pre>
+
+<p>GCP GPU 서버와 VSCode에서는 <code>git rev-parse --show-toplevel</code>로 저장소 루트를 찾고, 그 아래의 <code>RPS_Dataset</code>을 사용한다. 따라서 학생이 저장소를 fork하고 clone하면 별도 데이터 다운로드 없이 실행할 수 있다.</p>
+
+<h2>4. 데이터 보강</h2>
+
+<p>손 모양 이미지는 촬영 위치, 회전, 밝기, 크기에 따라 달라진다. 데이터 보강은 학습 중 이미지를 조금씩 변형해서 모델이 더 일반적인 특징을 배우게 하는 방법이다.</p>
+
+<table>
+<thead>
+<tr>
+<th>보강 방식</th>
+<th>의미</th>
+<th>효과</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rotation</td>
+<td>이미지를 약간 회전</td>
+<td>손 각도 변화에 강해짐</td>
+</tr>
+<tr>
+<td>Shift</td>
+<td>이미지를 좌우/상하 이동</td>
+<td>손 위치 변화에 강해짐</td>
+</tr>
+<tr>
+<td>Zoom</td>
+<td>이미지를 확대/축소</td>
+<td>카메라 거리 변화에 강해짐</td>
+</tr>
+<tr>
+<td>Flip</td>
+<td>좌우 반전</td>
+<td>손 방향 변화에 강해짐</td>
+</tr>
+</tbody>
+</table>
+
+<h2>5. DenseNet121을 사용하는 이유</h2>
+
+<p>DenseNet121은 ImageNet으로 미리 학습된 CNN 모델이다. 처음부터 가위바위보 이미지만으로 CNN을 학습하는 것보다, 이미 일반 이미지 특징을 배운 모델을 가져와 마지막 분류기만 바꾸는 방식이 효율적이다.</p>
+
+<pre><code>base_model = keras.applications.DenseNet121(
+    weights="imagenet",
+    include_top=False,
+    input_tensor=x
+)</code></pre>
+
+<p><code>include_top=False</code>는 ImageNet의 1000개 클래스 분류기를 제거한다는 뜻이다. 그 위에 가위, 바위, 보 3개 클래스를 위한 새 분류기를 붙인다.</p>
+
+<h2>6. QAT란 무엇인가?</h2>
+
+<p>QAT는 Quantization Aware Training의 약자다. 한국어로는 양자화 인식 학습이라고 부른다.</p>
+
+<p>일반적으로 딥러닝 모델은 <code>float32</code> 숫자로 계산한다. 하지만 온디바이스에서는 <code>int8</code> 같은 작은 숫자 형식으로 바꾸면 모델 크기와 연산량을 줄일 수 있다. 이 변환을 양자화라고 한다.</p>
+
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>float32 모델</th>
+<th>int8 양자화 모델</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>숫자 크기</td>
+<td>32비트</td>
+<td>8비트</td>
+</tr>
+<tr>
+<td>모델 크기</td>
+<td>큼</td>
+<td>작음</td>
+</tr>
+<tr>
+<td>추론 속도</td>
+<td>상대적으로 느림</td>
+<td>빠를 수 있음</td>
+</tr>
+<tr>
+<td>정확도 위험</td>
+<td>기준</td>
+<td>변환 과정에서 손실 가능</td>
+</tr>
+</tbody>
+</table>
+
+<p>QAT는 학습 중에 양자화 오차를 미리 흉내 낸다. 그래서 나중에 TFLite로 변환했을 때 정확도 손실을 줄이는 데 도움이 된다.</p>
+
+<h2>7. 코드에서 QAT가 적용되는 부분</h2>
+
+<pre><code>def apply_quantization_to_layer(layer):
+    if isinstance(layer, (keras.layers.Dense, keras.layers.Conv2D)):
+        return tfmot.quantization.keras.quantize_annotate_layer(layer)
+    return layer
+
+annotated_model = keras.models.clone_model(
+    model,
+    clone_function=apply_quantization_to_layer,
+)
+
+qat_model = tfmot.quantization.keras.quantize_apply(annotated_model)</code></pre>
+
+<p>이 코드는 모든 레이어를 무조건 양자화하지 않는다. 주로 계산량이 큰 <code>Dense</code>와 <code>Conv2D</code> 레이어를 양자화 대상으로 표시한다. 초보자에게는 “중요한 계산 레이어에 양자화 훈련 장치를 붙인다”고 이해하면 된다.</p>
+
+<h2>8. TFLite 변환</h2>
+
+<p>학습된 QAT 모델은 마지막에 TFLite 형식으로 변환한다.</p>
+
+<pre><code>converter = tf.lite.TFLiteConverter.from_keras_model(model_best)
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+tflite_model = converter.convert()</code></pre>
+
+<p><code>.tflite</code> 파일은 라즈베리파이에서 실행할 최종 모델이다. Keras 모델은 학습과 실험에 좋고, TFLite 모델은 배포와 추론에 적합하다.</p>
+
+<h2>9. 학생들이 비교할 것</h2>
+
+<table>
+<thead>
+<tr>
+<th>비교 항목</th>
+<th>확인 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정확도</td>
+<td>validation accuracy와 test accuracy 비교</td>
+</tr>
+<tr>
+<td>모델 크기</td>
+<td><code>.h5</code>와 <code>.tflite</code> 파일 크기 비교</td>
+</tr>
+<tr>
+<td>추론 속도</td>
+<td>라즈베리파이 또는 서버에서 이미지 1장 예측 시간 측정</td>
+</tr>
+<tr>
+<td>배포 가능성</td>
+<td>TFLite 파일이 라즈베리파이에서 로드되는지 확인</td>
+</tr>
+</tbody>
+</table>
+
+<h2>핵심 정리</h2>
+
+<blockquote>
+<p>경량화는 단순히 모델을 작게 만드는 작업이 아니다. 제한된 장치에서 정확도, 속도, 메모리 사용량을 함께 맞추는 온디바이스 AI의 핵심 설계 과정이다.</p>
+</blockquote>
+
+</body>
+</html>

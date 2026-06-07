@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OnDevice AI ResNet 강의: RPS QAT 비교 실습</title>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">OnDevice AI ResNet 강의: RPS QAT 비교 실습</h1>
+</header>
+
+<h1>OnDevice AI ResNet 강의: RPS QAT 비교 실습</h1>
+
+<p>이 강의자료는 <code>RPS_QAT_ResNet50_초보자용.ipynb</code>를 기준으로, ResNet50 구조와 DenseNet121 버전 대비 비교 포인트를 설명한다.</p>
+
+<blockquote>
+<p>핵심 목표는 “같은 데이터셋과 같은 QAT 흐름에서 Backbone CNN을 바꾸면 어떤 차이가 생기는가”를 이해하는 것이다.</p>
+</blockquote>
+
+<h2>실습 코드</h2>
+
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>링크</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>학생용 저장소</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab">RP2-RPS-QAT-Lab</a></td>
+<td>노트북과 RPS 이미지 데이터셋만 포함한 실습 저장소</td>
+</tr>
+<tr>
+<td>ResNet 코드</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab/blob/main/notebooks/RPS_QAT_ResNet50_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%9A%A9.ipynb">RPS_QAT_ResNet50_초보자용.ipynb</a></td>
+<td>ResNet50 기반 RPS 분류 + 데이터 보강 + QAT + TFLite 변환</td>
+</tr>
+<tr>
+<td>비교 코드</td>
+<td><a href="https://github.com/philipdekim-OnD01/RP2-RPS-QAT-Lab/blob/main/notebooks/RPS_QAT_DenseNet121_%EC%B4%88%EB%B3%B4%EC%9E%90%EC%9A%A9.ipynb">RPS_QAT_DenseNet121_초보자용.ipynb</a></td>
+<td>같은 실습 흐름에서 Backbone만 DenseNet121로 바꾼 버전</td>
+</tr>
+</tbody>
+</table>
+
+<h2>1. ResNet이 등장한 이유</h2>
+
+<p>CNN은 층을 깊게 쌓을수록 더 복잡한 특징을 배울 수 있다. 하지만 층이 너무 깊어지면 학습이 어려워진다. 대표적인 문제가 gradient vanishing과 degradation 문제다.</p>
+
+<p>ResNet은 이 문제를 해결하기 위해 residual connection, 즉 skip connection을 사용한다. 입력을 몇 개의 layer 뒤 출력에 더해 주어, 모델이 전체 변환을 새로 배우는 대신 “입력에서 얼마나 수정할지”를 배우게 한다.</p>
+
+<pre><code>일반 CNN:
+x -> Conv -> Conv -> y
+
+ResNet block:
+x -> Conv -> Conv -> + -> y
+|__________________|</code></pre>
+
+<p>이 구조 덕분에 ResNet은 깊은 네트워크를 비교적 안정적으로 학습할 수 있다.</p>
+
+<h2>2. ResNet50의 의미</h2>
+
+<p>ResNet50은 residual block을 사용해 50개 층 수준의 깊이를 가진 CNN 모델이다. ImageNet으로 미리 학습된 가중치를 가져오면, 선, 모서리, 질감, 물체 일부 같은 일반 이미지 특징을 이미 알고 있는 상태에서 RPS 데이터에 맞게 미세조정할 수 있다.</p>
+
+<pre><code>base_model = keras.applications.ResNet50(
+    weights="imagenet",
+    include_top=False,
+    input_tensor=x
+)</code></pre>
+
+<p><code>include_top=False</code>는 ImageNet 1000개 클래스 분류기를 제거하고, 가위/바위/보 3개 클래스용 새 분류기를 붙이기 위한 설정이다.</p>
+
+<h2>3. ResNet 전처리</h2>
+
+<p>ResNet50은 ImageNet 학습 당시 사용한 전처리 방식이 있다. 그래서 입력 이미지를 모델에 넣기 전에 ResNet 전용 <code>preprocess_input</code>을 적용한다.</p>
+
+<pre><code>inputs = keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+x = keras.applications.resnet.preprocess_input(inputs)</code></pre>
+
+<p>이 때문에 데이터 로딩 직후 <code>train_data / 255.0</code>처럼 직접 정규화하지 않는다. 전처리는 모델 그래프 안에서 처리된다.</p>
+
+<h2>4. DenseNet121과 ResNet50 비교</h2>
+
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>DenseNet121</th>
+<th>ResNet50</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>핵심 아이디어</td>
+<td>이전 layer의 feature를 계속 이어 붙임</td>
+<td>입력을 뒤쪽 출력에 더하는 skip connection</td>
+</tr>
+<tr>
+<td>특징 재사용</td>
+<td>강함</td>
+<td>안정적인 깊은 학습에 강함</td>
+</tr>
+<tr>
+<td>실습 목적</td>
+<td>기본 권장 QAT 모델</td>
+<td>Backbone 변경 시 결과 비교</td>
+</tr>
+<tr>
+<td>전처리 함수</td>
+<td><code>densenet.preprocess_input</code></td>
+<td><code>resnet.preprocess_input</code></td>
+</tr>
+<tr>
+<td>결과 확인</td>
+<td>정확도, TFLite 크기, 추론 속도</td>
+<td>DenseNet 결과와 같은 기준으로 비교</td>
+</tr>
+</tbody>
+</table>
+
+<h2>5. ResNet50 코드의 전체 흐름</h2>
+
+<pre><code>1. RPS_Dataset 자동 로딩
+2. 이미지를 64 x 64 x 3 배열로 변환
+3. ImageDataGenerator로 데이터 보강
+4. ImageNet 사전학습 ResNet50 불러오기
+5. 가위/바위/보 3개 클래스 분류기 연결
+6. Conv2D와 Dense layer 중심으로 QAT 적용
+7. best model 저장
+8. TFLite 변환
+9. DenseNet121 결과와 비교</code></pre>
+
+<h2>6. QAT는 ResNet에서도 같은 역할을 한다</h2>
+
+<p>ResNet50 버전에서도 QAT의 목적은 같다. TFLite 양자화 모델로 변환했을 때 정확도 손실을 줄이기 위해, 학습 중 양자화 오차를 미리 경험하게 한다.</p>
+
+<pre><code>def apply_quantization_to_layer(layer):
+    if isinstance(layer, (keras.layers.Dense, keras.layers.Conv2D)):
+        return tfmot.quantization.keras.quantize_annotate_layer(layer)
+    return layer
+
+annotated_model = keras.models.clone_model(
+    model,
+    clone_function=apply_quantization_to_layer,
+)
+
+qat_model = tfmot.quantization.keras.quantize_apply(annotated_model)</code></pre>
+
+<p>초보자 관점에서는 이 코드를 “ResNet50 모델의 주요 계산 layer에 양자화 훈련 준비 표시를 붙이고, 실제 QAT 모델로 변환하는 단계”로 이해하면 된다.</p>
+
+<h2>7. BatchNormalization을 고정하는 이유</h2>
+
+<p>전이학습에서 BatchNormalization layer는 주의가 필요하다. 이미 ImageNet에서 학습된 통계를 갖고 있는데, 작은 RPS 데이터셋으로 다시 흔들리면 성능이 불안정해질 수 있다.</p>
+
+<pre><code>for layer in base_model.layers:
+    if isinstance(layer, keras.layers.BatchNormalization):
+        layer.trainable = False</code></pre>
+
+<p>그래서 BatchNormalization은 고정하고, 나머지 layer를 RPS 데이터에 맞게 조정하는 방식을 사용한다.</p>
+
+<h2>8. 결과 파일</h2>
+
+<p>ResNet50 QAT 실습은 다음 파일을 만든다.</p>
+
+<pre><code>results/
+  RPS_PreTrained_ResNet_Augmentation_QAT.h5
+  RPS_PreTrained_ResNet50_Augmentation_QAT.tflite</code></pre>
+
+<p><code>.h5</code>는 학습된 Keras QAT 모델이고, <code>.tflite</code>는 라즈베리파이에 가져갈 배포용 모델이다.</p>
+
+<h2>9. 학생들이 반드시 비교할 것</h2>
+
+<table>
+<thead>
+<tr>
+<th>비교 질문</th>
+<th>확인 포인트</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ResNet50이 더 정확한가?</td>
+<td>test accuracy와 validation accuracy 비교</td>
+</tr>
+<tr>
+<td>모델 크기는 어떤가?</td>
+<td>DenseNet TFLite와 ResNet TFLite 파일 크기 비교</td>
+</tr>
+<tr>
+<td>추론 속도는 어떤가?</td>
+<td>라즈베리파이에서 이미지 1장 처리 시간 비교</td>
+</tr>
+<tr>
+<td>경량화 관점에서 더 좋은 선택은?</td>
+<td>정확도만 보지 말고 크기, 속도, 메모리를 함께 판단</td>
+</tr>
+</tbody>
+</table>
+
+<h2>핵심 정리</h2>
+
+<blockquote>
+<p>ResNet50은 residual connection으로 깊은 CNN을 안정적으로 학습하게 만든 대표 모델이다. 온디바이스 AI에서는 ResNet50이 항상 더 좋은 선택은 아니며, DenseNet121과 정확도, 모델 크기, 추론 속도를 함께 비교해야 한다.</p>
+</blockquote>
+
+</body>
+</html>
