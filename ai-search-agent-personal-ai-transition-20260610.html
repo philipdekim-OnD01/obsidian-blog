@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex" />
+  <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex" />
+  <meta name="dcterms.date" content="2026-06-10" />
+  <title>AI Search에서 Agent, Personal AI로의 전환 리포트</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+  <style>
+    .title-note {
+      margin: 0 0 28px;
+      padding: 22px 24px;
+      background: #ffffff;
+      border: 1px solid #d9e2ec;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(16, 24, 40, .05);
+    }
+    .title-note .eyebrow {
+      margin: 0 0 8px;
+      color: #0b63ce;
+      font-size: .92rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .title-note h1 {
+      margin-bottom: 10px;
+    }
+    .title-note p {
+      margin: 0;
+      color: #52616f;
+    }
+  </style>
+</head>
+<body>
+<section class="title-note">
+<p class="eyebrow">AI Search · Agent · Personal AI · 2026-06-10</p>
+<h1>AI Search에서 Agent, Personal AI로의 전환 리포트</h1>
+<p>라이너 사례를 통해 검색, AI Search, Agent, 개인 데이터 기반 AI의 전환을 정리한다.</p>
+</section>
+<header id="title-block-header">
+<h1 class="title">AI Search에서 Agent, Personal AI로의 전환 리포트</h1>
+<p class="date">2026-06-10</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#ai-search에서-agent-personal-ai로의-전환-리포트"
+id="toc-ai-search에서-agent-personal-ai로의-전환-리포트">AI Search에서
+Agent, Personal AI로의 전환 리포트</a>
+<ul>
+<li><a href="#라이너-사례로-보는-ai-산업의-다음-방향"
+id="toc-라이너-사례로-보는-ai-산업의-다음-방향">라이너 사례로 보는 AI
+산업의 다음 방향</a></li>
+<li><a href="#핵심-결론" id="toc-핵심-결론">1. 핵심 결론</a></li>
+<li><a href="#한-장-요약" id="toc-한-장-요약">2. 한 장 요약</a></li>
+<li><a href="#시장-데이터로-본-변화" id="toc-시장-데이터로-본-변화">3.
+시장 데이터로 본 변화</a></li>
+<li><a href="#ai-발전-단계" id="toc-ai-발전-단계">4. AI 발전
+단계</a></li>
+<li><a href="#라이너는-왜-좋은-사례인가"
+id="toc-라이너는-왜-좋은-사례인가">5. 라이너는 왜 좋은
+사례인가?</a></li>
+<li><a href="#하이라이트-데이터의-본질"
+id="toc-하이라이트-데이터의-본질">6. 하이라이트 데이터의 본질</a></li>
+<li><a href="#그러나-핵심은-라이너-평가가-아니다"
+id="toc-그러나-핵심은-라이너-평가가-아니다">7. 그러나 핵심은 라이너
+평가가 아니다</a></li>
+<li><a href="#search와-ai-search의-차이"
+id="toc-search와-ai-search의-차이">8. Search와 AI Search의 차이</a></li>
+<li><a href="#ai-search와-agent의-차이"
+id="toc-ai-search와-agent의-차이">9. AI Search와 Agent의 차이</a></li>
+<li><a href="#agent와-personal-ai의-차이"
+id="toc-agent와-personal-ai의-차이">10. Agent와 Personal AI의
+차이</a></li>
+<li><a href="#학생과-전문가의-ai-수요는-다르다"
+id="toc-학생과-전문가의-ai-수요는-다르다">11. 학생과 전문가의 AI 수요는
+다르다</a></li>
+<li><a href="#시장-구조-검색-시장이-아니라-지식노동-시장"
+id="toc-시장-구조-검색-시장이-아니라-지식노동-시장">12. 시장 구조: 검색
+시장이 아니라 지식노동 시장</a></li>
+<li><a href="#시장-데이터-해석" id="toc-시장-데이터-해석">13. 시장
+데이터 해석</a></li>
+<li><a href="#liner-perplexity-chatgpt-claude-gemini-codex의-위치"
+id="toc-liner-perplexity-chatgpt-claude-gemini-codex의-위치">14. Liner,
+Perplexity, ChatGPT, Claude, Gemini, Codex의 위치</a></li>
+<li><a href="#라이너-사례의-의미" id="toc-라이너-사례의-의미">15. 라이너
+사례의 의미</a></li>
+<li><a href="#전문가-관점에서의-핵심-변화"
+id="toc-전문가-관점에서의-핵심-변화">16. 전문가 관점에서의 핵심
+변화</a></li>
+<li><a href="#년-현재의-전략적-판단" id="toc-년-현재의-전략적-판단">17.
+2026년 현재의 전략적 판단</a></li>
+<li><a href="#최종-결론" id="toc-최종-결론">18. 최종 결론</a></li>
+<li><a href="#ai가-쓰고-ai가-읽는-시대-사람의-역할은-무엇인가"
+id="toc-ai가-쓰고-ai가-읽는-시대-사람의-역할은-무엇인가">19. AI가 쓰고
+AI가 읽는 시대: 사람의 역할은 무엇인가?</a></li>
+<li><a href="#강의-후-토론-질문" id="toc-강의-후-토론-질문">20. 강의 후
+토론 질문</a></li>
+<li><a href="#출처와-참고자료" id="toc-출처와-참고자료">21. 출처와
+참고자료</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="ai-search에서-agent-personal-ai로의-전환-리포트">AI Search에서
+Agent, Personal AI로의 전환 리포트</h1>
+<h2 id="라이너-사례로-보는-ai-산업의-다음-방향">라이너 사례로 보는 AI
+산업의 다음 방향</h2>
+<h2 id="핵심-결론">1. 핵심 결론</h2>
+<p>라이너(Liner)를 볼 때 핵심은 “라이너라는 회사가 좋은 투자처인가”가
+아니다. 더 중요한 질문은 <strong>왜 하이라이트 기반 검색 서비스가 AI
+Search로 바뀌었고, 왜 AI Search가 다시 Agent와 Personal AI로 이동하고
+있는가</strong>이다.</p>
+<p>AI 산업은 다음 순서로 이동하고 있다.</p>
+<pre class="text"><code>Search
+-&gt; AI Search
+-&gt; Agent
+-&gt; Personal AI</code></pre>
+<p>과거의 검색은 사용자가 직접 정보를 찾는 구조였다. AI Search는 검색
+결과를 요약하고 출처를 붙여준다. Agent는 검색과 요약을 넘어 실제 업무를
+수행한다. Personal AI는 공개 웹뿐 아니라 개인의 논문, 강의자료, 코드,
+Obsidian, 투자 메모, 업무 기록까지 연결해 장기적인 지식 파트너가
+된다.</p>
+<blockquote>
+<p>라이너는 이 전환을 설명하기 좋은 사례다. 라이너는 “사람이 중요하다고
+표시한 정보”를 바탕으로 AI Search를 만들려 한다. 그러나 산업 전체의
+방향은 AI Search 자체에서 멈추지 않고, 사용자의 업무와 개인 데이터까지
+연결되는 Agent로 이동하고 있다.</p>
+</blockquote>
+<h2 id="한-장-요약">2. 한 장 요약</h2>
+<pre class="mermaid"><code>flowchart LR
+  A[Search&lt;br/&gt;검색 결과 제공] --&gt; B[AI Search&lt;br/&gt;요약과 출처 제공]
+  B --&gt; C[Agent&lt;br/&gt;검색/분석/실행]
+  C --&gt; D[Personal AI&lt;br/&gt;개인 데이터 기반 업무 파트너]
+
+  L[Liner&lt;br/&gt;하이라이트 기반 AI Search] --&gt; B
+  B --&gt; E[Research Agent]
+  C --&gt; F[Codex / Claude Code / ChatGPT Agent]
+  D --&gt; G[Obsidian / GitHub / 논문 / 강의자료 / 업무문서]</code></pre>
+<p>이 흐름에서 라이너의 의미는 “검색 회사 하나의 사례”가 아니라, 정보
+탐색 방식이 어떻게 바뀌고 있는지를 보여주는 신호다.</p>
+<h2 id="시장-데이터로-본-변화">3. 시장 데이터로 본 변화</h2>
+<p>AI Search와 Agent로의 전환은 단순한 유행어가 아니다. 실제 사용량,
+검색 행태, 기업 지출 전망에서 이미 변화가 나타난다.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th style="text-align: right;">시장 신호</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatGPT 사용량</td>
+<td style="text-align: right;">2025년 중반 기준 하루 약 25억 프롬프트
+처리 보도</td>
+<td>사용자가 검색창 대신 대화형 AI에 질문하기 시작</td>
+</tr>
+<tr>
+<td>Perplexity 질의량</td>
+<td style="text-align: right;">2025년 5월 약 7.8억 월간 질의, 일 3천만
+질의 수준으로 보도</td>
+<td>AI Search가 독립 사용 습관을 만들고 있음</td>
+</tr>
+<tr>
+<td>Google AI Overviews</td>
+<td style="text-align: right;">2025년 200개 이상 국가/지역, 40개 이상
+언어로 확대 보도</td>
+<td>기존 검색 엔진도 AI 답변형 검색으로 전환</td>
+</tr>
+<tr>
+<td>AI 요약의 클릭 영향</td>
+<td style="text-align: right;">Pew Research 계열 보도 기준 AI 요약 표시
+시 링크 클릭률 8%, 미표시 시 15%</td>
+<td>검색 결과 페이지에서 웹사이트 방문이 줄고 답변 소비가 늘어남</td>
+</tr>
+<tr>
+<td>Agent 지출 전망</td>
+<td style="text-align: right;">Gartner 관련 보도: AI agent 지출이 2025년
+864억 달러, 2026년 2,065억 달러, 2027년 3,763억 달러 전망</td>
+<td>기업의 관심이 챗봇에서 업무 자동화 Agent로 이동</td>
+</tr>
+<tr>
+<td>Agentic AI 시장규모</td>
+<td style="text-align: right;">McKinsey 관련 보도: 2024년 약 50억~70억
+달러에서 2034년 1,990억 달러 이상 가능성 제시</td>
+<td>Agent가 별도 소프트웨어 시장으로 커지는 중</td>
+</tr>
+<tr>
+<td>Agentic AI 프로젝트 리스크</td>
+<td style="text-align: right;">Gartner 관련 보도: 2027년까지 40% 이상
+agentic AI 프로젝트 취소 가능성 제기</td>
+<td>가능성은 크지만 데이터·거버넌스·신뢰성 문제가 병목</td>
+</tr>
+<tr>
+<td>생성형 AI 경제효과</td>
+<td style="text-align: right;">McKinsey 분석 보도: 연간 2.6조~4.4조 달러
+가치 창출 잠재력</td>
+<td>AI는 검색 시장만이 아니라 지식노동 전체 시장을 겨냥</td>
+</tr>
+<tr>
+<td>Agentic commerce</td>
+<td style="text-align: right;">Morgan Stanley/McKinsey 관련 보도: 2030년
+AI 쇼핑 Agent가 전자상거래에 큰 비중을 만들 전망</td>
+<td>Agent가 정보 탐색을 넘어 구매 실행까지 이동</td>
+</tr>
+</tbody>
+</table>
+<p>이 데이터들이 말하는 방향은 일관된다. 사용자는 검색 결과 목록보다
+<strong>즉시 이해 가능한 답변</strong>을 원하고, 기업은 답변보다
+<strong>업무 실행</strong>을 원한다. 그 다음 단계는 사용자의 장기
+데이터와 맥락을 기억하는 Personal AI다.</p>
+<h2 id="ai-발전-단계">4. AI 발전 단계</h2>
+<h3 id="단계-인터넷-검색-시대">4.1 1단계: 인터넷 검색 시대</h3>
+<p>인터넷 검색 시대의 중심은 Google이었다.</p>
+<pre class="text"><code>사용자
+-&gt; 검색어 입력
+-&gt; 검색 결과 확인
+-&gt; 여러 웹페이지 방문
+-&gt; 직접 판단</code></pre>
+<p>이 시대의 핵심 경쟁력은 웹 전체를 크롤링하고, 관련성 높은 페이지를
+순서대로 보여주는 능력이었다. 사용자는 정보를 얻기 위해 검색어를 잘
+만들어야 했고, 결과를 읽고 판단하는 부담은 사용자에게 있었다.</p>
+<h3 id="단계-생성형-ai-시대">4.2 2단계: 생성형 AI 시대</h3>
+<p>ChatGPT, Claude, Gemini가 등장하면서 사용자는 검색 결과가 아니라
+답변을 받기 시작했다.</p>
+<pre class="text"><code>사용자
+-&gt; 질문
+-&gt; AI 답변
+-&gt; 사용자가 검토</code></pre>
+<p>이 단계에서 AI의 가치는 “정보를 설명하는 능력”이었다. 사용자는 여러
+문서를 읽지 않아도 요약, 비교, 번역, 초안 작성을 받을 수 있게
+되었다.</p>
+<h3 id="단계-ai-search-시대">4.3 3단계: AI Search 시대</h3>
+<p>AI Search는 생성형 AI와 검색의 결합이다.</p>
+<pre class="text"><code>사용자
+-&gt; 질문
+-&gt; AI가 웹/논문 검색
+-&gt; 요약
+-&gt; 출처 제공</code></pre>
+<p>Perplexity, Liner, Google AI Overviews, ChatGPT Search가 여기에
+해당한다. 이 단계의 핵심은 “답변만 주는 것이 아니라 출처를 함께
+제공한다”는 점이다.</p>
+<p>AI Search의 의미는 크다. 사용자는 더 이상 검색 결과 10개를 하나씩
+열어보지 않아도 된다. AI가 먼저 읽고, 비교하고, 요약한다. 그러나 아직
+최종 책임은 사용자에게 있다. AI Search는 정보를 정리해주지만, 업무를
+끝내지는 않는다.</p>
+<h3 id="단계-agent-시대">4.4 4단계: Agent 시대</h3>
+<p>Agent는 검색과 답변을 넘어 실행한다.</p>
+<pre class="text"><code>사용자
+-&gt; 업무 요청
+-&gt; Agent가 검색
+-&gt; 자료 분석
+-&gt; 파일 작성
+-&gt; 코드 실행
+-&gt; 결과 검증
+-&gt; 산출물 저장</code></pre>
+<p>예를 들어 “AI Search 시장 리포트 작성해줘”라고 하면 Agent는 검색,
+자료 선별, 표 작성, 문서 편집까지 수행한다. 사용자는 검색 결과보다 최종
+보고서를 원한다.</p>
+<p>Codex, Claude Code, ChatGPT Agent, Gemini 기반 업무 Agent가 이
+방향으로 움직인다.</p>
+<h3 id="단계-personal-ai-시대">4.5 5단계: Personal AI 시대</h3>
+<p>Personal AI는 Agent에 개인 데이터가 연결된 형태다.</p>
+<pre class="text"><code>공개 웹
++ 개인 논문
++ 강의자료
++ GitHub 코드
++ Obsidian 노트
++ 투자 메모
++ 업무문서
+-&gt; 개인 맥락 기반 Agent</code></pre>
+<p>전문가에게 중요한 것은 더 많은 검색 결과가 아니다. 이미 가진 자료가
+너무 많기 때문이다. 핵심 문제는 정보 부족이 아니라 정보 연결이다.</p>
+<p>Personal AI는 “새로운 정보 탐색”과 “내 기존 지식의 재구성”을 함께
+수행한다. 이 지점에서 AI는 검색 도구가 아니라 장기적인 지식 파트너가
+된다.</p>
+<h2 id="라이너는-왜-좋은-사례인가">5. 라이너는 왜 좋은 사례인가?</h2>
+<p>라이너는 한국에서 시작한 AI 검색 서비스다. 초기에는 웹페이지
+하이라이트 서비스였다. 사용자가 중요한 문장에 형광펜을 긋고 저장하는
+도구였다.</p>
+<p>이후 생성형 AI가 등장하면서 라이너는 AI Search 플랫폼으로 진화했다.
+현재 공식 서비스 페이지는 연구용 AI, 신뢰 가능한 출처, Liner Scholar,
+Literature Review, Citation Recommender, Hypothesis Generator 같은
+기능을 전면에 내세운다.</p>
+<p>라이너가 흥미로운 이유는 세 가지다.</p>
+<ol type="1">
+<li>검색에서 출발했다.</li>
+<li>사람의 판단 데이터, 즉 하이라이트를 가지고 있다.</li>
+<li>AI Search와 Research Agent 사이에 위치한다.</li>
+</ol>
+<p>즉 라이너는 AI 산업의 전환을 보여준다. 단순 하이라이트 도구가 AI
+Search가 되고, AI Search는 다시 Agent 기능을 요구받는다.</p>
+<h2 id="하이라이트-데이터의-본질">6. 하이라이트 데이터의 본질</h2>
+<p>하이라이트는 사용자가 웹페이지나 논문을 읽다가 중요하다고 판단한
+문장을 표시한 기록이다.</p>
+<p>예를 들어 다음 문장을 사용자가 하이라이트했다고 하자.</p>
+<pre class="text"><code>AI Agent는 검색, 추론, 실행을 결합한다.</code></pre>
+<p>이 데이터에는 세 가지 의미가 있다.</p>
+<table>
+<thead>
+<tr>
+<th>데이터</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>어떤 문서를 읽었는가</td>
+<td>사용자의 관심 분야</td>
+</tr>
+<tr>
+<td>어떤 문장을 표시했는가</td>
+<td>사람이 중요하다고 판단한 정보</td>
+</tr>
+<tr>
+<td>어떤 주제가 반복되는가</td>
+<td>사용자의 장기 지식 패턴</td>
+</tr>
+</tbody>
+</table>
+<p>Google은 웹 전체를 본다. ChatGPT는 대규모 언어 패턴을 학습한다.
+라이너는 사용자가 실제로 중요하다고 표시한 문장을 본다.</p>
+<p>그래서 라이너의 하이라이트 데이터는 AI Search에서 의미가 있다. 검색
+결과의 우선순위, 요약 품질, 출처 신뢰도 판단에 도움이 될 수 있기
+때문이다.</p>
+<h2 id="그러나-핵심은-라이너-평가가-아니다">7. 그러나 핵심은 라이너
+평가가 아니다</h2>
+<p>이 리포트의 목적은 라이너의 투자 매력도를 판단하는 것이 아니다.
+라이너는 하나의 렌즈다.</p>
+<p>라이너를 통해 봐야 할 큰 질문은 다음이다.</p>
+<ul>
+<li>검색은 왜 AI Search로 바뀌는가?</li>
+<li>AI Search는 왜 Agent로 확장되는가?</li>
+<li>Agent는 왜 개인 데이터와 연결되어야 하는가?</li>
+<li>전문가에게 필요한 AI는 검색 서비스인가, 개인 지식 기반
+Agent인가?</li>
+</ul>
+<p>라이너의 강점과 한계는 모두 이 전환 과정 안에서 이해해야 한다.</p>
+<h2 id="search와-ai-search의-차이">8. Search와 AI Search의 차이</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th>Search</th>
+<th>AI Search</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>입력</td>
+<td>키워드</td>
+<td>자연어 질문</td>
+</tr>
+<tr>
+<td>출력</td>
+<td>링크 목록</td>
+<td>요약, 출처, 핵심 주장</td>
+</tr>
+<tr>
+<td>사용자 부담</td>
+<td>여러 페이지를 직접 읽음</td>
+<td>AI 요약을 검토</td>
+</tr>
+<tr>
+<td>수익 구조</td>
+<td>광고, SEO</td>
+<td>구독, 광고, API, 연구 도구</td>
+</tr>
+<tr>
+<td>핵심 경쟁력</td>
+<td>인덱싱과 랭킹</td>
+<td>출처 판단, 요약 품질, 신뢰성</td>
+</tr>
+<tr>
+<td>대표 사례</td>
+<td>Google Search</td>
+<td>Perplexity, Liner, Google AI Overviews, ChatGPT Search</td>
+</tr>
+</tbody>
+</table>
+<p>AI Search는 검색을 없애는 것이 아니라 검색의 소비 방식을 바꾼다. 링크
+목록 중심에서 답변 중심으로 이동한다.</p>
+<p>이 변화는 웹 생태계에도 영향을 준다. AI 요약이 검색 결과 상단에
+나타나면 사용자는 출처 웹사이트를 덜 클릭한다. Pew Research 관련
+보도에서 AI 요약이 있을 때 링크 클릭률이 8%, 없을 때 15%로 나타난 것은
+이 변화를 보여주는 대표 신호다.</p>
+<h2 id="ai-search와-agent의-차이">9. AI Search와 Agent의 차이</h2>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>AI Search</th>
+<th>Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>목적</td>
+<td>정보를 찾고 요약</td>
+<td>업무를 수행</td>
+</tr>
+<tr>
+<td>산출물</td>
+<td>답변, 출처, 요약</td>
+<td>보고서, 코드, 표, PPT, 이메일, 실행 결과</td>
+</tr>
+<tr>
+<td>사용자 역할</td>
+<td>검토자</td>
+<td>감독자</td>
+</tr>
+<tr>
+<td>도구 사용</td>
+<td>검색 중심</td>
+<td>검색, 파일, 코드, DB, 브라우저, API</td>
+</tr>
+<tr>
+<td>가치 기준</td>
+<td>답변 품질</td>
+<td>업무 완료율</td>
+</tr>
+<tr>
+<td>대표 서비스</td>
+<td>Liner, Perplexity</td>
+<td>Codex, Claude Code, ChatGPT Agent</td>
+</tr>
+</tbody>
+</table>
+<p>AI Search의 경쟁력은 “좋은 답변”이다. Agent의 경쟁력은 “일을 끝내는
+능력”이다.</p>
+<p>예를 들어 반도체 시장조사를 한다면 다음처럼 달라진다.</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>결과</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search</td>
+<td>관련 링크 100개</td>
+</tr>
+<tr>
+<td>AI Search</td>
+<td>시장 전망 요약과 출처</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>시장조사 보고서, 표, 그래프, PPT 초안</td>
+</tr>
+<tr>
+<td>Personal AI</td>
+<td>기존 강의자료, 투자 메모, 논문과 연결된 맞춤형 보고서</td>
+</tr>
+</tbody>
+</table>
+<p>이 차이가 산업의 방향을 결정한다.</p>
+<h2 id="agent와-personal-ai의-차이">10. Agent와 Personal AI의 차이</h2>
+<p>Agent는 일을 수행하지만, Personal AI는 사용자의 장기 맥락을
+이해한다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th>Agent</th>
+<th>Personal AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>데이터</td>
+<td>현재 요청과 접근 가능한 자료</td>
+<td>장기 축적된 개인/조직 데이터</td>
+</tr>
+<tr>
+<td>기억</td>
+<td>세션 중심</td>
+<td>장기 지식 기반</td>
+</tr>
+<tr>
+<td>역할</td>
+<td>업무 실행자</td>
+<td>지식 파트너</td>
+</tr>
+<tr>
+<td>예시</td>
+<td>“이 파일 고쳐줘”</td>
+<td>“내 지난 강의 스타일에 맞춰 새 강의안 만들어줘”</td>
+</tr>
+<tr>
+<td>핵심 자산</td>
+<td>도구 사용 능력</td>
+<td>개인 데이터와 맥락</td>
+</tr>
+</tbody>
+</table>
+<p>전문가에게 Personal AI가 중요한 이유는 단순하다. 전문가는 이미 많은
+정보를 가지고 있다.</p>
+<p>문제는 다음이다.</p>
+<ul>
+<li>어디에 어떤 자료가 있는지 기억하기 어렵다.</li>
+<li>과거 자료와 최신 자료가 연결되지 않는다.</li>
+<li>논문, 강의, 코드, 시장 데이터가 흩어져 있다.</li>
+<li>반복적으로 같은 설명과 보고서를 다시 만든다.</li>
+</ul>
+<p>Personal AI는 이 문제를 해결한다. 공개 웹 검색보다 개인 지식의 재활용
+가치가 더 커지는 순간이다.</p>
+<h2 id="학생과-전문가의-ai-수요는-다르다">11. 학생과 전문가의 AI 수요는
+다르다</h2>
+<p>AI Search와 Personal AI의 시장은 사용자 집단에 따라 다르게
+열린다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th>학생/초보자</th>
+<th>전문가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>문제</td>
+<td>정보 부족</td>
+<td>정보 과잉</td>
+</tr>
+<tr>
+<td>필요한 것</td>
+<td>설명, 검색, 요약</td>
+<td>통합, 재구성, 검증, 산출물</td>
+</tr>
+<tr>
+<td>AI 역할</td>
+<td>튜터</td>
+<td>업무 파트너</td>
+</tr>
+<tr>
+<td>데이터</td>
+<td>공개 웹, 교재</td>
+<td>개인 지식, 논문, 코드, 업무자료</td>
+</tr>
+<tr>
+<td>대표 제품</td>
+<td>Liner, Perplexity, ChatGPT Search</td>
+<td>Codex, Claude Code, Personal Agent</td>
+</tr>
+<tr>
+<td>지불 의사</td>
+<td>낮거나 중간</td>
+<td>높음</td>
+</tr>
+</tbody>
+</table>
+<p>학생에게는 “좋은 정보를 찾아주는 AI”가 큰 가치다. 전문가에게는 “내
+자료를 연결해서 결과물을 만드는 AI”가 더 큰 가치다.</p>
+<p>라이너는 학생과 연구자에게 강한 출발점을 가진다. 하지만 전문가
+시장에서는 검색 품질만으로 충분하지 않다. 개인 데이터 연결, 파일 작업,
+코드 실행, 보고서 생성까지 가야 한다.</p>
+<h2 id="시장-구조-검색-시장이-아니라-지식노동-시장">12. 시장 구조: 검색
+시장이 아니라 지식노동 시장</h2>
+<p>AI Search와 Agent의 시장을 기존 검색 광고 시장으로만 보면 작게 보게
+된다. 실제로는 더 큰 지식노동 시장을 향한다.</p>
+<p>McKinsey 분석 보도에 따르면 생성형 AI는 연간 2.6조~4.4조 달러의
+경제적 가치를 만들 잠재력이 있다. 이 숫자가 중요한 이유는 AI의 가치가
+검색 광고 대체에만 있지 않다는 점을 보여주기 때문이다.</p>
+<p>AI의 대상은 다음 업무 전체다.</p>
+<ul>
+<li>자료 조사</li>
+<li>보고서 작성</li>
+<li>코드 작성과 테스트</li>
+<li>고객 지원</li>
+<li>영업 준비</li>
+<li>회의록 정리</li>
+<li>법무/계약 검토</li>
+<li>논문 조사</li>
+<li>교육 콘텐츠 제작</li>
+<li>투자 리서치</li>
+</ul>
+<p>따라서 AI Search는 입구이고, Agent는 업무 시장으로 들어가는 통로다.
+Personal AI는 이 업무 시장에서 개인과 조직의 데이터를 붙잡는 장기
+플랫폼이다.</p>
+<h2 id="시장-데이터-해석">13. 시장 데이터 해석</h2>
+<h3 id="ai-search는-이미-대중화-단계에-진입">13.1 AI Search는 이미
+대중화 단계에 진입</h3>
+<p>ChatGPT가 하루 수십억 건의 프롬프트를 처리하고, Perplexity가 월 수억
+건의 질의를 처리한다는 보도는 사용자가 검색창에서 대화창으로 이동하고
+있음을 보여준다.</p>
+<p>Google이 AI Overviews를 200개 이상 국가/지역과 40개 이상 언어로
+확대한 것도 같은 방향이다. 기존 검색의 지배자도 AI 답변형 검색을 피할 수
+없다.</p>
+<h3 id="웹-클릭은-줄고-답변-소비는-늘어난다">13.2 웹 클릭은 줄고 답변
+소비는 늘어난다</h3>
+<p>AI 요약이 있으면 사용자는 링크를 덜 클릭한다. 이는 출판사, 블로그,
+뉴스, 검색광고, SEO 산업에 구조적 변화를 만든다.</p>
+<p>앞으로는 SEO보다 GEO, 즉 Generative Engine Optimization이 중요해질 수
+있다. 웹페이지가 검색 결과 1위에 오르는 것보다 AI 답변에 인용되는 것이
+더 중요해질 수 있다.</p>
+<h3 id="agent-시장은-빠르게-커지지만-실패율도-높다">13.3 Agent 시장은
+빠르게 커지지만 실패율도 높다</h3>
+<p>Gartner 관련 보도에서 AI agent 지출이 2025년 864억 달러에서 2027년
+3,763억 달러까지 늘어날 수 있다고 제시된 것은 기업의 관심이 얼마나
+빠르게 Agent로 이동하는지 보여준다.</p>
+<p>하지만 동시에 2027년까지 agentic AI 프로젝트의 40% 이상이 취소될 수
+있다는 전망도 있다. 이유는 명확하다.</p>
+<ul>
+<li>기업 데이터가 정리되어 있지 않다.</li>
+<li>Agent가 잘못된 정보를 바탕으로 실행할 수 있다.</li>
+<li>책임 소재와 승인 절차가 불명확하다.</li>
+<li>보안과 권한 관리가 어렵다.</li>
+<li>실험은 쉽지만 운영은 어렵다.</li>
+</ul>
+<p>따라서 Agent 시장의 승자는 모델만 좋은 회사가 아니라, 데이터 연결,
+권한, 감사, 워크플로, 사용자 감독 구조를 잘 설계하는 회사가 될 가능성이
+높다.</p>
+<h3 id="personal-ai는-아직-초기지만-방향은-명확하다">13.4 Personal AI는
+아직 초기지만 방향은 명확하다</h3>
+<p>Personal AI는 아직 표준 제품 형태가 확정되지 않았다. 그러나 방향은
+분명하다.</p>
+<p>개인은 이미 다음 데이터를 가지고 있다.</p>
+<ul>
+<li>메모</li>
+<li>이메일</li>
+<li>일정</li>
+<li>사진</li>
+<li>문서</li>
+<li>논문</li>
+<li>코드</li>
+<li>강의자료</li>
+<li>투자 기록</li>
+<li>검색 기록</li>
+</ul>
+<p>이 데이터를 AI가 안전하게 이해하고, 장기 기억으로 활용하고, 필요할 때
+산출물로 바꿀 수 있다면 검색보다 훨씬 큰 가치가 생긴다.</p>
+<h2 id="liner-perplexity-chatgpt-claude-gemini-codex의-위치">14. Liner,
+Perplexity, ChatGPT, Claude, Gemini, Codex의 위치</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>서비스</th>
+<th>출발점</th>
+<th>현재 위치</th>
+<th>장기 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Liner</td>
+<td>하이라이트/검색</td>
+<td>AI Search, Research AI</td>
+<td>Research Agent</td>
+</tr>
+<tr>
+<td>Perplexity</td>
+<td>AI Search</td>
+<td>답변형 검색, AI 브라우저</td>
+<td>Agentic browser</td>
+</tr>
+<tr>
+<td>ChatGPT</td>
+<td>범용 대화</td>
+<td>검색, 파일, Agent, 앱 연결</td>
+<td>범용 Personal AI</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>문서 분석/글쓰기</td>
+<td>긴 문서, 코드, Agent 워크플로</td>
+<td>지식노동 Agent</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td>Google 생태계</td>
+<td>검색, Workspace, Android</td>
+<td>생태계형 AI Agent</td>
+</tr>
+<tr>
+<td>Codex</td>
+<td>코드/로컬 작업</td>
+<td>파일 수정, 코드 실행, 리포트 작성</td>
+<td>개인/프로젝트 데이터 Agent</td>
+</tr>
+</tbody>
+</table>
+<p>이 표에서 중요한 점은 출발점이 다르다는 것이다.</p>
+<p>라이너와 Perplexity는 Search에서 Agent로 간다. ChatGPT, Claude,
+Gemini, Codex는 Agent 안에 Search를 흡수한다.</p>
+<p>장기적으로는 두 방향이 경쟁한다.</p>
+<pre class="text"><code>Search -&gt; Agent
+Agent -&gt; Search</code></pre>
+<p>현재 더 큰 힘은 후자에 있다. 사용자는 검색 서비스를 따로 열기보다,
+이미 쓰는 Agent가 필요할 때 검색해주기를 원한다.</p>
+<h2 id="라이너-사례의-의미">15. 라이너 사례의 의미</h2>
+<p>라이너는 AI Search 시대의 중요한 질문을 던진다.</p>
+<p>사람이 중요하다고 표시한 데이터는 AI Search 품질을 높일 수
+있는가?</p>
+<p>이 질문은 중요하다. AI Search의 품질은 단순히 웹페이지를 많이
+찾는다고 좋아지지 않는다. 어떤 출처를 믿을지, 어떤 문장을 핵심으로 볼지,
+어떤 관점이 사용자에게 유용한지를 판단해야 한다.</p>
+<p>하이라이트 데이터는 여기에 힌트를 준다.</p>
+<p>하지만 이것만으로 충분하지는 않다. Agent와 Personal AI로 가려면 다음
+능력이 추가되어야 한다.</p>
+<ul>
+<li>개인 문서 연결</li>
+<li>장기 기억</li>
+<li>프로젝트 단위 맥락 관리</li>
+<li>파일 생성과 수정</li>
+<li>코드/데이터 실행</li>
+<li>출처 검증</li>
+<li>사용자 승인 기반 실행</li>
+<li>결과물 품질 관리</li>
+</ul>
+<p>따라서 라이너의 미래를 보려면 “검색 품질이 좋은가”보다 “Search에서
+Agent로 얼마나 자연스럽게 확장되는가”를 봐야 한다.</p>
+<h2 id="전문가-관점에서의-핵심-변화">16. 전문가 관점에서의 핵심
+변화</h2>
+<p>전문가에게 AI의 가치는 다음 순서로 커진다.</p>
+<pre class="text"><code>정보 제공
+&lt; 요약
+&lt; 비교 분석
+&lt; 보고서 작성
+&lt; 내 자료와 연결
+&lt; 반복 업무 자동화
+&lt; 장기 지식 파트너</code></pre>
+<p>30년 이상의 반도체 경험, 논문, 강의자료, GitHub, Obsidian, 시장
+데이터, 투자 자료를 이미 가진 전문가에게 검색은 출발점일 뿐이다.</p>
+<p>핵심 질문은 다음이다.</p>
+<ul>
+<li>내 과거 강의자료와 최신 시장 데이터를 연결할 수 있는가?</li>
+<li>내 Obsidian 노트를 바탕으로 새 리포트를 만들 수 있는가?</li>
+<li>내 기존 투자 프레임으로 새로운 기업을 평가할 수 있는가?</li>
+<li>내 논문 초안과 선행연구를 연결해 gap을 찾을 수 있는가?</li>
+<li>내가 반복하는 업무를 자동화할 수 있는가?</li>
+</ul>
+<p>이 질문에 답하는 AI가 Personal AI다.</p>
+<h2 id="년-현재의-전략적-판단">17. 2026년 현재의 전략적 판단</h2>
+<p>2026년 현재 AI 시장은 세 개 층으로 나뉜다.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>층위</th>
+<th>대표 제품</th>
+<th>핵심 경쟁력</th>
+<th>시장 상태</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI Search</td>
+<td>Liner, Perplexity, Google AI Overviews</td>
+<td>출처 기반 답변</td>
+<td>대중화 중</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>Codex, Claude Code, ChatGPT Agent</td>
+<td>업무 실행</td>
+<td>빠른 성장, 높은 실패율</td>
+</tr>
+<tr>
+<td>Personal AI</td>
+<td>Obsidian+Agent, 기업 내부 Agent, Workspace AI</td>
+<td>개인/조직 데이터 연결</td>
+<td>초기 형성</td>
+</tr>
+</tbody>
+</table>
+<p>AI Search는 이미 사용자 습관을 바꾸고 있다. Agent는 기업 예산을
+끌어들이고 있다. Personal AI는 아직 초기지만 전문가와 기업의 장기 락인을
+만들 가능성이 가장 크다.</p>
+<h2 id="최종-결론">18. 최종 결론</h2>
+<p>라이너는 AI 산업 전환을 이해하기 좋은 사례다. 웹 하이라이트
+서비스에서 출발해 AI Search로 진화했고, 이제 Research Agent로 확장해야
+하는 위치에 있다.</p>
+<p>그러나 산업 전체의 큰 방향은 라이너 하나보다 넓다. 사용자는 검색 결과
+목록에서 AI 요약으로 이동했고, 다시 AI 요약에서 Agent 실행으로 이동하고
+있다. 그 다음 단계는 개인과 기업의 축적된 데이터까지 연결하는 Personal
+AI다.</p>
+<p>장기적으로 중요한 경쟁력은 모델 이름 자체가 아니다. 같은 모델을
+쓰더라도 누가 더 좋은 데이터, 더 깊은 업무 맥락, 더 안정적인 실행 환경을
+가지고 있는지가 결과를 가른다.</p>
+<p>따라서 AI의 미래 질문은 다음처럼 바뀐다.</p>
+<pre class="text"><code>누가 더 좋은 답변을 하는가?</code></pre>
+<p>에서</p>
+<pre class="text"><code>누가 내 자료를 이해하고 내 일을 끝까지 수행하는가?</code></pre>
+<p>로 이동한다.</p>
+<h2 id="ai가-쓰고-ai가-읽는-시대-사람의-역할은-무엇인가">19. AI가 쓰고
+AI가 읽는 시대: 사람의 역할은 무엇인가?</h2>
+<p>AI Search, Agent, Personal AI가 확산되면 정보 생태계는 더 이상
+“사람이 쓰고 사람이 읽는 구조”에 머물지 않는다.</p>
+<p>앞으로는 다음 구조가 일반화될 수 있다.</p>
+<pre class="text"><code>AI가 초안 작성
+-&gt; AI가 편집/최적화
+-&gt; 플랫폼에 배포
+-&gt; 다른 AI가 검색/수집
+-&gt; 소비자의 AI가 요약
+-&gt; 소비자는 최종 판단 또는 실행</code></pre>
+<p>즉 생산자도 AI를 쓰고, 유통 플랫폼도 AI를 쓰고, 소비자도 AI를 쓴다.
+이때 사람의 직접 읽기와 직접 쓰기는 줄어들 수 있다. 그러나 사람의 의미가
+사라지는 것은 아니다. 역할이 바뀐다.</p>
+<h3 id="정보-생산의-변화">19.1 정보 생산의 변화</h3>
+<p>과거에는 사람이 직접 글을 쓰고, 독자가 직접 읽었다.</p>
+<pre class="text"><code>사람 작성 -&gt; 플랫폼 배포 -&gt; 사람 독서</code></pre>
+<p>AI 시대에는 구조가 바뀐다.</p>
+<pre class="text"><code>사람 의도/경험/관점
+-&gt; AI 초안 작성
+-&gt; 사람 검토/판단
+-&gt; AI 배포 최적화
+-&gt; AI Search/Agent가 재요약
+-&gt; 소비자 AI가 다시 요약</code></pre>
+<p>여기서 문제는 콘텐츠 양이 폭증한다는 점이다. 글, 보고서, 뉴스레터,
+영상 스크립트, 논문 초안, 마케팅 문구가 거의 무한히 만들어진다. 정보가
+부족한 시대가 아니라 <strong>정보가 너무 많고, 진짜 의미를 찾기 어려운
+시대</strong>가 된다.</p>
+<h3 id="ai가-만든-콘텐츠를-ai가-요약하면-생기는-문제">19.2 AI가 만든
+콘텐츠를 AI가 요약하면 생기는 문제</h3>
+<p>AI가 작성한 글을 다른 AI가 요약하면 편리하지만, 몇 가지 문제가
+생긴다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>문제</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>의미 희석</td>
+<td>원래 사람의 경험과 맥락이 요약 과정에서 사라질 수 있다</td>
+</tr>
+<tr>
+<td>평균화</td>
+<td>AI가 많이 본 표현과 관점으로 내용이 평평해진다</td>
+</tr>
+<tr>
+<td>출처 혼탁</td>
+<td>원문, 요약문, 재요약문이 섞여 최초 근거가 흐려진다</td>
+</tr>
+<tr>
+<td>책임 회피</td>
+<td>틀린 정보가 생겼을 때 작성자, AI, 플랫폼, 요약 AI 중 누가 책임지는지
+불명확하다</td>
+</tr>
+<tr>
+<td>정보 과잉</td>
+<td>생산 비용이 낮아져 읽을 가치가 낮은 콘텐츠도 폭증한다</td>
+</tr>
+<tr>
+<td>인간 판단 약화</td>
+<td>사용자가 직접 읽고 판단하는 근육이 약해질 수 있다</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 미래의 핵심 능력은 “AI로 더 많이 쓰기”가 아니라,
+<strong>무엇을 쓸 가치가 있는지, 무엇을 믿을 수 있는지, 무엇을 실행할지
+판단하는 능력</strong>이다.</p>
+<h3 id="사람의-역할은-생산자에서-편집자-감독자-책임자로-이동">19.3
+사람의 역할은 생산자에서 편집자, 감독자, 책임자로 이동</h3>
+<p>AI가 글을 쓰고 요약할수록 사람의 역할은 다음처럼 바뀐다.</p>
+<table>
+<thead>
+<tr>
+<th>과거 역할</th>
+<th>미래 역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>직접 검색하는 사람</td>
+<td>질문과 목적을 정의하는 사람</td>
+</tr>
+<tr>
+<td>직접 글 쓰는 사람</td>
+<td>관점과 판단을 제공하는 사람</td>
+</tr>
+<tr>
+<td>직접 읽는 사람</td>
+<td>AI 요약을 검증하는 사람</td>
+</tr>
+<tr>
+<td>정보 수집자</td>
+<td>출처와 맥락을 판별하는 사람</td>
+</tr>
+<tr>
+<td>반복 작업자</td>
+<td>Agent를 설계하고 감독하는 사람</td>
+</tr>
+<tr>
+<td>지식 보유자</td>
+<td>개인 데이터와 경험을 AI에 연결하는 사람</td>
+</tr>
+<tr>
+<td>콘텐츠 생산자</td>
+<td>신뢰, 책임, 해석을 제공하는 사람</td>
+</tr>
+</tbody>
+</table>
+<p>AI는 문장을 빠르게 만들 수 있다. 그러나 AI가 자동으로 삶의 경험, 산업
+현장의 감각, 책임 있는 판단, 인간적 우선순위를 갖는 것은 아니다.</p>
+<p>사람의 핵심 역할은 다음 네 가지로 압축된다.</p>
+<ol type="1">
+<li><strong>문제 정의</strong>: 무엇을 질문할지 정한다.</li>
+<li><strong>맥락 제공</strong>: 경험, 목적, 제약조건, 우선순위를
+제공한다.</li>
+<li><strong>검증과 책임</strong>: AI 결과가 맞는지 확인하고 최종 책임을
+진다.</li>
+<li><strong>의미 부여</strong>: 단순 정보가 아니라 왜 중요한지
+해석한다.</li>
+</ol>
+<h3 id="미래의-경쟁력은-ai-사용량이-아니라-인간-맥락의-품질">19.4 미래의
+경쟁력은 “AI 사용량”이 아니라 “인간 맥락의 품질”</h3>
+<p>모두가 AI로 글을 쓰면 글쓰기 자체는 희소하지 않다. 모두가 AI로
+요약하면 요약 자체도 희소하지 않다.</p>
+<p>희소해지는 것은 다음이다.</p>
+<ul>
+<li>실제 경험</li>
+<li>깊은 전문성</li>
+<li>좋은 질문</li>
+<li>독창적 관점</li>
+<li>신뢰 가능한 출처</li>
+<li>장기 축적 데이터</li>
+<li>책임 있는 판단</li>
+<li>현실에서 실행해 본 피드백</li>
+</ul>
+<p>이것이 Personal AI와 연결되면 강력해진다. AI는 도구이고, 사람은
+방향과 기준을 제공한다. 좋은 Personal AI는 사용자의 데이터만 많이 가진
+AI가 아니라, 사용자의 판단 기준과 경험을 잘 반영하는 AI다.</p>
+<h3
+id="인간의-의미는-직접-다-하기가-아니라-무엇이-중요한지-정하는-것">19.5
+인간의 의미는 “직접 다 하기”가 아니라 “무엇이 중요한지 정하는 것”</h3>
+<p>AI가 쓰고 AI가 읽는 시대에도 인간의 의미는 남는다. 다만 의미의 위치가
+바뀐다.</p>
+<p>과거의 인간은 정보를 직접 찾고, 읽고, 정리하고, 작성했다. 미래의
+인간은 AI가 만든 정보 흐름 속에서 목적을 정하고, 기준을 세우고, 중요한
+결정을 내린다.</p>
+<pre class="text"><code>과거의 인간 가치 = 많이 알고 많이 쓰는 능력
+미래의 인간 가치 = 좋은 질문, 깊은 맥락, 책임 있는 판단</code></pre>
+<p>따라서 미래 교육과 전문가 훈련의 핵심도 바뀐다.</p>
+<ul>
+<li>검색법보다 질문 설계</li>
+<li>암기보다 맥락 구성</li>
+<li>글쓰기보다 편집과 검증</li>
+<li>정보 수집보다 출처 판단</li>
+<li>도구 사용보다 Agent 감독</li>
+<li>단기 산출물보다 개인 지식 자산 구축</li>
+</ul>
+<p>결국 AI 시대의 인간은 사라지는 것이 아니라, <strong>정보 노동자에서
+의미 설계자</strong>로 이동한다.</p>
+<h2 id="강의-후-토론-질문">20. 강의 후 토론 질문</h2>
+<ol type="1">
+<li>검색은 독립 산업으로 남을 것인가, 아니면 Agent의 기본 기능으로
+흡수될 것인가?</li>
+<li>AI Search의 핵심 경쟁력은 모델인가, 출처 데이터인가, 사용자 행동
+데이터인가?</li>
+<li>라이너의 하이라이트 데이터는 AI Search 품질을 높이는 진짜 해자가 될
+수 있는가?</li>
+<li>전문가에게 더 필요한 것은 좋은 검색 서비스인가, 개인 지식 기반
+Agent인가?</li>
+<li>대학 교육에서는 검색법을 가르쳐야 하는가, Agent에게 일을 맡기고
+검증하는 법을 가르쳐야 하는가?</li>
+<li>10년 후 AI 시장의 승자는 가장 좋은 모델을 가진 기업일까, 가장 깊은
+사용자 맥락을 가진 기업일까?</li>
+<li>AI가 작성하고 AI가 요약하는 시대에, 사람은 무엇을 직접 읽고 직접
+써야 하는가?</li>
+<li>AI가 만든 콘텐츠가 넘쳐날수록 신뢰와 책임은 누가 어떻게 보장해야
+하는가?</li>
+</ol>
+<h2 id="출처와-참고자료">21. 출처와 참고자료</h2>
+<ul>
+<li>Liner 공식 서비스 페이지, https://getliner.com/, 접속일
+2026-06-10.</li>
+<li>The Verge, “OpenAI says ChatGPT users send over 2.5 billion prompts
+every day”, 2025-07,
+https://www.theverge.com/news/710867/openai-chatgpt-daily-prompts-2-billion</li>
+<li>Axios, OpenAI daily prompts 관련 보도, 2025-07,
+https://www.axios.com/2025/07/21/sam-altman-openai-trump-dc-fed</li>
+<li>TechCrunch/Perplexity CEO 공개 발언 관련 보도, Perplexity monthly
+queries, 2025-06. 검색 결과에서 확인한 보도 제목: “Perplexity received
+780 million queries last month, CEO says”.</li>
+<li>Pew Research Center 관련 보도, Google AI summaries and click-through
+behavior, 2025-07. 보도 예: https://omni.se/a/JbaEVb</li>
+<li>Google AI Overviews 관련 공개 보도, 200개 이상 국가/지역 및 40개
+이상 언어 확대, 2025. 정리 페이지:
+https://en.wikipedia.org/wiki/AI_Overviews</li>
+<li>TechRadar, Gartner agent spending 관련 보도, 2026-05,
+https://www.techradar.com/pro/workforce-reductions-may-create-budget-room-but-they-do-not-create-return-gartner-warns-companies-relying-on-layoffs-to-free-up-room-for-ai-may-be-caught-out-in-the-long-run</li>
+<li>TechRadar, agentic AI market and Gartner cancellation 전망 관련
+보도, 2026-04,
+https://www.techradar.com/pro/why-most-agentic-ai-projects-fail-and-how-to-avoid-being-one-of-them</li>
+<li>Axios, McKinsey Global Institute generative AI economic potential
+보도, 2023-06,
+https://www.axios.com/2023/06/14/ai-productivity-revolution-banks-retail</li>
+<li>Business Insider, Morgan Stanley AI shopping agents and e-commerce
+outlook, 2025-11,
+https://www.businessinsider.com/morgan-stanley-expects-ai-agents-to-fuel-e-commerce-boom-2025-11</li>
+<li>arXiv, “The Rise of AI Search: Implications for Information Markets
+and Human Judgement at Scale”, 2026,
+https://arxiv.org/abs/2602.13415</li>
+<li>arXiv, “The Adoption and Usage of AI Agents: Early Evidence from
+Perplexity”, 2025, https://arxiv.org/abs/2512.07828</li>
+</ul>
+<script src="assets/protect.js" defer></script>
+</body>
+</html>
