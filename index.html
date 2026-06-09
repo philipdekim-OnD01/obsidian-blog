@@ -232,6 +232,20 @@
             fill: #0b63ce;
         }
 
+        .chart-line {
+            fill: none;
+            stroke: #0b63ce;
+            stroke-width: 2.25;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .chart-point {
+            fill: #ffffff;
+            stroke: #0b63ce;
+            stroke-width: 2;
+        }
+
         .contact-label {
             color: var(--muted);
             font-size: 0.88rem;
@@ -520,7 +534,7 @@
         <section class="panel stats">
             <div class="stats-head">
                 <h2>Visitors</h2>
-                <div class="stats-note">Live counts via CounterAPI</div>
+                <div class="stats-note">Live total + stored daily history</div>
             </div>
             <div class="stats-grid">
                 <div class="metric">
@@ -542,6 +556,7 @@
         const namespace = 'philipkim-blog';
         const totalCounter = 'home-total';
         const apiBase = 'https://api.counterapi.dev/v1';
+        const visitorHistoryUrl = 'data/visitors.json';
 
         const totalEl = document.getElementById('visitor-total');
         const todayEl = document.getElementById('visitor-today');
@@ -574,6 +589,14 @@
             return response.json();
         }
 
+        async function fetchVisitorHistory() {
+            try {
+                return await fetchJson(`${visitorHistoryUrl}?t=${Date.now()}`);
+            } catch (error) {
+                return null;
+            }
+        }
+
         async function increment(name) {
             const data = await fetchJson(`${apiBase}/${namespace}/${name}/up`);
             return Number(data.count ?? data.value ?? 0);
@@ -595,31 +618,34 @@
             const chartWidth = width - pad.left - pad.right;
             const chartHeight = height - pad.top - pad.bottom;
             const max = Math.max(1, ...points.map((point) => point.value));
-            const gap = 8;
-            const barWidth = (chartWidth - gap * (points.length - 1)) / points.length;
+            const stepX = points.length === 1 ? 0 : chartWidth / (points.length - 1);
+            const coords = points.map((point, index) => {
+                const x = pad.left + (stepX * index);
+                const y = pad.top + (chartHeight - ((point.value / max) * chartHeight));
+                return { ...point, x, y };
+            });
 
-            const bars = points.map((point, index) => {
-                const barHeight = Math.max(6, (point.value / max) * chartHeight);
-                const x = pad.left + index * (barWidth + gap);
-                const y = pad.top + (chartHeight - barHeight);
-                const labelX = x + barWidth / 2;
-                const valueY = y - 2;
-                const baseY = pad.top + chartHeight + 10;
-                return `
-                    <rect class="chart-bar" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="6"></rect>
-                    <text class="chart-value" x="${labelX}" y="${valueY}" text-anchor="middle">${point.value}</text>
-                    <text class="chart-label" x="${labelX}" y="${baseY}" text-anchor="middle">${point.label}</text>
-                `;
-            }).join('');
+            const linePath = coords
+                .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+                .join(' ');
+
+            const pointsSvg = coords.map((point) => `
+                <circle class="chart-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4"></circle>
+                <text class="chart-value" x="${point.x.toFixed(1)}" y="${(point.y - 8).toFixed(1)}" text-anchor="middle">${point.value}</text>
+                <text class="chart-label" x="${point.x.toFixed(1)}" y="${(pad.top + chartHeight + 10).toFixed(1)}" text-anchor="middle">${point.label}</text>
+            `).join('');
 
             chartEl.innerHTML = `
                 <text x="12" y="14" class="chart-label">Last 7 days</text>
-                ${bars}
+                <path class="chart-line" d="${linePath}"></path>
+                ${pointsSvg}
             `;
         }
 
         (async function init() {
             try {
+                const history = await fetchVisitorHistory();
+                const historyMap = new Map((history?.history ?? []).map((entry) => [entry.date, Number(entry.count) || 0]));
                 const today = dayKey(0);
                 const totalValue = await increment(totalCounter);
                 const todayValue = await increment(`home-${today.iso}`);
@@ -630,7 +656,9 @@
                 const points = [];
                 for (let offset = 6; offset >= 0; offset -= 1) {
                     const day = dayKey(offset);
-                    const value = offset === 0 ? todayValue : await getCount(`home-${day.iso}`);
+                    const value = offset === 0
+                        ? todayValue
+                        : (historyMap.has(day.iso) ? historyMap.get(day.iso) : await getCount(`home-${day.iso}`));
                     points.push({ label: day.label, value });
                 }
 
