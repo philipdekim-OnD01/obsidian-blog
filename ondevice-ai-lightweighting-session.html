@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OnDevice AI 경량화 강의자료 세션</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">OnDevice AI 경량화 강의자료 세션</h1>
+</header>
+<h1 id="ondevice-ai-경량화-강의자료-세션">OnDevice AI 경량화 강의자료
+세션</h1>
+<p>이 페이지는 On-Device AI 경량화 강의자료를 블로그에서 한 번에 읽을 수
+있도록 묶은 세션 자료입니다. 초보자는 먼저 큰 그림을 보고, 이후 Pruning,
+Clustering, PTQ, QAT, 최신 온디바이스 경량화 트렌드 순서로 읽으면
+됩니다.</p>
+<h2 id="세션-목차">세션 목차</h2>
+<ol type="1">
+<li><p><a href="#section-00">강의 목차</a></p></li>
+<li><p><a href="#section-01">먼저 읽는 초간단 그림</a></p></li>
+<li><p><a href="#section-02">온디바이스 AI와 경량화 개요</a></p></li>
+<li><p><a href="#section-03">공통 실습 흐름: MNIST 기준</a></p></li>
+<li><p><a href="#section-04">Pruning: 가지치기</a></p></li>
+<li><p><a href="#section-05">Clustering: 가중치 군집화</a></p></li>
+<li><p><a href="#section-06">PTQ: 학습 후 양자화</a></p></li>
+<li><p><a href="#section-07">QAT: 양자화 인지 학습</a></p></li>
+<li><p><a href="#section-08">Preserving QAT: 조합 경량화</a></p></li>
+<li><p><a href="#section-09">RPS 실전 이미지 분류 QAT</a></p></li>
+<li><p><a href="#section-10">초보자 체크리스트와 용어</a></p></li>
+<li><p><a href="#section-11">온디바이스 AI 경량화 최신
+트렌드</a></p></li>
+</ol>
+<h2 id="실습-코드-저장소">실습 코드 저장소</h2>
+<ul>
+<li>학생 fork용 코드: <a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab"
+class="uri">https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab</a></li>
+<li>강의자료 원본 브랜치: <a
+href="https://github.com/philipdekim-OnD01/obsidian-vault/tree/ondevice-ai-lightweighting-lecture/CNN20260510/Lecture/OnDeviceAI.RBPI.2026/examples%28COLAB%29/04_Lightweighting/Obsidian_OnDeviceAI_Lightweighting"
+class="uri">https://github.com/philipdekim-OnD01/obsidian-vault/tree/ondevice-ai-lightweighting-lecture/CNN20260510/Lecture/OnDeviceAI.RBPI.2026/examples%28COLAB%29/04_Lightweighting/Obsidian_OnDeviceAI_Lightweighting</a></li>
+</ul>
+<hr />
+<p><a id="section-00"></a></p>
+<h1 id="on-device-ai-경량화-강의">On-Device AI 경량화 강의</h1>
+<h2 id="추천-학습-순서">추천 학습 순서</h2>
+<p>처음 보는 사람은 아래 순서대로 읽으면 됩니다. 코드는 바로 외우지
+말고, 먼저 “무엇을 줄이는 기법인지”만 잡으면 됩니다.</p>
+<ol type="1">
+<li><a href="#section-01">먼저 읽는 초간단 그림</a></li>
+<li><a href="#section-02">온디바이스 AI와 경량화 개요</a></li>
+<li><a href="#section-03">공통 실습 흐름: MNIST 기준</a></li>
+<li><a href="#section-04">Pruning: 가지치기</a></li>
+<li><a href="#section-05">Clustering: 가중치 군집화</a></li>
+<li><a href="#section-06">PTQ: 학습 후 양자화</a></li>
+<li><a href="#section-07">QAT: 양자화 인지 학습</a></li>
+<li><a href="#section-08">Preserving QAT: 조합 경량화</a></li>
+<li><a href="#section-09">RPS 실전 이미지 분류 QAT</a></li>
+<li><a href="#section-10">초보자 체크리스트와 용어</a></li>
+<li><a href="#section-11">온디바이스 AI 경량화 최신 트렌드</a></li>
+</ol>
+<h2 id="예제-노트북-대응표">예제 노트북 대응표</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>노트</th>
+<th>원본 노트북</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#section-04">Pruning: 가지치기</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_01_Pruning_Whole_Model.ipynb">EX_01</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_02_Pruning_Some_Layer.ipynb">EX_02</a></td>
+</tr>
+<tr>
+<td><a href="#section-05">Clustering: 가중치 군집화</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_03_Clustering_Whole_Model.ipynb">EX_03</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_04_Clustering_Some_Layer.ipynb">EX_04</a></td>
+</tr>
+<tr>
+<td><a href="#section-06">PTQ: 학습 후 양자화</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_05_PTQ_Dynamic_Range.ipynb">EX_05</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_06_PTQ_INT8.ipynb">EX_06</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_07_PTQ_FLOAT16.ipynb">EX_07</a></td>
+</tr>
+<tr>
+<td><a href="#section-07">QAT: 양자화 인지 학습</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_08_Quantization_Aware_Training.ipynb">EX_08</a></td>
+</tr>
+<tr>
+<td><a href="#section-08">Preserving QAT: 조합 경량화</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_09_Cluster_Preserving_QAT.ipynb">EX_09</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_10_Sparsity_Preserving_QAT.ipynb">EX_10</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_11_Sparsity_and_Cluster_Preserving%20QAT.ipynb">EX_11</a></td>
+</tr>
+<tr>
+<td><a href="#section-09">RPS 실전 이미지 분류 QAT</a></td>
+<td><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT.ipynb">EX_12
+DenseNet</a>, <a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT_초보자주석.ipynb">초보자주석</a>,
+<a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT_ResNet50_초보자주석.ipynb">ResNet50
+초보자주석</a></td>
+</tr>
+<tr>
+<td><a href="#section-11">온디바이스 AI 경량화 최신 트렌드</a></td>
+<td>Hugging Face, arXiv 중심 최신 경량화 이슈 정리</td>
+</tr>
+</tbody>
+</table>
+<h2 id="fork용-실습-코드-저장소">Fork용 실습 코드 저장소</h2>
+<ul>
+<li>실습 코드 저장소: <a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab"
+class="uri">https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab</a></li>
+<li>학생들은 위 저장소를 fork해서 각자 GitHub 계정에서 실습하면
+됩니다.</li>
+</ul>
+<h2 id="github-공유-링크">GitHub 공유 링크</h2>
+<ul>
+<li>강의자료 폴더: <a
+href="https://github.com/philipdekim-OnD01/obsidian-vault/tree/ondevice-ai-lightweighting-lecture/CNN20260510/Lecture/OnDeviceAI.RBPI.2026/examples%28COLAB%29/04_Lightweighting/Obsidian_OnDeviceAI_Lightweighting"
+class="uri">https://github.com/philipdekim-OnD01/obsidian-vault/tree/ondevice-ai-lightweighting-lecture/CNN20260510/Lecture/OnDeviceAI.RBPI.2026/examples%28COLAB%29/04_Lightweighting/Obsidian_OnDeviceAI_Lightweighting</a></li>
+<li>실습 코드 폴더: <a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab"
+class="uri">https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab</a></li>
+</ul>
+<h2 id="이-강의의-큰-질문">이 강의의 큰 질문</h2>
+<ul>
+<li>모델을 작게 만들면 왜 온디바이스에서 유리한가?</li>
+<li>정확도를 크게 잃지 않으면서 모델 크기와 연산량을 줄이는 방법은
+무엇인가?</li>
+<li><code>.h5</code> 모델과 <code>.tflite</code> 모델은 어떤 차이가
+있는가?</li>
+<li>Pruning, Clustering, Quantization은 각각 무엇을 줄이는가?</li>
+</ul>
+<h2 id="초보자용-한-장-요약">초보자용 한 장 요약</h2>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 6%" />
+<col style="width: 76%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr>
+<th>기법</th>
+<th>아주 쉬운 말</th>
+<th>줄이는 것</th>
+<th>장점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pruning</td>
+<td>별로 안 쓰는 연결을 끊기</td>
+<td>중요하지 않은 연결의 가중치를 0으로 만들어서 실제로 일하는 연결 수를
+줄이는 것</td>
+<td></td>
+</tr>
+<tr>
+<td>Clustering</td>
+<td>비슷한 숫자를 같은 숫자로 묶기</td>
+<td>[0.81, 0.79, 0.82, -0.21, -0.19, -0.22]<br>이 숫자들은 서로 조금씩
+다르지만, 사실 비슷한 숫자끼리 묶을 수 있습니다. 0.81, 0.79, 0.82는 대략
+0.8로 묶고 -0.21, -0.19, -0.22는 대략 -0.2로 묶습니다.<br>[0.8, 0.8,
+0.8, -0.2, -0.2, -0.2]<br>원래는 서로 다른 숫자가 6개였는데, 이제는
+실제로 쓰는 숫자 종류가 2개가 되어 저장과 계산을 단순하게 만드는
+방법.</td>
+<td>저장효율 개선</td>
+</tr>
+<tr>
+<td>PTQ(Post-Training Quantization)</td>
+<td>다 만든 모델의 숫자 표현을 작게 바꾸기</td>
+<td>float32를 int8로 바꿉니다. float32는 숫자 하나에 32비트 int8은 숫자
+하나에 8비트 그러면 숫자 하나의 저장 크기가 4분의 1이 됩니다. 예를 들어
+가중치가 100만 개 있다고 하면,<br>float32 모델은 대략 4MB 필요 <br>int8
+모델은 대략 1MB 필요</td>
+<td>모델 파일,<br>메모리 사용량,<br>추론 속도</td>
+</tr>
+<tr>
+<td>QAT(Quantization-Aware Training)</td>
+<td>작게 바뀔 것을 미리 알고 훈련하기</td>
+<td>QAT는 PTQ와 비슷하게 양자화를 목표로 합니다. PTQ는 훈련이 끝난 뒤에
+갑자기 숫자를 작게 바꿉니다. QAT는 훈련할 때부터 “나중에 숫자가 작게
+바뀔 거야”라고 모델에게 미리 알려줍니다.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Pruning은 연결을 줄입니다. Clustering은 값의 종류를 줄입니다. PTQ는
+숫자의 저장 크기를 줄입니다.<br />
+QAT는 정확도 손실을 줄입니다.</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 14%" />
+<col style="width: 30%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>기법</th>
+<th style="text-align: right;">직접 줄이는 대상</th>
+<th style="text-align: right;">기대 경량화 효과</th>
+<th>주의점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pruning</td>
+<td style="text-align: right;">가중치 연결 수</td>
+<td style="text-align: right;">10~90%까지 가능</td>
+<td>0이 많아져도 파일 크기와 속도가 바로 줄지는 않음</td>
+</tr>
+<tr>
+<td>Clustering</td>
+<td style="text-align: right;">가중치 값의 종류</td>
+<td style="text-align: right;">보통 10~40% 수준</td>
+<td>압축 저장 방식이 있어야 효과가 큼</td>
+</tr>
+<tr>
+<td>PTQ</td>
+<td style="text-align: right;">숫자 저장 크기</td>
+<td style="text-align: right;">float32 → int8이면 약 75% 감소</td>
+<td>정확도 손실 가능</td>
+</tr>
+<tr>
+<td>QAT</td>
+<td style="text-align: right;">양자화 후 정확도 손실</td>
+<td style="text-align: right;">크기 감소 효과는 PTQ와 비슷</td>
+<td>QAT 자체가 줄이는 게 아니라 int8 양자화를 잘 견디게 함</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="section-01"></a></p>
+<h1 id="먼저-읽는-초간단-그림">먼저 읽는 초간단 그림</h1>
+<p>이 강의는 “AI 모델을 작은 기기에서 잘 돌아가게 만드는 법”을
+배웁니다.</p>
+<h2 id="큰-그림">큰 그림</h2>
+<pre class="text"><code>큰 AI 모델
+  |
+  |  너무 큼, 느림, 메모리 많이 씀
+  v
+경량화
+  |
+  |  조금 작게, 조금 빠르게, 가능하면 정확도는 유지
+  v
+라즈베리파이 같은 작은 기기에서 실행</code></pre>
+<h2 id="모델을-짐가방이라고-생각하기">모델을 짐가방이라고 생각하기</h2>
+<p>AI 모델은 여행 가방과 비슷합니다.</p>
+<ul>
+<li>가방이 너무 크면 작은 차에 싣기 어렵습니다.</li>
+<li>물건이 너무 많으면 찾는 데 오래 걸립니다.</li>
+<li>필요 없는 물건을 빼면 가방이 가벼워집니다.</li>
+<li>비슷한 물건을 한 봉지에 묶으면 정리가 됩니다.</li>
+<li>큰 병을 작은 병에 덜면 공간을 덜 씁니다.</li>
+</ul>
+<p>경량화도 같은 생각입니다.</p>
+<table>
+<thead>
+<tr>
+<th>여행 가방 정리</th>
+<th>AI 경량화</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>안 쓰는 물건 빼기</td>
+<td>Pruning</td>
+</tr>
+<tr>
+<td>비슷한 물건끼리 묶기</td>
+<td>Clustering</td>
+</tr>
+<tr>
+<td>큰 병을 작은 병에 덜기</td>
+<td>Quantization</td>
+</tr>
+<tr>
+<td>작은 가방에 맞춰 다시 정리 연습하기</td>
+<td>QAT</td>
+</tr>
+</tbody>
+</table>
+<h2 id="네-가지-기법을-한-문장으로">네 가지 기법을 한 문장으로</h2>
+<h3 id="pruning">Pruning</h3>
+<p>모델 안의 “별로 중요하지 않은 연결”을 0으로 만듭니다.</p>
+<pre class="text"><code>많은 연결 -&gt; 중요한 연결만 남김</code></pre>
+<h3 id="clustering">Clustering</h3>
+<p>비슷한 가중치 숫자들을 같은 대표 숫자로 바꿉니다.</p>
+<pre class="text"><code>수많은 숫자 종류 -&gt; 몇 개의 대표 숫자</code></pre>
+<h3 id="ptq">PTQ</h3>
+<p>학습이 끝난 모델을 TFLite로 바꾸면서 숫자 크기를 줄입니다.</p>
+<pre class="text"><code>float32 -&gt; float16 또는 int8</code></pre>
+<h3 id="qat">QAT</h3>
+<p>숫자가 작게 바뀌어도 잘 맞히도록 학습 중에 미리 연습시킵니다.</p>
+<pre class="text"><code>양자화될 상황을 미리 경험하며 학습</code></pre>
+<h2 id="가장-헷갈리는-부분">가장 헷갈리는 부분</h2>
+<h3 id="pruning과-clustering-차이">Pruning과 Clustering 차이</h3>
+<p>Pruning은 값을 0으로 만드는 것입니다.</p>
+<pre class="text"><code>0.52, 0.01, -0.33 -&gt; 0.52, 0, -0.33</code></pre>
+<p>Clustering은 비슷한 값을 같은 값으로 묶는 것입니다.</p>
+<pre class="text"><code>0.52, 0.50, 0.49 -&gt; 0.50, 0.50, 0.50</code></pre>
+<h3 id="ptq와-qat-차이">PTQ와 QAT 차이</h3>
+<p>PTQ는 시험이 끝난 뒤 답안지를 줄여 쓰는 느낌입니다. 쉽지만 글씨가
+뭉개져서 의미가 조금 달라질 수 있습니다.</p>
+<p>QAT는 처음부터 작은 칸에 답을 쓰는 연습을 하며 공부하는 느낌입니다.
+더 번거롭지만 최종 결과가 안정적일 수 있습니다.</p>
+<h2 id="강의자료-읽는-법">강의자료 읽는 법</h2>
+<ol type="1">
+<li>먼저 각 노트의 “핵심 개념”만 읽습니다.</li>
+<li>그 다음 “실습에서 확인할 것”을 봅니다.</li>
+<li>마지막에 코드 블록을 봅니다.</li>
+</ol>
+<p>처음부터 코드 문법을 외우려고 하면 어렵습니다. 이 강의에서는 “이
+코드가 어떤 경량화 동작을 시키는지”를 이해하는 것이 먼저입니다.</p>
+<hr />
+<p><a id="section-02"></a></p>
+<h1 id="온디바이스-ai와-경량화-개요">온디바이스 AI와 경량화 개요</h1>
+<h2 id="먼저-한-문장으로">먼저 한 문장으로</h2>
+<p>온디바이스 AI 경량화는 “큰 AI 모델을 작은 기기에서도 돌아가도록
+가볍게 정리하는 작업”입니다.</p>
+<h2 id="온디바이스-ai란">온디바이스 AI란?</h2>
+<p>온디바이스 AI는 서버로 데이터를 보내지 않고, 스마트폰, 라즈베리파이,
+마이크로컨트롤러, 카메라 같은 기기 안에서 AI 모델을 직접 실행하는
+방식입니다.</p>
+<p>장점은 다음과 같습니다.</p>
+<ul>
+<li>인터넷이 불안정해도 동작한다.</li>
+<li>서버 왕복 시간이 없어 반응이 빠르다.</li>
+<li>이미지, 음성 같은 민감한 데이터를 외부로 보내지 않아도 된다.</li>
+<li>서버 비용을 줄일 수 있다.</li>
+</ul>
+<p>하지만 기기 안에서 실행하려면 제약이 있습니다.</p>
+<ul>
+<li>메모리가 작다.</li>
+<li>CPU/GPU/NPU 성능이 서버보다 낮다.</li>
+<li>배터리를 아껴야 한다.</li>
+<li>모델 파일이 너무 크면 배포와 로딩이 느리다.</li>
+</ul>
+<p>그래서 경량화가 필요합니다.</p>
+<h2 id="쉬운-비유">쉬운 비유</h2>
+<p>서버는 넓은 연구실이고, 온디바이스 기기는 작은 책상입니다.
+연구실에서는 큰 장비를 마음껏 펼칠 수 있지만, 작은 책상에서는 꼭 필요한
+도구만 올려야 합니다.</p>
+<p>AI 모델도 같습니다.</p>
+<ul>
+<li>서버에서는 큰 모델을 돌릴 수 있습니다.</li>
+<li>라즈베리파이에서는 큰 모델이 느리거나 메모리 부족으로 안 될 수
+있습니다.</li>
+<li>그래서 모델을 작게 줄이고, 계산을 단순하게 만들고, 실행 파일을
+가볍게 해야 합니다.</li>
+</ul>
+<h2 id="경량화가-줄이는-것">경량화가 줄이는 것</h2>
+<table>
+<thead>
+<tr>
+<th>줄이는 대상</th>
+<th>의미</th>
+<th>대표 기법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모델 파일 크기</td>
+<td>저장 공간, 다운로드 크기</td>
+<td>Quantization, Clustering</td>
+</tr>
+<tr>
+<td>메모리 사용량</td>
+<td>실행 중 RAM 사용</td>
+<td>Quantization, Pruning</td>
+</tr>
+<tr>
+<td>연산량</td>
+<td>추론 시간, 전력 사용</td>
+<td>Pruning, Quantization</td>
+</tr>
+<tr>
+<td>중복된 표현</td>
+<td>비슷한 가중치 반복</td>
+<td>Clustering</td>
+</tr>
+</tbody>
+</table>
+<h2 id="이-예제에서-배우는-4가지-축">이 예제에서 배우는 4가지 축</h2>
+<h3 id="pruning-1">1. Pruning</h3>
+<p>중요도가 낮은 가중치를 0으로 만드는 방법입니다. 0이 많아지면 sparse
+model이 됩니다.</p>
+<p>핵심 질문:</p>
+<ul>
+<li>어느 가중치를 0으로 만들 것인가?</li>
+<li>0을 많이 만들었을 때 정확도는 얼마나 떨어지는가?</li>
+<li>압축했을 때 실제 파일 크기가 줄어드는가?</li>
+</ul>
+<p>관련 노트: <a href="#section-04">Pruning: 가지치기</a></p>
+<h3 id="clustering-1">2. Clustering</h3>
+<p>서로 비슷한 가중치들을 몇 개의 대표값으로 묶는 방법입니다. 예를 들어
+수많은 가중치를 16개의 대표값만 사용하도록 제한합니다.</p>
+<p>핵심 질문:</p>
+<ul>
+<li>대표값 개수를 몇 개로 둘 것인가?</li>
+<li>같은 대표값을 공유하면 압축이 얼마나 잘 되는가?</li>
+<li>일부 레이어에만 적용하면 정확도 손실을 줄일 수 있는가?</li>
+</ul>
+<p>관련 노트: <a href="#section-05">Clustering: 가중치 군집화</a></p>
+<h3 id="ptq-1">3. PTQ</h3>
+<p>이미 학습된 모델을 TFLite로 변환하면서 양자화하는 방법입니다. 학습을
+다시 하지 않거나 거의 하지 않기 때문에 적용이 쉽습니다.</p>
+<p>핵심 질문:</p>
+<ul>
+<li>Dynamic Range, INT8, FLOAT16은 무엇이 다른가?</li>
+<li>대표 데이터셋이 왜 필요한가?</li>
+<li>입력과 출력 dtype이 바뀌면 추론 코드는 어떻게 달라지는가?</li>
+</ul>
+<p>관련 노트: <a href="#section-06">PTQ: 학습 후 양자화</a></p>
+<h3 id="qat-1">4. QAT</h3>
+<p>학습 중에 양자화될 상황을 미리 흉내 내는 방법입니다. 양자화 후 정확도
+하락을 줄이는 데 유리합니다.</p>
+<p>핵심 질문:</p>
+<ul>
+<li>PTQ보다 번거로운데 왜 쓰는가?</li>
+<li>학습 그래프에 quantize wrapper가 생기는 이유는 무엇인가?</li>
+<li>최종 <code>.tflite</code> 변환은 어떻게 하는가?</li>
+</ul>
+<p>관련 노트: <a href="#section-07">QAT: 양자화 인지 학습</a></p>
+<h2 id="초보자가-기억할-한-문장">초보자가 기억할 한 문장</h2>
+<p>경량화는 모델을 무작정 작게 만드는 작업이 아니라, 정확도와 속도와
+크기 사이의 균형점을 찾는 실험입니다.</p>
+<h2 id="처음에는-이것만-구분하기">처음에는 이것만 구분하기</h2>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>보면 되는 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모델이 작아졌나?</td>
+<td>파일 크기</td>
+</tr>
+<tr>
+<td>모델이 빨라질 가능성이 있나?</td>
+<td>연산 타입, sparsity, TFLite 변환 여부</td>
+</tr>
+<tr>
+<td>모델이 여전히 잘 맞히나?</td>
+<td>test accuracy</td>
+</tr>
+<tr>
+<td>실제 기기에서 쓸 수 있나?</td>
+<td><code>.tflite</code> 파일 생성 여부</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="section-03"></a></p>
+<h1 id="공통-실습-흐름-mnist-기준">공통 실습 흐름: MNIST 기준</h1>
+<p><code>EX_01</code>부터 <code>EX_11</code>까지는 대부분 MNIST 숫자
+이미지 분류 모델을 기준으로 경량화를 실습합니다.</p>
+<h2 id="먼저-한-문장으로-1">먼저 한 문장으로</h2>
+<p>MNIST 실습은 “작은 숫자 분류 모델을 하나 만든 뒤, 여러 경량화 방법을
+차례로 적용해 비교하는 실험”입니다.</p>
+<h2 id="전체-흐름">전체 흐름</h2>
+<pre class="text"><code>데이터 준비
+-&gt; baseline CNN 모델 준비
+-&gt; baseline 정확도 확인
+-&gt; 경량화 적용
+-&gt; 필요하면 fine-tuning
+-&gt; 정확도 비교
+-&gt; TFLite 변환
+-&gt; 파일 크기와 추론 결과 확인</code></pre>
+<h2 id="라이브러리-설치">1. 라이브러리 설치</h2>
+<p>주요 라이브러리는 TensorFlow와 TensorFlow Model Optimization
+Toolkit입니다.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install tensorflow<span class="op">-</span>model<span class="op">-</span>optimization</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow_model_optimization <span class="im">as</span> tfmot</span></code></pre></div>
+<p><code>tfmot</code>는 pruning, clustering, QAT를 제공하는 핵심
+도구입니다.</p>
+<p>초보자식으로 말하면 <code>tfmot</code>는 TensorFlow 모델을 가볍게
+만드는 도구 상자입니다.</p>
+<h2 id="데이터-로딩">2. 데이터 로딩</h2>
+<p>MNIST는 손글씨 숫자 이미지 데이터셋입니다.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(train_images, train_labels), (test_images, test_labels) <span class="op">=</span> keras.datasets.mnist.load_data()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>train_images <span class="op">=</span> train_images <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>test_images <span class="op">=</span> test_images <span class="op">/</span> <span class="fl">255.0</span></span></code></pre></div>
+<p>이미지 픽셀은 원래 0부터 255 사이의 정수입니다. 이를 0부터 1 사이
+값으로 바꾸면 모델이 학습하기 쉽습니다.</p>
+<h2 id="baseline-모델">3. Baseline 모델</h2>
+<p>Baseline은 경량화 전 기준 모델입니다. 실험에서 기준 모델이 없으면
+경량화가 좋아졌는지 나빠졌는지 판단할 수 없습니다.</p>
+<p>쉽게 말해 baseline은 “원래 성적표”입니다. 경량화를 한 뒤에는 항상
+원래 성적표와 비교해야 합니다.</p>
+<p>확인해야 할 값:</p>
+<ul>
+<li>baseline test accuracy</li>
+<li>baseline model file size</li>
+<li>baseline TFLite file size</li>
+</ul>
+<h2 id="fine-tuning">4. Fine-tuning</h2>
+<p>Pruning, Clustering, QAT는 모델 구조나 학습 조건을 바꿉니다. 그래서
+적용 직후 바로 끝내지 않고 짧게 다시 학습합니다. 이 과정을
+fine-tuning이라고 합니다.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model.fit(train_images, train_labels, epochs<span class="op">=</span><span class="dv">1</span> 또는 <span class="dv">2</span>)</span></code></pre></div>
+<p>초보자는 fine-tuning을 “경량화로 흔들린 모델을 다시 적응시키는
+단계”로 이해하면 됩니다.</p>
+<p>비유하면 책상 배치를 바꾼 뒤, 다시 익숙해지도록 몇 번 연습하는
+과정입니다.</p>
+<h2 id="tflite-변환">5. TFLite 변환</h2>
+<p>온디바이스 실행을 위해 Keras 모델을 TFLite 모델로 바꿉니다.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(model)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter.convert()</span></code></pre></div>
+<p>양자화를 적용할 때는 다음 옵션이 자주 등장합니다.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span></code></pre></div>
+<h2 id="실험-결과를-보는-순서">6. 실험 결과를 보는 순서</h2>
+<p>초보자는 출력 로그를 다음 순서로 보면 됩니다.</p>
+<ol type="1">
+<li>정확도: baseline과 경량화 모델의 <code>test accuracy</code>
+비교</li>
+<li>크기: <code>.h5</code>, <code>.tflite</code>, <code>.zip</code> 파일
+크기 비교</li>
+<li>dtype: TFLite 입력과 출력 타입 확인</li>
+<li>추론 코드: float 입력인지 int8 입력인지 확인</li>
+</ol>
+<h2 id="초보자에게-중요한-순서">초보자에게 중요한 순서</h2>
+<p>처음에는 모든 코드를 이해하려고 하지 말고 아래 네 줄만 따라가면
+됩니다.</p>
+<pre class="text"><code>1. 원래 모델 정확도 확인
+2. 경량화 적용
+3. 경량화 모델 정확도 확인
+4. 파일 크기 또는 dtype 확인</code></pre>
+<h2 id="관련-노트">관련 노트</h2>
+<ul>
+<li><a href="#section-04">Pruning: 가지치기</a></li>
+<li><a href="#section-05">Clustering: 가중치 군집화</a></li>
+<li><a href="#section-06">PTQ: 학습 후 양자화</a></li>
+<li><a href="#section-07">QAT: 양자화 인지 학습</a></li>
+</ul>
+<hr />
+<p><a id="section-04"></a></p>
+<h1 id="pruning-가지치기">Pruning: 가지치기</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_01_Pruning_Whole_Model.ipynb">EX_01_Pruning_Whole_Model.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_02_Pruning_Some_Layer.ipynb">EX_02_Pruning_Some_Layer.ipynb</a></li>
+</ul>
+<h2 id="핵심-개념">핵심 개념</h2>
+<p>Pruning은 모델의 가중치 중 중요도가 낮은 값을 0으로 만드는
+기법입니다.</p>
+<p>아주 쉽게 말하면 “AI 모델 안의 약한 연결을 끊는 것”입니다.</p>
+<h2 id="쉬운-비유-1">쉬운 비유</h2>
+<p>신경망을 도로망이라고 생각해 봅니다. 도시 안에 도로가 너무 많으면
+관리가 어렵습니다. 그런데 실제로는 거의 차가 다니지 않는 작은 길도
+있습니다. Pruning은 이런 거의 안 쓰는 길을 막고, 중요한 길만 남기는
+작업입니다.</p>
+<pre class="text"><code>복잡한 도로망
+-&gt; 거의 안 쓰는 길 제거
+-&gt; 더 단순한 도로망</code></pre>
+<p>모델에서는 “길”이 가중치이고, “길을 막는다”는 것이 가중치를 0으로
+만든다는 뜻입니다.</p>
+<p>예를 들어 가중치가 다음과 같다고 합시다.</p>
+<pre class="text"><code>[0.82, 0.01, -0.44, 0.002, 0.31]</code></pre>
+<p>작은 값들을 0으로 만들면 다음처럼 됩니다.</p>
+<pre class="text"><code>[0.82, 0, -0.44, 0, 0.31]</code></pre>
+<p>0이 많아진 모델은 sparse model입니다.</p>
+<h2 id="왜-경량화가-되는가">왜 경량화가 되는가?</h2>
+<p>0이 많아지면 압축이 잘 됩니다. 다만 일반 <code>.h5</code> 파일만 보면
+크기가 확 줄지 않을 수 있습니다. 실제 이득은 압축 저장, sparse 연산
+지원, TFLite 변환과 함께 볼 때 더 의미가 있습니다.</p>
+<h2 id="ex_01-전체-모델-pruning">EX_01: 전체 모델 Pruning</h2>
+<p>전체 모델에 pruning wrapper를 씌웁니다.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pruning_params <span class="op">=</span> {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;pruning_schedule&quot;</span>: tfmot.sparsity.keras.PolynomialDecay(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>        initial_sparsity<span class="op">=</span><span class="fl">0.50</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        final_sparsity<span class="op">=</span><span class="fl">0.80</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        begin_step<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        end_step<span class="op">=</span>end_step</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>model_for_pruning <span class="op">=</span> tfmot.sparsity.keras.prune_low_magnitude(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>pruning_params</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li><code>initial_sparsity=0.50</code>: 처음부터 가중치의 약 50%를 0으로
+만들겠다는 뜻입니다.</li>
+<li><code>final_sparsity=0.80</code>: 최종적으로 약 80%까지 0으로
+만들겠다는 뜻입니다.</li>
+<li><code>PolynomialDecay</code>: 한 번에 확 자르지 않고 학습 step에
+따라 점진적으로 0을 늘립니다.</li>
+</ul>
+<h2 id="꼭-필요한-callback">꼭 필요한 callback</h2>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>callbacks <span class="op">=</span> [</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    tfmot.sparsity.keras.UpdatePruningStep(),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div>
+<p>Pruning schedule은 현재 학습 step을 알아야 동작합니다. 이 callback이
+없으면 pruning이 의도대로 진행되지 않습니다.</p>
+<h2 id="학습-후-wrapper-제거">학습 후 wrapper 제거</h2>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>final_model <span class="op">=</span> tfmot.sparsity.keras.strip_pruning(model_for_pruning)</span></code></pre></div>
+<p><code>prune_low_magnitude</code>를 적용하면 모델에 pruning용 부가
+정보가 붙습니다. 배포 전에는 <code>strip_pruning</code>으로 학습용
+wrapper를 제거합니다.</p>
+<h2 id="ex_02-일부-레이어만-pruning">EX_02: 일부 레이어만 Pruning</h2>
+<p>모든 레이어에 pruning을 걸면 정확도가 더 흔들릴 수 있습니다. 그래서
+Dense 레이어처럼 파라미터가 많은 일부 레이어에만 적용할 수 있습니다.</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> apply_pruning_to_dense(layer):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(layer, tf.keras.layers.Dense):</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tfmot.sparsity.keras.prune_low_magnitude(layer, <span class="op">**</span>pruning_params)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> layer</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>model_for_pruning <span class="op">=</span> keras.models.clone_model(</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    clone_function<span class="op">=</span>apply_pruning_to_dense,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li><code>clone_model</code>: 기존 모델을 복사하면서 레이어별로 수정할
+수 있습니다.</li>
+<li><code>isinstance(layer, Dense)</code>: Dense 레이어만 pruning
+대상입니다.</li>
+<li>Conv2D 같은 레이어는 그대로 둡니다.</li>
+</ul>
+<h2 id="실습에서-확인할-것">실습에서 확인할 것</h2>
+<ul>
+<li>baseline accuracy와 pruned accuracy가 얼마나 차이 나는가?</li>
+<li><code>model.summary()</code>에서 pruning wrapper가 붙었는가?</li>
+<li><code>strip_pruning</code> 후 최종 모델 구조가 단순해졌는가?</li>
+<li>압축 파일 크기가 줄었는가?</li>
+</ul>
+<h2 id="초보자가-자주-하는-오해">초보자가 자주 하는 오해</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>오해</th>
+<th>실제 의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0으로 만들면 무조건 빨라진다</td>
+<td>실행 엔진이 sparse 연산을 잘 지원해야 속도 이득이 커집니다.</td>
+</tr>
+<tr>
+<td>pruning을 많이 할수록 항상 좋다</td>
+<td>너무 많이 자르면 정확도가 떨어집니다.</td>
+</tr>
+<tr>
+<td>pruning 후 바로 배포하면 된다</td>
+<td>보통 fine-tuning과 <code>strip_pruning</code>이 필요합니다.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="초보자-포인트">초보자 포인트</h2>
+<p>Pruning은 “작은 가중치를 0으로 만드는 것”입니다. 정확도 하락을
+줄이려면 pruning 후 fine-tuning을 해야 합니다.</p>
+<hr />
+<p><a id="section-05"></a></p>
+<h1 id="clustering-가중치-군집화">Clustering: 가중치 군집화</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_03_Clustering_Whole_Model.ipynb">EX_03_Clustering_Whole_Model.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_04_Clustering_Some_Layer.ipynb">EX_04_Clustering_Some_Layer.ipynb</a></li>
+</ul>
+<h2 id="핵심-개념-1">핵심 개념</h2>
+<p>Clustering은 많은 가중치를 몇 개의 대표값으로 묶는 방법입니다.</p>
+<p>아주 쉽게 말하면 “비슷비슷한 숫자는 같은 숫자로 통일하는
+것”입니다.</p>
+<h2 id="쉬운-비유-2">쉬운 비유</h2>
+<p>색연필이 1,000개 있는데 색이 아주 조금씩만 다르다고 해 봅니다. 실제로
+그림을 그릴 때는 빨강 계열 16개, 파랑 계열 16개 정도만 있어도 충분할 수
+있습니다.</p>
+<p>Clustering은 모델 안의 수많은 숫자를 이런 대표 색연필 몇 개로
+정리하는 작업입니다.</p>
+<pre class="text"><code>수많은 미세한 색 차이
+-&gt; 대표 색 몇 개로 묶기
+-&gt; 저장하기 쉬워짐</code></pre>
+<p>예를 들어 가중치가 10,000개 있어도 실제 값 종류를 16개만 쓰도록
+제한할 수 있습니다.</p>
+<pre class="text"><code>원래 가중치: 0.123, 0.127, 0.131, -0.45, -0.47, ...
+군집화 후:   0.13,  0.13,  0.13,  -0.46, -0.46, ...</code></pre>
+<h2 id="왜-압축이-되는가">왜 압축이 되는가?</h2>
+<p>모든 가중치 값을 각각 저장하는 대신, 대표값 목록과 각 가중치가 어떤
+대표값을 쓰는지만 저장할 수 있습니다. 그래서 zip 같은 압축에서 효과가
+커집니다.</p>
+<h2 id="ex_03-전체-모델-clustering">EX_03: 전체 모델 Clustering</h2>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>clustering_params <span class="op">=</span> {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;number_of_clusters&quot;</span>: <span class="dv">16</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cluster_centroids_init&quot;</span>: tfmot.clustering.keras.CentroidInitialization.LINEAR</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>clustered_model <span class="op">=</span> tfmot.clustering.keras.cluster_weights(</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    model,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>clustering_params</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li><code>number_of_clusters=16</code>: 가중치 대표값을 16개로
+제한합니다.</li>
+<li><code>CentroidInitialization.LINEAR</code>: 대표값 초기 위치를
+선형적으로 배치합니다.</li>
+<li><code>cluster_weights</code>: 모델에 clustering wrapper를
+적용합니다.</li>
+</ul>
+<h2 id="ex_04-일부-레이어만-clustering">EX_04: 일부 레이어만
+Clustering</h2>
+<p>레이어마다 대표값 개수를 다르게 줄 수 있습니다.</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dict_clustering_params <span class="op">=</span> {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;conv2d_1&quot;</span>: {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;number_of_clusters&quot;</span>: <span class="dv">8</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cluster_centroids_init&quot;</span>: tfmot.clustering.keras.CentroidInitialization.KMEANS_PLUS_PLUS</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dense&quot;</span>: {</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;number_of_clusters&quot;</span>: <span class="dv">16</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cluster_centroids_init&quot;</span>: tfmot.clustering.keras.CentroidInitialization.KMEANS_PLUS_PLUS</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li><code>conv2d_1</code>은 8개 대표값만 사용합니다.</li>
+<li><code>dense</code>는 16개 대표값을 사용합니다.</li>
+<li><code>KMEANS_PLUS_PLUS</code>는 데이터 분포를 고려해 대표값 초기
+위치를 잡는 방식입니다.</li>
+</ul>
+<h2 id="학습-후-wrapper-제거-1">학습 후 wrapper 제거</h2>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>final_model <span class="op">=</span> tfmot.clustering.keras.strip_clustering(clustered_model)</span></code></pre></div>
+<p>Pruning과 마찬가지로, clustering도 학습용 wrapper를 제거한 뒤
+저장하거나 변환하는 것이 좋습니다.</p>
+<h2 id="실습에서-확인할-것-1">실습에서 확인할 것</h2>
+<ul>
+<li>특정 레이어의 weight 값 종류가 정말 줄었는가?</li>
+<li>baseline accuracy와 clustered accuracy 차이가 큰가?</li>
+<li><code>.zip</code>으로 압축했을 때 크기가 줄었는가?</li>
+<li>전체 모델 적용과 일부 레이어 적용 중 어떤 것이 정확도를 더 잘
+유지하는가?</li>
+</ul>
+<h2 id="pruning과-바로-비교하기">Pruning과 바로 비교하기</h2>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>Pruning</th>
+<th>Clustering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>하는 일</td>
+<td>값을 0으로 만듦</td>
+<td>비슷한 값을 같은 값으로 묶음</td>
+</tr>
+<tr>
+<td>쉬운 비유</td>
+<td>안 쓰는 길 막기</td>
+<td>비슷한 색연필 정리</td>
+</tr>
+<tr>
+<td>주로 보는 값</td>
+<td>0의 비율, sparsity</td>
+<td>대표값 개수, cluster 수</td>
+</tr>
+<tr>
+<td>기대 효과</td>
+<td>sparse 압축, sparse 연산</td>
+<td>압축률 개선</td>
+</tr>
+</tbody>
+</table>
+<h2 id="초보자-포인트-1">초보자 포인트</h2>
+<p>Clustering은 “비슷한 가중치를 같은 값으로 묶는 것”입니다. 0을 만드는
+Pruning과 다르게, 값의 종류를 줄이는 방식입니다.</p>
+<hr />
+<p><a id="section-06"></a></p>
+<h1 id="ptq-학습-후-양자화">PTQ: 학습 후 양자화</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_05_PTQ_Dynamic_Range.ipynb">EX_05_PTQ_Dynamic_Range.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_06_PTQ_INT8.ipynb">EX_06_PTQ_INT8.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_07_PTQ_FLOAT16.ipynb">EX_07_PTQ_FLOAT16.ipynb</a></li>
+</ul>
+<h2 id="핵심-개념-2">핵심 개념</h2>
+<p>PTQ는 Post-Training Quantization의 약자입니다. 이미 학습된 모델을
+다시 오래 학습하지 않고, TFLite 변환 단계에서 더 작은 숫자 표현으로
+바꿉니다.</p>
+<p>딥러닝 모델은 보통 <code>float32</code>를 많이 씁니다.
+<code>float32</code>는 숫자 하나에 32비트를 씁니다. 이를
+<code>float16</code> 또는 <code>int8</code>로 바꾸면 모델 크기와 메모리
+사용량을 줄일 수 있습니다.</p>
+<h2 id="쉬운-비유-3">쉬운 비유</h2>
+<p>정밀한 저울이 있다고 생각해 봅니다.</p>
+<ul>
+<li><code>float32</code>: 0.123456789g처럼 매우 자세히 기록합니다.</li>
+<li><code>float16</code>: 0.1235g 정도로 덜 자세히 기록합니다.</li>
+<li><code>int8</code>: 정해진 눈금 256칸 중 하나로 기록합니다.</li>
+</ul>
+<p>기록은 덜 정밀해지지만, 종이에 적는 양과 계산 부담은 줄어듭니다.
+양자화는 이 생각과 비슷합니다.</p>
+<h2 id="숫자-크기-감각">숫자 크기 감각</h2>
+<pre class="text"><code>float32: 숫자 하나를 32비트로 저장
+float16: 숫자 하나를 16비트로 저장
+int8:    숫자 하나를 8비트로 저장</code></pre>
+<p>단순히 저장 크기만 보면 <code>int8</code>은 <code>float32</code>보다
+4배 작습니다. 실제 모델 전체 크기는 레이어 구성과 변환 방식에 따라
+달라집니다.</p>
+<h2 id="공통-변환-코드">공통 변환 코드</h2>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(model)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter.convert()</span></code></pre></div>
+<p><code>Optimize.DEFAULT</code>는 TensorFlow Lite가 가능한 기본
+최적화를 적용하도록 지시합니다.</p>
+<h2 id="ex_05-dynamic-range-quantization">EX_05: Dynamic Range
+Quantization</h2>
+<p>Dynamic Range 방식은 가장 적용하기 쉽습니다.</p>
+<p>특징:</p>
+<ul>
+<li>별도 대표 데이터셋 없이 적용 가능</li>
+<li>주로 weight를 양자화</li>
+<li>입력과 출력은 float인 경우가 많아 기존 추론 코드와 비슷함</li>
+<li>가장 간단하지만 INT8 full quantization보다 최적화 폭이 작을 수
+있음</li>
+</ul>
+<p>초보자용 이해:</p>
+<p>Dynamic Range PTQ는 “일단 쉽게 모델 크기를 줄여보는 첫 번째
+양자화”입니다.</p>
+<h2 id="ex_06-int8-quantization">EX_06: INT8 Quantization</h2>
+<p>INT8은 가중치와 활성값을 8비트 정수 중심으로 바꾸는 방식입니다.</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> representative_data_gen():</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> input_value <span class="kw">in</span> tf.data.Dataset.from_tensor_slices(train_images).batch(<span class="dv">1</span>).take(<span class="dv">100</span>):</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> [input_value]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>converter.target_spec.supported_ops <span class="op">=</span> [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>converter.inference_input_type <span class="op">=</span> tf.int8</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>converter.inference_output_type <span class="op">=</span> tf.int8</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>converter.representative_dataset <span class="op">=</span> representative_data_gen</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li><code>representative_dataset</code>: 실제 입력과 비슷한
+샘플입니다.</li>
+<li><code>supported_ops</code>: INT8 연산만 사용하도록 요청합니다.</li>
+<li><code>inference_input_type=tf.int8</code>: 모델 입력도
+int8입니다.</li>
+<li><code>inference_output_type=tf.int8</code>: 모델 출력도
+int8입니다.</li>
+</ul>
+<h2 id="대표-데이터셋이-필요한-이유">대표 데이터셋이 필요한 이유</h2>
+<p>float 값을 int8로 바꾸려면 “어떤 float 범위를 int8 범위에 대응시킬지”
+정해야 합니다. 이 범위를 잡는 과정을 calibration이라고 생각하면 됩니다.
+대표 데이터셋은 calibration에 쓰입니다.</p>
+<h2 id="int8-추론에서-주의할-점">INT8 추론에서 주의할 점</h2>
+<p>모델 입력이 <code>int8</code>이면 이미지를 그냥 float로 넣으면 안
+됩니다. TFLite interpreter의 <code>input_details</code>에서 scale과 zero
+point를 확인해 입력을 변환해야 합니다.</p>
+<p>개념적으로는 다음과 같습니다.</p>
+<pre class="text"><code>real_value = scale * (int8_value - zero_point)</code></pre>
+<p>또는 반대로 입력 float를 int8로 넣을 때는 scale과 zero point를 이용해
+변환합니다.</p>
+<h2 id="ex_07-float16-quantization">EX_07: FLOAT16 Quantization</h2>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>converter.target_spec.supported_types <span class="op">=</span> [tf.float16]</span></code></pre></div>
+<p>특징:</p>
+<ul>
+<li>float32 weight를 float16으로 줄임</li>
+<li>GPU가 float16에 강한 환경에서 유리할 수 있음</li>
+<li>입력과 출력은 float32로 유지되는 경우가 많아 사용이 편함</li>
+<li>INT8보다 정확도 손실이 작을 가능성이 있음</li>
+</ul>
+<h2 id="세-방식-비교">세 방식 비교</h2>
+<table>
+<thead>
+<tr>
+<th>방식</th>
+<th style="text-align: right;">적용 난이도</th>
+<th>대표 데이터셋</th>
+<th>입력/출력 dtype</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dynamic Range</td>
+<td style="text-align: right;">낮음</td>
+<td>보통 불필요</td>
+<td>주로 float</td>
+<td>가장 간단</td>
+</tr>
+<tr>
+<td>INT8</td>
+<td style="text-align: right;">중간</td>
+<td>필요</td>
+<td>int8 가능</td>
+<td>가장 강한 경량화 후보</td>
+</tr>
+<tr>
+<td>FLOAT16</td>
+<td style="text-align: right;">낮음</td>
+<td>불필요</td>
+<td>주로 float</td>
+<td>정확도 보존이 쉬운 편</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ptq-세-가지를-아주-쉽게-고르기">PTQ 세 가지를 아주 쉽게
+고르기</h2>
+<table>
+<thead>
+<tr>
+<th>원하는 것</th>
+<th>먼저 볼 방식</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>가장 쉽게 해보고 싶다</td>
+<td>Dynamic Range</td>
+</tr>
+<tr>
+<td>크기와 속도를 강하게 줄이고 싶다</td>
+<td>INT8</td>
+</tr>
+<tr>
+<td>정확도 손실을 적게 하면서 크기를 줄이고 싶다</td>
+<td>FLOAT16</td>
+</tr>
+</tbody>
+</table>
+<h2 id="int8이-어려운-이유">INT8이 어려운 이유</h2>
+<p>INT8은 숫자를 아주 작은 칸에 넣습니다. 그래서 입력 이미지도 그 칸에
+맞춰 넣어야 합니다.</p>
+<pre class="text"><code>원래 이미지 값: 0.0부터 1.0 사이 float
+INT8 모델 입력: -128부터 127 사이 정수</code></pre>
+<p>따라서 INT8 모델에서는 <code>input_details</code>에 있는 scale과 zero
+point를 보고 입력을 맞춰야 합니다.</p>
+<h2 id="실습에서-확인할-것-2">실습에서 확인할 것</h2>
+<ul>
+<li><code>.tflite</code> 파일 크기가 얼마나 줄었는가?</li>
+<li><code>input_details</code>, <code>output_details</code>의 dtype이
+무엇인가?</li>
+<li>INT8 모델에서 scale과 zero point가 출력되는가?</li>
+<li>baseline accuracy와 PTQ 모델 accuracy 차이가 허용 가능한가?</li>
+</ul>
+<h2 id="초보자-포인트-2">초보자 포인트</h2>
+<p>PTQ는 “학습이 끝난 모델을 변환하면서 숫자 표현을 작게 바꾸는
+것”입니다. 쉽지만, INT8처럼 강하게 줄일수록 입력 처리와 정확도 확인이
+중요해집니다.</p>
+<hr />
+<p><a id="section-07"></a></p>
+<h1 id="qat-양자화-인지-학습">QAT: 양자화 인지 학습</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_08_Quantization_Aware_Training.ipynb">EX_08_Quantization_Aware_Training.ipynb</a></li>
+</ul>
+<h2 id="핵심-개념-3">핵심 개념</h2>
+<p>QAT는 Quantization Aware Training의 약자입니다. 학습할 때부터 “나중에
+양자화될 것”을 모델이 미리 경험하게 만드는 방법입니다.</p>
+<p>PTQ는 학습이 끝난 뒤 숫자 표현을 바꿉니다. 반면 QAT는 학습 과정에서
+양자화 오차를 흉내 냅니다.</p>
+<h2 id="쉬운-비유-4">쉬운 비유</h2>
+<p>PTQ는 넓은 공책에 글씨를 다 쓴 다음, 마지막에 작은 종이에 줄여 쓰는
+것과 비슷합니다. 글자가 뭉개질 수 있습니다.</p>
+<p>QAT는 처음부터 작은 칸 공책에 맞춰 쓰는 연습을 하며 공부하는 것과
+비슷합니다. 시간이 더 걸리지만 작은 칸에 옮겼을 때 결과가 더
+안정적입니다.</p>
+<h2 id="왜-qat가-필요한가">왜 QAT가 필요한가?</h2>
+<p>양자화는 숫자를 거칠게 표현합니다.</p>
+<pre class="text"><code>float32: 0.123456789
+int8로 표현 후 복원: 0.125 정도</code></pre>
+<p>이 작은 차이가 레이어를 지나며 누적되면 정확도가 떨어질 수 있습니다.
+QAT는 모델이 이런 오차에 익숙해지도록 학습합니다.</p>
+<h2 id="qat-모델-만들기">QAT 모델 만들기</h2>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>q_aware_model <span class="op">=</span> tfmot.quantization.keras.quantize_model(model)</span></code></pre></div>
+<p>읽는 법:</p>
+<ul>
+<li>기존 Keras 모델을 QAT용 모델로 감쌉니다.</li>
+<li>내부에 quantize 관련 layer/wrapper가 추가됩니다.</li>
+<li>이 상태에서 다시 fine-tuning합니다.</li>
+</ul>
+<h2 id="fine-tuning-1">Fine-tuning</h2>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>q_aware_model.<span class="bu">compile</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span><span class="st">&quot;adam&quot;</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span>keras.losses.SparseCategoricalCrossentropy(),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    metrics<span class="op">=</span>[<span class="st">&quot;accuracy&quot;</span>]</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>q_aware_model.fit(</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    train_images,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    train_labels,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>    validation_split<span class="op">=</span><span class="fl">0.1</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>초보자는 이 단계를 “양자화 환경에 적응시키는 추가 학습”으로 이해하면
+됩니다.</p>
+<h2 id="tflite-변환-1">TFLite 변환</h2>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(q_aware_model)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>tflite_qat_model <span class="op">=</span> converter.convert()</span></code></pre></div>
+<p>QAT도 최종 배포를 위해서는 TFLite 변환이 필요합니다.</p>
+<h2 id="ptq와-qat-비교">PTQ와 QAT 비교</h2>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>PTQ</th>
+<th>QAT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>적용 시점</td>
+<td>학습 후 변환 단계</td>
+<td>학습 중</td>
+</tr>
+<tr>
+<td>구현 난이도</td>
+<td>쉬움</td>
+<td>더 복잡함</td>
+</tr>
+<tr>
+<td>추가 학습</td>
+<td>거의 없음</td>
+<td>필요</td>
+</tr>
+<tr>
+<td>정확도 보존</td>
+<td>모델에 따라 다름</td>
+<td>보통 더 유리</td>
+</tr>
+<tr>
+<td>사용 상황</td>
+<td>빠른 실험, 간단 배포</td>
+<td>정확도가 중요한 배포</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ptq와-qat를-그림으로-비교">PTQ와 QAT를 그림으로 비교</h2>
+<pre class="text"><code>PTQ
+학습 완료 -&gt; 양자화 -&gt; 정확도 확인
+
+QAT
+학습된 모델 -&gt; 양자화 상황을 흉내 내며 추가 학습 -&gt; 양자화 -&gt; 정확도 확인</code></pre>
+<p>핵심 차이는 “양자화 오차를 학습 중에 미리 경험했는가”입니다.</p>
+<h2 id="언제-qat까지-해야-하나">언제 QAT까지 해야 하나?</h2>
+<p>처음부터 QAT를 할 필요는 없습니다. 보통은 다음 순서가
+실용적입니다.</p>
+<pre class="text"><code>1. baseline 모델 만들기
+2. PTQ 적용해 보기
+3. 정확도가 충분하면 PTQ로 끝
+4. 정확도가 많이 떨어지면 QAT 시도</code></pre>
+<h2 id="실습에서-확인할-것-3">실습에서 확인할 것</h2>
+<ul>
+<li><code>q_aware_model.summary()</code>에서 quantize 관련 구조가
+보이는가?</li>
+<li>QAT fine-tuning 후 accuracy가 유지되는가?</li>
+<li>변환된 <code>mnist_qat_model.tflite</code> 크기가 baseline보다
+줄었는가?</li>
+<li>TFLite interpreter에서 입력과 출력 dtype이 무엇인가?</li>
+</ul>
+<h2 id="초보자-포인트-3">초보자 포인트</h2>
+<p>QAT는 “양자화될 미래를 알고 학습하는 모델”입니다. PTQ보다 손이 더
+가지만, 정확도 손실을 줄이고 싶을 때 강력합니다.</p>
+<hr />
+<p><a id="section-08"></a></p>
+<h1 id="preserving-qat-조합-경량화">Preserving QAT: 조합 경량화</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_09_Cluster_Preserving_QAT.ipynb">EX_09_Cluster_Preserving_QAT.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_10_Sparsity_Preserving_QAT.ipynb">EX_10_Sparsity_Preserving_QAT.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_11_Sparsity_and_Cluster_Preserving%20QAT.ipynb">EX_11_Sparsity_and_Cluster_Preserving%20QAT.ipynb</a></li>
+</ul>
+<h2 id="핵심-개념-4">핵심 개념</h2>
+<p>Pruning, Clustering, Quantization은 따로 쓸 수도 있지만 함께 쓸 수도
+있습니다. 문제는 단순히 이어 붙이면 앞 단계에서 만든 특성이 다음
+단계에서 깨질 수 있다는 점입니다.</p>
+<p>아주 쉽게 말하면 Preserving QAT는 “앞에서 열심히 줄여 놓은 특징을 QAT
+중에도 망가뜨리지 않게 지키는 방법”입니다.</p>
+<h2 id="쉬운-비유-5">쉬운 비유</h2>
+<p>가방을 정리했다고 생각해 봅니다.</p>
+<ul>
+<li>Pruning: 안 쓰는 물건을 뺐습니다.</li>
+<li>Clustering: 비슷한 물건끼리 봉지에 묶었습니다.</li>
+<li>QAT: 작은 가방에 다시 넣는 연습을 합니다.</li>
+</ul>
+<p>그런데 다시 넣는 과정에서 물건이 흐트러지면 앞에서 정리한 의미가
+줄어듭니다. Preserving QAT는 “정리한 상태를 유지하면서 다시 넣는
+방법”입니다.</p>
+<p>예를 들어:</p>
+<ul>
+<li>Clustering으로 대표값 8개만 쓰게 만들었다.</li>
+<li>그런데 일반 QAT를 적용하면서 가중치가 다시 여러 값으로 퍼질 수
+있다.</li>
+</ul>
+<p>Preserving QAT는 이런 특성을 보존하면서 QAT를 적용하는
+방식입니다.</p>
+<h2 id="ex_09-cluster-preserving-qat">EX_09: Cluster Preserving QAT</h2>
+<p>먼저 clustering을 적용합니다.</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>clustering_params <span class="op">=</span> {</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;number_of_clusters&quot;</span>: <span class="dv">8</span>,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cluster_centroids_init&quot;</span>: tfmot.clustering.keras.CentroidInitialization.KMEANS_PLUS_PLUS,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cluster_per_channel&quot;</span>: <span class="va">True</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>clustered_model <span class="op">=</span> tfmot.clustering.keras.cluster_weights(model, <span class="op">**</span>clustering_params)</span></code></pre></div>
+<p>그 다음 일반 QAT와 cluster-preserving QAT를 비교합니다.</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>quant_aware_annotate_model <span class="op">=</span> tfmot.quantization.keras.quantize_annotate_model(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    stripped_clustered_model</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>cqat_model <span class="op">=</span> tfmot.quantization.keras.quantize_apply(</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    quant_aware_annotate_model,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    tfmot.experimental.combine.Default8BitClusterPreserveQuantizeScheme()</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>핵심은 <code>Default8BitClusterPreserveQuantizeScheme()</code>입니다.
+QAT를 하면서 clustering 특성이 유지되도록 돕습니다.</p>
+<h2 id="ex_10-sparsity-preserving-qat">EX_10: Sparsity Preserving
+QAT</h2>
+<p>Pruning으로 만든 sparse 특성을 QAT에서도 유지합니다.</p>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>pqat_model <span class="op">=</span> tfmot.quantization.keras.quantize_apply(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    quant_aware_annotate_model,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    tfmot.experimental.combine.Default8BitPrunePreserveQuantizeScheme()</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>핵심 질문:</p>
+<ul>
+<li>일반 QAT 후에도 0 가중치가 많이 남아 있는가?</li>
+<li>PQAT 후에는 sparsity가 더 잘 유지되는가?</li>
+<li>gzip 또는 zip 압축 크기가 더 줄어드는가?</li>
+</ul>
+<h2 id="ex_11-sparsity-and-cluster-preserving-qat">EX_11: Sparsity and
+Cluster Preserving QAT</h2>
+<p>이 예제는 pruning, clustering, QAT를 모두 엮습니다.</p>
+<p>흐름:</p>
+<pre class="text"><code>baseline model
+-&gt; pruning
+-&gt; strip_pruning
+-&gt; clustering
+-&gt; strip_clustering
+-&gt; preserving QAT
+-&gt; TFLite 변환</code></pre>
+<p>초보자에게는 가장 복잡한 예제입니다. 처음 볼 때는 코드 전체를 외우려
+하지 말고 “앞 단계의 특성을 다음 단계에서도 유지하려고 별도 scheme을
+쓴다”는 점만 잡으면 됩니다.</p>
+<h2 id="이-노트를-처음-읽을-때-목표">이 노트를 처음 읽을 때 목표</h2>
+<p>이 노트는 한 번에 완전히 이해하기 어렵습니다. 처음에는 아래 세 문장만
+이해하면 충분합니다.</p>
+<ol type="1">
+<li>Pruning은 0을 많이 만드는 기법입니다.</li>
+<li>Clustering은 대표값 개수를 줄이는 기법입니다.</li>
+<li>Preserving QAT는 QAT 후에도 0과 대표값 특성이 유지되게
+돕습니다.</li>
+</ol>
+<h2 id="일반-qat와-preserving-qat-차이">일반 QAT와 Preserving QAT
+차이</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>구분</th>
+<th>일반 QAT</th>
+<th>Preserving QAT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>목적</td>
+<td>양자화 오차 적응</td>
+<td>양자화하면서 sparsity/cluster 유지</td>
+</tr>
+<tr>
+<td>사용 API</td>
+<td><code>quantize_model</code></td>
+<td><code>quantize_annotate_model</code> +
+<code>quantize_apply</code></td>
+</tr>
+<tr>
+<td>장점</td>
+<td>코드가 단순</td>
+<td>압축 특성 보존에 유리</td>
+</tr>
+<tr>
+<td>단점</td>
+<td>기존 경량화 특성이 깨질 수 있음</td>
+<td>코드가 복잡</td>
+</tr>
+</tbody>
+</table>
+<h2 id="실습에서-확인할-것-4">실습에서 확인할 것</h2>
+<ul>
+<li>QAT model과 CQAT/PQAT model의 cluster 수 또는 sparsity가
+다른가?</li>
+<li>압축 크기 비교에서 preserving 방식이 유리한가?</li>
+<li>accuracy 손실이 허용 가능한가?</li>
+<li>실전 배포에서는 복잡도 대비 이득이 충분한가?</li>
+</ul>
+<h2 id="초보자-포인트-4">초보자 포인트</h2>
+<p>Preserving QAT는 “경량화 특성을 지키면서 QAT를 하는 방법”입니다. 여러
+기법을 조합할 때 필요한 고급 단계입니다.</p>
+<hr />
+<p><a id="section-09"></a></p>
+<h1 id="rps-실전-이미지-분류-qat">RPS 실전 이미지 분류 QAT</h1>
+<p>대응 노트북:</p>
+<ul>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT.ipynb">EX_12_RPS_Classification_Augmentation_QAT.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT_초보자주석.ipynb">EX_12_RPS_Classification_Augmentation_QAT_초보자주석.ipynb</a></li>
+<li><a
+href="https://github.com/philipdekim-OnD01/OnDeviceAI-Lightweighting-Lab/blob/main/notebooks/EX_12_RPS_Classification_Augmentation_QAT_ResNet50_초보자주석.ipynb">EX_12_RPS_Classification_Augmentation_QAT_ResNet50_초보자주석.ipynb</a></li>
+</ul>
+<h2 id="실습-목표">실습 목표</h2>
+<p>가위, 바위, 보 이미지를 분류하는 모델을 만들고, QAT와 TFLite 변환을
+적용합니다.</p>
+<p>아주 쉽게 말하면 “카메라 사진을 보고 가위, 바위, 보 중 하나를 맞히는
+작은 AI를 만드는 실습”입니다.</p>
+<p>최종 산출물 예:</p>
+<ul>
+<li><code>RPS_PreTrained_DenseNet_Augmentation_QAT.h5</code></li>
+<li><code>RPS_PreTrained_DenseNet_Augmentation_QAT.tflite</code></li>
+<li><code>RPS_PreTrained_ResNet50_Augmentation_QAT.tflite</code></li>
+</ul>
+<h2 id="mnist-예제와-다른-점">MNIST 예제와 다른 점</h2>
+<p>MNIST는 28x28 흑백 숫자 이미지입니다. RPS는 64x64 컬러
+이미지입니다.</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>MNIST</th>
+<th>RPS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>입력</td>
+<td>28x28 흑백</td>
+<td>64x64 RGB</td>
+</tr>
+<tr>
+<td>클래스</td>
+<td>0부터 9 숫자</td>
+<td>가위, 바위, 보</td>
+</tr>
+<tr>
+<td>데이터 준비</td>
+<td>Keras 내장 데이터셋</td>
+<td>폴더 이미지 직접 로딩</td>
+</tr>
+<tr>
+<td>모델</td>
+<td>작은 CNN</td>
+<td>DenseNet121 또는 ResNet50 기반</td>
+</tr>
+<tr>
+<td>실전성</td>
+<td>기초 실습</td>
+<td>실제 이미지 분류에 가까움</td>
+</tr>
+</tbody>
+</table>
+<h2 id="쉬운-비유-6">쉬운 비유</h2>
+<p>MNIST는 칠판에 또박또박 쓴 숫자를 보는 문제에 가깝습니다. RPS는 실제
+사진을 보는 문제에 가깝습니다.</p>
+<p>실제 사진은 더 어렵습니다.</p>
+<ul>
+<li>손 위치가 다를 수 있습니다.</li>
+<li>조명이 다를 수 있습니다.</li>
+<li>배경이 다를 수 있습니다.</li>
+<li>손 크기와 각도가 다를 수 있습니다.</li>
+</ul>
+<p>그래서 RPS 실습에서는 데이터 보강과 사전학습 모델을 사용합니다.</p>
+<h2 id="데이터-로딩-1">데이터 로딩</h2>
+<p>폴더별로 이미지를 읽어서 numpy 배열로 만듭니다.</p>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>IMG_SIZE <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ind <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">3</span>):</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    path <span class="op">=</span> files_path <span class="op">+</span> <span class="st">&quot;/&quot;</span> <span class="op">+</span> <span class="bu">str</span>(ind) <span class="op">+</span> <span class="st">&quot;/*.*&quot;</span></span></code></pre></div>
+<p>예제 주석 기준 클래스는 다음처럼 이해하면 됩니다.</p>
+<ul>
+<li><code>0</code>: scissors</li>
+<li><code>1</code>: rock</li>
+<li><code>2</code>: paper</li>
+</ul>
+<h2 id="이미지-전처리">이미지 전처리</h2>
+<p>OpenCV는 이미지를 BGR 순서로 읽습니다. 일반적인 딥러닝 모델은 RGB를
+기대합니다.</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>cv2.cvtColor(cv2.imread(x, cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)</span></code></pre></div>
+<p>초보자가 자주 틀리는 부분입니다. 색 순서가 잘못되면 모델이 이상한
+패턴을 학습할 수 있습니다.</p>
+<h2 id="데이터-보강">데이터 보강</h2>
+<p><code>ImageDataGenerator</code>로 이미지를 회전, 이동, 확대, 반전하며
+학습 데이터를 다양하게 만듭니다.</p>
+<p>데이터 보강의 목적:</p>
+<ul>
+<li>사진 각도와 위치가 달라도 맞히게 하기</li>
+<li>적은 데이터로 과적합 줄이기</li>
+<li>실제 카메라 입력에 더 강한 모델 만들기</li>
+</ul>
+<p>초보자식으로 말하면 데이터 보강은 “같은 사진을 조금씩 흔들어 보면서
+연습 문제를 늘리는 것”입니다.</p>
+<h2 id="backbone-모델">Backbone 모델</h2>
+<p>초보자주석 버전에는 DenseNet121과 ResNet50 예제가 있습니다.</p>
+<table>
+<thead>
+<tr>
+<th>Backbone</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DenseNet121</td>
+<td>특징 재사용이 강하고 비교적 효율적</td>
+</tr>
+<tr>
+<td>ResNet50</td>
+<td>널리 쓰이는 표준 CNN 구조</td>
+</tr>
+</tbody>
+</table>
+<p>Backbone은 “이미지 특징을 뽑는 큰 기본 모델”입니다. 그 위에
+가위바위보 3개 클래스를 분류하는 head를 붙입니다.</p>
+<p>쉽게 말해 backbone은 이미 사진을 많이 봐서 선, 모양, 질감 같은 특징을
+잘 아는 선생님 모델입니다. 우리는 그 위에 가위바위보만 구분하는 작은
+분류기를 붙입니다.</p>
+<h2 id="qat-적용과-tflite-변환">QAT 적용과 TFLite 변환</h2>
+<p>RPS 예제에서도 최종 목적은 온디바이스 배포 가능한
+<code>.tflite</code> 파일을 만드는 것입니다.</p>
+<pre class="text"><code>이미지 데이터 준비
+-&gt; 데이터 보강
+-&gt; 모델 생성
+-&gt; 학습
+-&gt; best 모델 저장
+-&gt; QAT 또는 QAT 적용 모델 준비
+-&gt; TFLite 변환
+-&gt; .tflite 저장</code></pre>
+<h2 id="실습에서-확인할-것-5">실습에서 확인할 것</h2>
+<ul>
+<li>학습 전후 accuracy가 올라가는가?</li>
+<li>validation accuracy가 training accuracy와 너무 크게 벌어지지
+않는가?</li>
+<li><code>.h5</code>와 <code>.tflite</code> 파일이 정상 저장되는가?</li>
+<li>라즈베리파이에서 사용할 최종 파일명이 무엇인가?</li>
+<li>DenseNet121과 ResNet50 중 어떤 모델이 더 적합한가?</li>
+</ul>
+<h2 id="초보자-포인트-5">초보자 포인트</h2>
+<p>RPS 예제는 “경량화 기법을 실제 이미지 분류 문제에 적용하는 종합
+실습”입니다. MNIST에서 배운 PTQ/QAT 흐름이 실전 데이터에서도 반복된다는
+점을 확인하면 됩니다.</p>
+<hr />
+<p><a id="section-10"></a></p>
+<h1 id="초보자-체크리스트와-용어">초보자 체크리스트와 용어</h1>
+<h2 id="먼저-보는-초간단-용어표">먼저 보는 초간단 용어표</h2>
+<table>
+<thead>
+<tr>
+<th>용어</th>
+<th>아주 쉬운 뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모델</td>
+<td>입력을 보고 답을 내는 함수</td>
+</tr>
+<tr>
+<td>가중치</td>
+<td>모델 안에 저장된 숫자</td>
+</tr>
+<tr>
+<td>학습</td>
+<td>가중치를 답에 맞게 조정하는 과정</td>
+</tr>
+<tr>
+<td>추론</td>
+<td>학습된 모델로 새 입력의 답을 맞히는 과정</td>
+</tr>
+<tr>
+<td>정확도</td>
+<td>모델이 얼마나 많이 맞혔는지</td>
+</tr>
+<tr>
+<td>경량화</td>
+<td>모델을 작고 빠르게 만드는 작업</td>
+</tr>
+<tr>
+<td>TFLite</td>
+<td>작은 기기에서 실행하기 좋은 모델 형식</td>
+</tr>
+</tbody>
+</table>
+<h2 id="실습-전-체크리스트">실습 전 체크리스트</h2>
+<ul>
+<li>Colab에서 <code>tensorflow-model-optimization</code> 설치 후
+런타임을 재시작했는가?</li>
+<li>Google Drive 경로에 <code>baseline_model.h5</code> 또는 데이터셋
+zip이 있는가?</li>
+<li>MNIST 입력은 0부터 1 사이로 정규화했는가?</li>
+<li>RPS 이미지는 BGR이 아니라 RGB로 바꿨는가?</li>
+<li>저장 경로 <code>/content/drive/MyDrive/files/save</code>가
+존재하는가?</li>
+</ul>
+<h2 id="결과-확인-체크리스트">결과 확인 체크리스트</h2>
+<ul>
+<li>baseline accuracy를 먼저 기록했는가?</li>
+<li>경량화 후 accuracy를 baseline과 비교했는가?</li>
+<li><code>.tflite</code> 파일 크기를 비교했는가?</li>
+<li>TFLite interpreter의 input dtype과 output dtype을 확인했는가?</li>
+<li>INT8 모델이면 scale과 zero point를 확인했는가?</li>
+<li>Pruning/Clustering 후 wrapper를 strip했는가?</li>
+</ul>
+<h2 id="자주-헷갈리는-용어">자주 헷갈리는 용어</h2>
+<h3 id="baseline">Baseline</h3>
+<p>경량화 전 기준 모델입니다. 모든 비교의 출발점입니다.</p>
+<h3 id="fine-tuning-2">Fine-tuning</h3>
+<p>이미 학습된 모델을 조금 더 학습시키는 과정입니다. 경량화 후 정확도
+회복에 자주 사용합니다.</p>
+<h3 id="sparsity">Sparsity</h3>
+<p>가중치 중 0의 비율입니다. sparsity가 80%라면 가중치 100개 중 약
+80개가 0이라는 뜻입니다.</p>
+<h3 id="cluster">Cluster</h3>
+<p>비슷한 가중치들을 묶은 그룹입니다.
+<code>number_of_clusters=16</code>은 대표 가중치 값을 16개로 제한한다는
+뜻입니다.</p>
+<h3 id="quantization">Quantization</h3>
+<p>숫자를 더 작은 표현으로 바꾸는 기법입니다. 예를 들어
+<code>float32</code>를 <code>int8</code>로 바꿉니다.</p>
+<h3 id="representative-dataset">Representative Dataset</h3>
+<p>INT8 양자화에서 값의 범위를 잡기 위해 사용하는 샘플 입력
+데이터입니다. 실제 입력과 비슷해야 합니다.</p>
+<h3 id="scale-zero-point">Scale, Zero Point</h3>
+<p>float 값과 int8 값 사이를 변환하기 위한 파라미터입니다.</p>
+<pre class="text"><code>real_value = scale * (quantized_value - zero_point)</code></pre>
+<h3 id="tflite-interpreter">TFLite Interpreter</h3>
+<p><code>.tflite</code> 모델을 실제로 로딩하고 추론하는
+실행기입니다.</p>
+<h2 id="처음-실습할-때-외우지-않아도-되는-것">처음 실습할 때 외우지
+않아도 되는 것</h2>
+<p>처음부터 아래 내용을 외우려고 하지 않아도 됩니다.</p>
+<ul>
+<li><code>PolynomialDecay</code>의 정확한 수식</li>
+<li>K-means++의 수학적 동작</li>
+<li>scale과 zero point의 세부 계산식</li>
+<li>TFLite 내부 graph 구조</li>
+<li>preserving QAT scheme의 내부 구현</li>
+</ul>
+<p>처음에는 “무엇을 줄이는가”와 “정확도와 크기를 어떻게 비교하는가”를
+이해하는 것이 먼저입니다.</p>
+<h2 id="경량화-기법-선택-가이드">경량화 기법 선택 가이드</h2>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>먼저 시도할 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>빠르게 파일 크기를 줄이고 싶다</td>
+<td>PTQ Dynamic Range</td>
+</tr>
+<tr>
+<td>GPU/모바일에서 float16이 유리하다</td>
+<td>PTQ FLOAT16</td>
+</tr>
+<tr>
+<td>CPU/NPU에서 강하게 최적화하고 싶다</td>
+<td>PTQ INT8</td>
+</tr>
+<tr>
+<td>PTQ 후 정확도가 너무 떨어진다</td>
+<td>QAT</td>
+</tr>
+<tr>
+<td>압축률을 더 높이고 싶다</td>
+<td>Clustering</td>
+</tr>
+<tr>
+<td>0이 많은 모델을 만들고 싶다</td>
+<td>Pruning</td>
+</tr>
+<tr>
+<td>Pruning/Clustering 특성을 QAT 후에도 유지하고 싶다</td>
+<td>Preserving QAT</td>
+</tr>
+</tbody>
+</table>
+<h2 id="강의-중-던질-질문">강의 중 던질 질문</h2>
+<ul>
+<li>정확도가 1% 떨어지고 모델 크기가 4배 줄면 좋은 선택인가?</li>
+<li>라즈베리파이에서 중요한 것은 파일 크기인가, 추론 시간인가,
+메모리인가?</li>
+<li>INT8 모델의 입력 타입이 바뀌면 기존 전처리 코드는 그대로 쓸 수
+있는가?</li>
+<li>전체 레이어에 경량화를 적용하는 것과 일부 레이어만 적용하는 것 중
+어느 쪽이 실전에서 안전한가?</li>
+</ul>
+<hr />
+<p><a id="section-11"></a></p>
+<h1 id="온디바이스-ai-경량화-최신-트렌드">온디바이스 AI 경량화 최신
+트렌드</h1>
+<h2 id="먼저-한-문장으로-2">먼저 한 문장으로</h2>
+<p>최근 온디바이스 AI 경량화의 핵심은 “모델 성능을 더 높이는 것”보다
+“성능을 크게 잃지 않으면서 작은 기기에서 실제로 돌아가게 만드는
+것”입니다.</p>
+<p>서버에서는 모델이 크면 GPU를 더 붙일 수 있습니다. 하지만
+라즈베리파이, 스마트폰, 노트북, 엣지 카메라 같은 기기에서는 메모리,
+전력, 발열, 응답 시간이 모두 제한됩니다.</p>
+<pre class="text"><code>온디바이스 AI의 현실 제약
+= 작은 메모리
++ 낮은 연산 성능
++ 배터리와 발열 제한
++ 네트워크 없이 동작해야 하는 상황
++ 실시간 응답 요구</code></pre>
+<p>그래서 경량화의 성공 기준은 다음에 가깝습니다.</p>
+<pre class="text"><code>정확도 유지
++ 모델 크기 감소
++ 메모리 사용량 감소
++ 추론 지연시간 감소
++ 전력/발열 감소
++ 로컬 실행 가능</code></pre>
+<h2 id="이-강의-실습과-최신-흐름">이 강의 실습과 최신 흐름</h2>
+<p>이 강의의 MNIST/RPS 실습은 CNN 기반 경량화의 기본기를 다룹니다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>이 강의 실습</th>
+<th>배우는 핵심</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#section-04">Pruning: 가지치기</a></td>
+<td>중요하지 않은 연결을 0으로 만들기</td>
+</tr>
+<tr>
+<td><a href="#section-05">Clustering: 가중치 군집화</a></td>
+<td>비슷한 가중치를 대표값으로 묶기</td>
+</tr>
+<tr>
+<td><a href="#section-06">PTQ: 학습 후 양자화</a></td>
+<td>학습 후 숫자 표현을 작게 바꾸기</td>
+</tr>
+<tr>
+<td><a href="#section-07">QAT: 양자화 인지 학습</a></td>
+<td>양자화될 상황을 미리 알고 학습하기</td>
+</tr>
+<tr>
+<td><a href="#section-09">RPS 실전 이미지 분류 QAT</a></td>
+<td>실제 이미지 분류 모델을 TFLite로 배포하기</td>
+</tr>
+</tbody>
+</table>
+<p>최근 Hugging Face와 arXiv의 이슈는 이 개념이 LLM/VLM으로 확장된
+형태입니다.</p>
+<pre class="text"><code>CNN 시대:
+Pruning, Clustering, INT8 TFLite, FLOAT16 TFLite
+
+LLM/VLM 시대:
+4-bit quantization, GGUF, QLoRA, KV cache compression, local runtime 최적화</code></pre>
+<h2 id="트렌드-1.-weight-quantization은-기본-기술이-됨">트렌드 1. Weight
+quantization은 기본 기술이 됨</h2>
+<p>Hugging Face Transformers 문서는 quantization을 “모델 weight를 낮은
+precision으로 저장해 메모리 요구량을 낮추면서 정확도를 최대한 보존하는
+방법”으로 설명합니다.</p>
+<p>초보자식으로 말하면 다음과 같습니다.</p>
+<pre class="text"><code>float32: 숫자 하나를 32비트로 저장
+float16: 숫자 하나를 16비트로 저장
+int8:    숫자 하나를 8비트로 저장
+int4:    숫자 하나를 4비트로 저장</code></pre>
+<p>온디바이스에서는 가장 먼저 이 질문을 봅니다.</p>
+<pre class="text"><code>이 모델이 기기 메모리에 올라가는가?</code></pre>
+<p>정확도가 조금 좋아도 기기 메모리에 올라가지 않으면 사용할 수
+없습니다. 그래서 최근에는 8-bit뿐 아니라 4-bit, 3-bit, 2-bit, 1.58-bit
+같은 더 낮은 bit 표현도 활발히 연구됩니다.</p>
+<p>관련 자료:</p>
+<ul>
+<li>Hugging Face Transformers Quantization Overview: <a
+href="https://huggingface.co/docs/transformers/main/en/quantization/overview"
+class="uri">https://huggingface.co/docs/transformers/main/en/quantization/overview</a></li>
+<li>Hugging Face bitsandbytes 문서: <a
+href="https://huggingface.co/docs/transformers/main/en/quantization/bitsandbytes"
+class="uri">https://huggingface.co/docs/transformers/main/en/quantization/bitsandbytes</a></li>
+</ul>
+<h2 id="트렌드-2.-qlora와-parameter-efficient-fine-tuning">트렌드 2.
+QLoRA와 parameter-efficient fine-tuning</h2>
+<p>온디바이스 관점에서 fine-tuning은 어렵습니다. 작은 기기에서 직접
+학습하기에는 메모리와 연산량이 부족하기 때문입니다.</p>
+<p>==실전에서는== 보통 다음 흐름을 씁니다.</p>
+<pre class="text"><code>서버 또는 GPU 환경에서 fine-tuning
+-&gt; quantization 또는 경량화
+-&gt; 온디바이스용 포맷으로 변환
+-&gt; 기기에서는 추론만 수행</code></pre>
+<p>LLM에서는 QLoRA가 대표적인 실용 방식입니다. 큰 base model은 4-bit로
+줄여 메모리를 아끼고, 작은 LoRA adapter만 학습합니다.</p>
+<pre class="text"><code>전체 모델을 다시 학습하지 않음
+-&gt; 작은 adapter만 학습
+-&gt; 학습 비용 감소
+-&gt; 배포 시 quantized model과 adapter 조합</code></pre>
+<p>이것은 이 강의의 QAT와 직접 같지는 않지만, “경량화된 상태에서도 성능
+손실을 줄이기 위해 추가 학습을 설계한다”는 점에서 연결됩니다.</p>
+<h2 id="트렌드-3.-gguf와-llama.cpp-계열이-로컬-실행의-중심이-됨">트렌드
+3. GGUF와 llama.cpp 계열이 로컬 실행의 중심이 됨</h2>
+<p>CNN 실습에서는 TFLite가 온디바이스 배포 포맷입니다.</p>
+<p>LLM 로컬 실행에서는 GGUF가 매우 중요합니다. GGUF는 llama.cpp 계열에서
+널리 쓰이는 모델 파일 포맷이고, 다양한 quantized data type을
+지원합니다.</p>
+<pre class="text"><code>Hugging Face 모델
+-&gt; GGUF quantized 모델
+-&gt; llama.cpp / local runtime
+-&gt; 노트북, 맥, 미니 PC, 라즈베리파이 같은 로컬 기기에서 실행</code></pre>
+<p>온디바이스 LLM 실습을 한다면 TFLite뿐 아니라 GGUF도 함께 소개할
+가치가 있습니다.</p>
+<p>관련 자료:</p>
+<ul>
+<li>Hugging Face GGUF 문서: <a
+href="https://huggingface.co/docs/transformers/main/en/gguf"
+class="uri">https://huggingface.co/docs/transformers/main/en/gguf</a></li>
+</ul>
+<h2 id="트렌드-4.-kv-cache가-새로운-메모리-병목이-됨">트렌드 4. KV
+cache가 새로운 메모리 병목이 됨</h2>
+<p>CNN은 이미지 한 장을 넣고 결과 하나를 받으면 끝입니다.</p>
+<p>LLM은 다릅니다. 문장을 한 토큰씩 생성하면서 이전 문맥을 계속 기억해야
+합니다. 이때 key-value cache, 줄여서 KV cache가 커집니다.</p>
+<pre class="text"><code>짧은 질문:
+모델 weight 메모리가 중요
+
+긴 대화:
+모델 weight + KV cache 메모리가 중요</code></pre>
+<p>문맥 길이가 길어지고 대화가 길어질수록 KV cache가 큰 문제가 됩니다.
+그래서 최근 arXiv에서는 weight quantization뿐 아니라 KV cache
+quantization, KV cache compression이 큰 주제입니다.</p>
+<p>예를 들어 adaptive KV-cache quantization 연구는 token 중요도에 따라
+2-bit, 4-bit, 8-bit, FP16을 동적으로 배정합니다.</p>
+<p>쉬운 비유:</p>
+<pre class="text"><code>중요한 내용은 선명하게 저장
+덜 중요한 내용은 흐리게 저장
+전체 메모리는 줄이고 답변 품질은 유지</code></pre>
+<p>관련 논문:</p>
+<ul>
+<li>Don’t Waste Bits! Adaptive KV-Cache Quantization for Lightweight
+On-Device LLMs: <a href="https://arxiv.org/abs/2604.04722"
+class="uri">https://arxiv.org/abs/2604.04722</a></li>
+<li>SVDq: 1.25-bit and 410x Key Cache Compression for LLM Attention: <a
+href="https://arxiv.org/abs/2502.15304"
+class="uri">https://arxiv.org/abs/2502.15304</a></li>
+<li>Unifying KV Cache Compression for Large Language Models with LeanKV:
+<a href="https://arxiv.org/abs/2412.03131"
+class="uri">https://arxiv.org/abs/2412.03131</a></li>
+</ul>
+<h2 id="트렌드-5.-1.58-bit와-ternary-llm">트렌드 5. 1.58-bit와 ternary
+LLM</h2>
+<p>최근 화제 중 하나는 1.58-bit LLM입니다. weight를 세 가지 값으로
+표현합니다.</p>
+<pre class="text"><code>-1, 0, +1</code></pre>
+<p>세 가지 상태를 표현하는 데 필요한 정보량이 log2(3), 즉 약 1.58
+bit라서 1.58-bit라고 부릅니다.</p>
+<p>이 방식은 단순히 학습이 끝난 모델을 int8로 바꾸는 PTQ와 다릅니다.
+모델 구조와 학습 방식 자체가 달라질 수 있습니다. Hugging Face 블로그도
+BitNet 계열의 1.58-bit fine-tuning을 다루며, 극단적 양자화는 쉬운 변환
+문제가 아니라 학습 설계 문제라는 점을 보여줍니다.</p>
+<p>강의에서 연결할 메시지:</p>
+<pre class="text"><code>PTQ:
+다 만든 모델을 나중에 작게 바꿈
+
+QAT:
+작게 바뀔 것을 미리 알고 학습
+
+1.58-bit LLM:
+처음부터 아주 낮은 bit 표현을 전제로 구조와 학습을 설계</code></pre>
+<p>관련 자료:</p>
+<ul>
+<li>Hugging Face, Fine-tuning LLMs to 1.58bit: <a
+href="https://huggingface.co/blog/1_58_llm_extreme_quantization"
+class="uri">https://huggingface.co/blog/1_58_llm_extreme_quantization</a></li>
+</ul>
+<h2 id="트렌드-6.-경량화와-runtime-최적화가-함께-감">트렌드 6. 경량화와
+runtime 최적화가 함께 감</h2>
+<p>모델 파일만 작다고 실제 속도가 빨라지는 것은 아닙니다.</p>
+<p>이 강의에서 pruning을 배울 때도 같은 이야기를 했습니다.</p>
+<pre class="text"><code>0이 많아졌다고 무조건 빨라지지 않음
+-&gt; runtime이 sparse 연산을 잘 지원해야 함</code></pre>
+<p>LLM에서도 마찬가지입니다.</p>
+<pre class="text"><code>모델 quantization
++ KV cache 관리
++ batching
++ offloading
++ local runtime
++ 하드웨어 가속
+= 실제 온디바이스 성능</code></pre>
+<p>즉, 최근 경량화는 알고리즘만의 문제가 아니라 시스템 문제입니다.</p>
+<h2 id="온디바이스-관점의-정리">온디바이스 관점의 정리</h2>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>온디바이스에서의 의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>정확도가 좋아졌나?</td>
+<td>중요하지만 유일한 기준은 아님</td>
+</tr>
+<tr>
+<td>모델이 메모리에 올라가는가?</td>
+<td>매우 중요</td>
+</tr>
+<tr>
+<td>지연시간이 짧은가?</td>
+<td>매우 중요</td>
+</tr>
+<tr>
+<td>발열과 전력 소모가 괜찮은가?</td>
+<td>매우 중요</td>
+</tr>
+<tr>
+<td>네트워크 없이 동작하는가?</td>
+<td>중요</td>
+</tr>
+<tr>
+<td>개인정보가 기기 밖으로 나가지 않는가?</td>
+<td>중요</td>
+</tr>
+</tbody>
+</table>
+<p>그래서 온디바이스 AI에서 경량화는 성능을 올리는 기술이라기보다,
+성능을 크게 잃지 않으면서 작은 기기에서 실행 가능하게 만드는
+기술입니다.</p>
+<h2 id="강의용-결론">강의용 결론</h2>
+<p>학생들에게는 다음 문장을 강조하면 됩니다.</p>
+<pre class="text"><code>경량화 성공 = 정확도 상승
+이 아니라
+경량화 성공 = 정확도 유지 + 모델 크기 감소 + 기기 실행 가능</code></pre>
+<p>그리고 최신 트렌드까지 연결하면 다음과 같습니다.</p>
+<pre class="text"><code>1단계: CNN 모델을 TFLite INT8/FLOAT16으로 줄여보기
+2단계: 정확도와 파일 크기 비교하기
+3단계: 라즈베리파이에서 실제 추론 시간 측정하기
+4단계: LLM으로 확장할 때 GGUF와 KV cache 문제가 등장함을 이해하기</code></pre>
+<h2 id="이-강의-실습에서-얻어야-할-감각">이 강의 실습에서 얻어야 할
+감각</h2>
+<p>실습에서 실제 성능 개선이 크게 보이지 않을 수도 있습니다. 또한
+경량화를 해도 정확도 저하가 크지 않을 수 있습니다.</p>
+<p>이 결과는 실패가 아닙니다. 오히려 중요한 메시지입니다.</p>
+<pre class="text"><code>경량화는 정확도를 올리는 마법이 아니다.
+정확도를 가능한 유지하면서 배포 가능한 모델로 만드는 조정 과정이다.</code></pre>
+<p>Fine-tuning도 마찬가지입니다. 단순히 몇 epoch 더 학습한다고 항상
+좋아지지 않습니다. learning rate, dataset, layer freezing, quantization
+방식, target hardware가 모두 영향을 줍니다.</p>
+<p>온디바이스 AI에서 fine-tuning은 어렵고, 그래서 최근 연구는 다음
+방향으로 갑니다.</p>
+<ul>
+<li>쉬운 PTQ부터 먼저 시도</li>
+<li>정확도 손실이 크면 QAT 또는 LoRA/QLoRA 사용</li>
+<li>weight뿐 아니라 KV cache까지 압축</li>
+<li>모델 포맷과 runtime까지 함께 최적화</li>
+<li>실제 기기에서 latency, memory, power를 측정</li>
+</ul>
+<h2 id="함께-읽을-노트">함께 읽을 노트</h2>
+<ul>
+<li><a href="#section-02">온디바이스 AI와 경량화 개요</a></li>
+<li><a href="#section-06">PTQ: 학습 후 양자화</a></li>
+<li><a href="#section-07">QAT: 양자화 인지 학습</a></li>
+<li><a href="#section-09">RPS 실전 이미지 분류 QAT</a></li>
+<li><a href="#section-10">초보자 체크리스트와 용어</a></li>
+</ul>
+</body>
+</html>
