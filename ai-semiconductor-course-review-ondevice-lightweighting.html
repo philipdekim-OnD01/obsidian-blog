@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AI반도체설계혁신특론 핵심 복습: 선형대수부터 온디바이스 경량화까지</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="assets/report.css" />
+  <style>
+    .lecture-links {
+      margin: 1rem 0 1.4rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid #d7e0ea;
+      border-radius: 12px;
+      background: #f8fbff;
+    }
+    .lecture-links strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: #0b63ce;
+    }
+    .lecture-links a {
+      display: inline-block;
+      margin: 0.15rem 0.55rem 0.15rem 0;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">AI반도체설계혁신특론 핵심 복습: 선형대수부터
+온디바이스 경량화까지</h1>
+</header>
+<h1 id="ai반도체설계혁신특론-핵심">AI반도체설계혁신특론 핵심</h1>
+<p>대상 범위: 선형대수, 기초 통계와 Python, 머신러닝, 딥러닝, CNN,
+생성모델, 반도체 공정 데이터, 데이터 증강, TFLite와 라즈베리파이 기반
+온디바이스 AI, 온디바이스를 위한 경량화</p>
+<div class="lecture-links"><strong>바로가기</strong><a href="ai-math/">AI 수학 기초 강의</a> <a href="ondevice-ai-00-overview.html">온디바이스 AI 강좌</a> <a href="ondevice-ai-lightweighting-session.html">경량화 종합 세션</a> <a href="gcp-vscode-rps-qat-lab.html">GCP·VSCode 실습</a></div>
+
+<p>목표: AI “왜 필요한가 → 어떤 수식과 구조인가 → 어떻게 실습으로
+연결되는가 → 온디바이스에서는 무엇이 달라지는가”의 흐름으로 정리.</p>
+<hr />
+<h2 id="흐름">0. 흐름</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/00-ai-math-map.html">AI 수학 전체 지도</a> <a href="ondevice-ai-00-overview.html">온디바이스 AI 전체 지도</a> <a href="ondevice-ai-lightweighting-session.html">경량화 세션</a></div>
+
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr>
+<th>주제</th>
+<th>반드시 기억할 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전체 흐름</td>
+<td>데이터에서 특징을 만들고, 모델을 학습하고, 실제 장치에 배포하는
+과정</td>
+</tr>
+<tr>
+<td>선형대수와 미분</td>
+<td>벡터, 행렬, 내적, 가중합, 기울기, 손실함수</td>
+</tr>
+<tr>
+<td>머신러닝과 평가</td>
+<td><code>y = ax + b</code>, 회귀, 분류, MSE, RMSE, MAE, R2, 데이터
+분리</td>
+</tr>
+<tr>
+<td>딥러닝과 CNN</td>
+<td>퍼셉트론, 활성화 함수, 역전파, convolution, pooling, feature
+learning</td>
+</tr>
+<tr>
+<td>생성모델과 반도체 데이터</td>
+<td>Autoencoder, VAE, GAN, Diffusion, 불균형 데이터, 이상 탐지</td>
+</tr>
+<tr>
+<td>데이터 증강과 전이학습</td>
+<td>적은 데이터에서 일반화 성능을 높이는 방법</td>
+</tr>
+<tr>
+<td>온디바이스와 경량화</td>
+<td>TFLite, 양자화, pruning, distillation, latency, memory, power</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="전체-큰-그림">1. 전체 큰 그림</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/">AI 수학 기초</a> <a href="ondevice-ai-01-rps-tflite.html">TFLite 실시간 RPS</a> <a href="ondevice-ai-02-transfer-learning.html">전이학습</a> <a href="ondevice-ai-03-lightweighting.html">경량화</a></div>
+
+<p>이 과목의 핵심 흐름은 다음 한 문장으로 정리할 수 있다.</p>
+<blockquote>
+<p>AI 모델을 수학적으로 이해하고, Python으로 학습시키며, CNN과
+생성모델로 이미지와 반도체 데이터를 다루고, 최종적으로 라즈베리파이 같은
+제한된 장치에서 동작하도록 배포하고 경량화하는 과정.</p>
+</blockquote>
+<p>학기 전체는 다음 순서로 이어진다.</p>
+<ol type="1">
+<li>선형대수와 PCA: 데이터를 벡터와 행렬로 표현한다.</li>
+<li>기초 통계와 Python: 데이터를 읽고, 전처리하고, 분포와 관계를
+본다.</li>
+<li>머신러닝: 사람이 feature를 만들고 모델이 규칙을 학습한다.</li>
+<li>딥러닝: 모델이 feature와 판단을 함께 학습한다.</li>
+<li>CNN: 이미지처럼 공간 구조가 있는 데이터를 잘 처리한다.</li>
+<li>생성모델: 부족한 데이터나 새로운 샘플 생성을 다룬다.</li>
+<li>반도체 공정 데이터: 이상 탐지, 수율, 불균형 데이터 문제에 AI를
+적용한다.</li>
+<li>데이터 증강과 전이학습: 적은 데이터로 실제 환경에 강한 모델을
+만든다.</li>
+<li>온디바이스 AI: 모델을 서버가 아니라 장치에서 직접 실행한다.</li>
+<li>경량화: 제한된 메모리, 전력, 연산량 안에서 추론 성능을
+유지한다.</li>
+</ol>
+<hr />
+<h2 id="선형대수-ai-계산의-언어">2. 선형대수: AI 계산의 언어</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/02-vectors-dot-product.html">벡터와 내적</a> <a href="ai-math/03-matrix-multiplication-neural-network.html">행렬곱과 신경망</a> <a href="ai-math/04-linear-transform.html">선형변환</a></div>
+
+<h3 id="벡터">2.1 벡터</h3>
+<p>벡터는 여러 숫자를 한 번에 묶은 것이다.</p>
+<pre class="text"><code>x = [x1, x2, x3, ...]</code></pre>
+<p>AI에서 하나의 데이터 샘플은 보통 벡터로 표현된다.</p>
+<ul>
+<li>학생 데이터: <code>[공부시간, 출석률, 과제점수]</code></li>
+<li>이미지 데이터: 픽셀 값을 길게 펼친 벡터</li>
+<li>반도체 공정 데이터: 센서 값, 공정 조건, wafer 특성 값의 묶음</li>
+</ul>
+<h3 id="행렬">2.2 행렬</h3>
+<p>행렬은 여러 벡터를 모아 놓은 것이다.</p>
+<pre class="text"><code>X = [
+  [x11, x12, x13],
+  [x21, x22, x23],
+  [x31, x32, x33]
+]</code></pre>
+<p>머신러닝에서는 보통 <code>X</code>가 입력 데이터 전체,
+<code>y</code>가 정답이다.</p>
+<pre class="text"><code>X: 입력 feature 행렬
+y: label 또는 target
+W: 가중치 행렬
+b: bias</code></pre>
+<h3 id="내적과-가중합">2.3 내적과 가중합</h3>
+<p>가장 기본적인 모델 계산은 내적이다.</p>
+<pre class="text"><code>y = w1*x1 + w2*x2 + ... + wn*xn + b</code></pre>
+<p>이 식은 다음 의미를 가진다.</p>
+<ul>
+<li><code>x</code>: 입력값</li>
+<li><code>w</code>: 각 입력이 얼마나 중요한지 나타내는 가중치</li>
+<li><code>b</code>: 판단 기준을 이동시키는 bias</li>
+<li><code>y</code>: 모델의 출력</li>
+</ul>
+<p>퍼셉트론, 선형회귀, 신경망의 dense layer는 모두 이 가중합에서
+출발한다.</p>
+<h3 id="pca의-직관">2.4 PCA의 직관</h3>
+<p>PCA는 고차원 데이터를 중요한 방향으로 다시 표현하는 방법이다.</p>
+<p>핵심은 다음이다.</p>
+<ul>
+<li>데이터가 가장 많이 퍼진 방향을 찾는다.</li>
+<li>그 방향을 새로운 축으로 삼는다.</li>
+<li>덜 중요한 축을 줄이면 차원 축소가 된다.</li>
+<li>시각화, 노이즈 감소, feature 압축에 사용할 수 있다.</li>
+</ul>
+<p>반도체 공정 데이터처럼 센서가 많고 feature가 많은 경우, PCA는 전체
+변동을 요약하는 데 유용하다.</p>
+<hr />
+<h2 id="미분-손실함수-경사하강법">3. 미분, 손실함수, 경사하강법</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/05-derivative-chain-rule.html">미분과 Chain Rule</a> <a href="ai-math/06-gradient-backpropagation.html">Gradient와 Backpropagation</a> <a href="ai-math/07-gradient-descent.html">Gradient Descent</a> <a href="ai-math/10-entropy-cross-entropy.html">Cross Entropy</a></div>
+
+<h3 id="미분의-의미">3.1 미분의 의미</h3>
+<p>미분은 입력이 조금 변할 때 출력이 얼마나 변하는지 보는 것이다.</p>
+<pre class="text"><code>기울기 = y의 변화량 / x의 변화량</code></pre>
+<p>AI 학습에서는 “가중치를 조금 바꾸면 손실이 얼마나 줄어드는가”를
+계산하기 위해 미분을 사용한다.</p>
+<h3 id="손실함수">3.2 손실함수</h3>
+<p>손실함수는 모델이 얼마나 틀렸는지를 숫자로 표현한다.</p>
+<p>회귀 문제의 대표 손실:</p>
+<pre class="text"><code>MSE = 평균((정답 - 예측)^2)
+MAE = 평균(|정답 - 예측|)
+RMSE = sqrt(MSE)</code></pre>
+<p>분류 문제의 대표 손실:</p>
+<pre class="text"><code>Cross Entropy Loss</code></pre>
+<p>학습의 목표는 손실을 줄이는 것이다.</p>
+<pre class="text"><code>좋은 모델 = 손실이 낮고, 처음 보는 데이터에서도 성능이 유지되는 모델</code></pre>
+<h3 id="경사하강법">3.3 경사하강법</h3>
+<p>경사하강법은 손실이 줄어드는 방향으로 가중치를 조금씩 바꾸는
+방법이다.</p>
+<pre class="text"><code>w_new = w_old - learning_rate * gradient</code></pre>
+<p>여기서 중요한 개념은 다음이다.</p>
+<ul>
+<li><code>gradient</code>: 손실을 증가시키는 방향</li>
+<li><code>-gradient</code>: 손실을 줄이는 방향</li>
+<li><code>learning_rate</code>: 한 번에 얼마나 이동할지 결정하는 값</li>
+</ul>
+<p>학습률이 너무 크면 최적점을 지나쳐 발산할 수 있고, 너무 작으면 학습이
+느리다.</p>
+<hr />
+<h2 id="머신러닝-사람이-feature를-만들고-모델이-규칙을-찾는-방식">4.
+머신러닝: 사람이 feature를 만들고 모델이 규칙을 찾는 방식</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/09-statistics-preprocessing.html">통계와 전처리</a> <a href="application-semiconductor-revenue-validation.html">AI 반도체 매출 검증</a> <a href="ai-semiconductor-value-chain-demand-growth-anthropic-20260531.html">반도체 가치사슬</a></div>
+
+<h3 id="머신러닝-기본-구조">4.1 머신러닝 기본 구조</h3>
+<pre class="text"><code>데이터 → 사람이 feature 추출 → 모델 학습 → 예측</code></pre>
+<p>머신러닝은 정형 데이터에서 강하다. 예를 들어 반도체 데이터에서 다음과
+같은 feature를 만들 수 있다.</p>
+<ul>
+<li>wafer yield</li>
+<li>defect count</li>
+<li>process time</li>
+<li>sensor average</li>
+<li>sensor drift</li>
+<li>공정 노드 대비 생산성</li>
+<li>웨이퍼당 bit 생산량</li>
+</ul>
+<p>하지만 이미지, 음성, 자연어처럼 복잡한 데이터에서는 사람이 feature를
+직접 설계하기 어렵다.</p>
+<h3 id="회귀">4.2 회귀</h3>
+<p>회귀는 연속적인 숫자를 예측하는 문제다.</p>
+<pre class="text"><code>y = ax + b</code></pre>
+<p>예:</p>
+<ul>
+<li>공정 조건으로 수율 예측</li>
+<li>센서 데이터로 불량률 예측</li>
+<li>학습 시간으로 시험 점수 예측</li>
+</ul>
+<h3 id="분류">4.3 분류</h3>
+<p>분류는 class를 예측하는 문제다.</p>
+<p>예:</p>
+<ul>
+<li>정상 / 불량</li>
+<li>가위 / 바위 / 보</li>
+<li>양품 / 이상 / 고위험</li>
+</ul>
+<h3 id="평가-지표">4.4 평가 지표</h3>
+<p>회귀에서는 여러 지표를 함께 봐야 한다.</p>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>의미</th>
+<th>해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSE</td>
+<td>오차 제곱 평균</td>
+<td>큰 오차에 민감</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>MSE의 제곱근</td>
+<td>실제 단위로 오차 해석 가능</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>절대오차 평균</td>
+<td>이상치 영향이 상대적으로 작음</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>설명력</td>
+<td>평균 예측보다 얼마나 나은지</td>
+</tr>
+</tbody>
+</table>
+<p>분류에서는 다음을 본다.</p>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accuracy</td>
+<td>전체 중 맞춘 비율</td>
+</tr>
+<tr>
+<td>Precision</td>
+<td>불량이라고 예측한 것 중 실제 불량 비율</td>
+</tr>
+<tr>
+<td>Recall</td>
+<td>실제 불량 중 모델이 잡아낸 비율</td>
+</tr>
+<tr>
+<td>F1-score</td>
+<td>Precision과 Recall의 균형</td>
+</tr>
+</tbody>
+</table>
+<p>반도체 불량 탐지처럼 불량 데이터가 매우 적은 경우에는 accuracy만 보면
+안 된다. 대부분을 정상이라고 해도 accuracy가 높게 나올 수 있기 때문이다.
+이때는 recall과 F1-score가 중요하다.</p>
+<hr />
+<h2 id="딥러닝-feature를-모델이-스스로-학습하는-방식">5. 딥러닝:
+feature를 모델이 스스로 학습하는 방식</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/12-tiny-neural-network.html">작은 신경망</a> <a href="ai-math/03-matrix-multiplication-neural-network.html">행렬곱과 신경망</a> <a href="ai-math/06-gradient-backpropagation.html">Backpropagation</a></div>
+
+<h3 id="딥러닝이-나온-이유">5.1 딥러닝이 나온 이유</h3>
+<p>머신러닝의 한계는 사람이 feature를 만들어야 한다는 점이다.</p>
+<pre class="text"><code>머신러닝: 데이터 → 사람이 feature 추출 → 모델 → 예측
+딥러닝: 데이터 → 모델이 feature와 판단을 함께 학습 → 예측</code></pre>
+<p>딥러닝의 본질은 단순히 성능이 좋은 최신 기술이 아니라, feature
+engineering의 많은 부분을 모델 내부 학습으로 옮긴 구조 변화다.</p>
+<h3 id="퍼셉트론">5.2 퍼셉트론</h3>
+<p>퍼셉트론은 하나의 인공 뉴런이다.</p>
+<pre class="text"><code>입력 x → 가중합 z = Wx + b → 활성화 함수 → 출력</code></pre>
+<p>하나의 퍼셉트론은 본질적으로 직선 하나로 데이터를 나누는 모델이다.
+따라서 선형 분리 가능한 문제는 풀 수 있지만 XOR처럼 선형 분리 불가능한
+문제는 풀기 어렵다.</p>
+<h3 id="다층-신경망">5.3 다층 신경망</h3>
+<p>퍼셉트론을 여러 층으로 쌓으면 복잡한 비선형 경계를 만들 수 있다.</p>
+<pre class="text"><code>입력층 → 은닉층 → 은닉층 → 출력층</code></pre>
+<p>층이 깊어질수록 단순한 feature에서 복잡한 feature로 올라간다.</p>
+<p>이미지 예:</p>
+<pre class="text"><code>픽셀 → 선/모서리 → 질감/패턴 → 객체 일부 → 객체 class</code></pre>
+<h3 id="활성화-함수">5.4 활성화 함수</h3>
+<p>활성화 함수는 신경망에 비선형성을 넣는다.</p>
+<p>대표 예:</p>
+<ul>
+<li>Sigmoid</li>
+<li>Tanh</li>
+<li>ReLU</li>
+<li>Softmax</li>
+</ul>
+<p>활성화 함수가 없으면 여러 층을 쌓아도 결국 하나의 선형 변환과
+비슷해진다. 따라서 딥러닝이 복잡한 문제를 풀려면 활성화 함수가
+필수다.</p>
+<h3 id="역전파">5.5 역전파</h3>
+<p>역전파는 출력에서 계산한 손실을 앞쪽 layer로 전달하며 각 가중치가
+손실에 얼마나 영향을 줬는지 계산하는 방법이다.</p>
+<pre class="text"><code>forward: 입력 → 예측 → 손실 계산
+backward: 손실 → gradient 계산 → 가중치 업데이트</code></pre>
+<p>기울기 소실은 깊은 신경망에서 앞쪽 layer로 갈수록 gradient가 너무
+작아져 학습이 거의 멈추는 현상이다. XOR 문제의 직접 원인은 기울기 소실이
+아니라 단일 퍼셉트론의 선형 분리 한계다.</p>
+<hr />
+<h2 id="cnn-이미지-처리를-위한-핵심-구조">6. CNN: 이미지 처리를 위한
+핵심 구조</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ondevice-ai-01-rps-tflite.html">TFLite RPS 실습</a> <a href="ondevice-ai-02-transfer-learning.html">전이학습 RPS</a> <a href="ondevice-ai-05-resnet-rps-qat.html">ResNet QAT 비교</a></div>
+
+<h3 id="왜-cnn이-필요한가">6.1 왜 CNN이 필요한가</h3>
+<p>이미지는 픽셀의 위치 관계가 중요하다. 일반 dense layer는 이미지를
+길게 펼쳐서 처리하기 때문에 공간 구조를 잃기 쉽다.</p>
+<p>CNN은 작은 필터를 이미지 위에 움직이며 지역 패턴을 찾는다.</p>
+<pre class="text"><code>입력 이미지 → Convolution → Activation → Pooling → Classifier</code></pre>
+<h3 id="convolution">6.2 Convolution</h3>
+<p>Convolution은 필터가 이미지 일부 영역과 곱셈-덧셈을 수행하면서
+feature map을 만드는 과정이다. 초기 layer는 선, 모서리, 색상 변화 같은
+단순한 패턴을 잡고, 뒤 layer는 더 복잡한 형태를 잡는다.</p>
+<h3 id="pooling">6.3 Pooling</h3>
+<p>Pooling은 feature map의 크기를 줄인다.</p>
+<p>효과:</p>
+<ul>
+<li>연산량 감소</li>
+<li>위치 변화에 조금 더 강해짐</li>
+<li>중요한 feature만 남김</li>
+</ul>
+<h3 id="전이학습">6.4 전이학습</h3>
+<p>전이학습은 이미 큰 데이터로 학습된 모델을 가져와 새로운 문제에 맞게
+일부만 다시 학습하는 방법이다. 가위바위보 실습에서 DenseNet 같은
+pretrained 모델을 활용하면 적은 데이터로도 성능을 낼 수 있다.</p>
+<pre class="text"><code>기존 모델의 feature extractor + 새 분류기</code></pre>
+<hr />
+<h2 id="데이터-증강-적은-데이터로-일반화-성능-높이기">7. 데이터 증강:
+적은 데이터로 일반화 성능 높이기</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ondevice-ai-02-transfer-learning.html">전이학습과 데이터 보강</a> <a href="ondevice-ai-04-lightweighting-qat-beginner.html">DenseNet QAT 초보자용</a> <a href="gcp-vscode-rps-qat-lab.html">GCP GPU 실습</a></div>
+
+<h3 id="왜-필요한가">7.1 왜 필요한가</h3>
+<p>실제 환경에서는 학습 데이터와 입력 환경이 다르다.</p>
+<p>예:</p>
+<ul>
+<li>손 위치가 다름</li>
+<li>카메라 각도가 다름</li>
+<li>밝기가 다름</li>
+<li>손 크기가 다름</li>
+<li>배경이 다름</li>
+<li>카메라가 흔들림</li>
+</ul>
+<p>데이터 증강은 원본 이미지를 여러 방식으로 변형해 모델이 다양한 상황을
+경험하게 만드는 기술이다.</p>
+<h3 id="대표-증강">7.2 대표 증강</h3>
+<table>
+<thead>
+<tr>
+<th>증강</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flip</td>
+<td>좌우 반전</td>
+</tr>
+<tr>
+<td>Rotation</td>
+<td>회전</td>
+</tr>
+<tr>
+<td>Shift</td>
+<td>위치 이동</td>
+</tr>
+<tr>
+<td>Zoom</td>
+<td>확대/축소</td>
+</tr>
+<tr>
+<td>Brightness</td>
+<td>밝기 변화</td>
+</tr>
+<tr>
+<td>Cutout</td>
+<td>일부 영역 가림</td>
+</tr>
+<tr>
+<td>MixUp</td>
+<td>두 이미지를 섞어 학습</td>
+</tr>
+<tr>
+<td>AutoAugment</td>
+<td>증강 전략을 자동 탐색</td>
+</tr>
+</tbody>
+</table>
+<h3 id="주의할-점">7.3 주의할 점</h3>
+<p>데이터 증강은 학습 데이터에만 적용해야 한다. test 데이터까지
+증강하거나, train/test 분리가 잘못되면 데이터 누수가 발생한다.</p>
+<pre class="text"><code>올바른 순서:
+원본 데이터 수집 → train/test 분리 → train에만 augmentation 적용 → test는 원본 기준 평가</code></pre>
+<hr />
+<h2 id="생성모델-없는-데이터를-만들고-분포를-학습하는-방법">8. 생성모델:
+없는 데이터를 만들고 분포를 학습하는 방법</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/09-statistics-preprocessing.html">통계와 전처리</a> <a href="ai-semiconductor-value-chain-demand-growth-anthropic-20260531.html">반도체 가치사슬</a> <a href="edge-ai-onprem-physical-ai-expansion-202605.html">Edge AI와 Physical AI</a></div>
+
+<h3 id="autoencoder">8.1 Autoencoder</h3>
+<p>Autoencoder는 입력을 압축했다가 다시 복원하는 모델이다.</p>
+<pre class="text"><code>입력 x → Encoder → latent vector z → Decoder → 복원 x&#39;</code></pre>
+<p>이상 탐지에서는 정상 데이터를 잘 복원하도록 학습한 뒤, 복원 오차가 큰
+데이터를 이상으로 볼 수 있다.</p>
+<h3 id="vae">8.2 VAE</h3>
+<p>VAE는 latent vector를 확률분포로 학습하는 생성모델이다.</p>
+<p>장점:</p>
+<ul>
+<li>데이터 분포를 학습할 수 있음</li>
+<li>새로운 샘플 생성 가능</li>
+<li>결함 데이터가 부족할 때 synthetic data 생성에 활용 가능</li>
+</ul>
+<p>한계:</p>
+<ul>
+<li>결함 데이터가 너무 적으면 다양성을 충분히 학습하기 어렵다.</li>
+<li>latent space 해석이 어렵다.</li>
+<li>생성 데이터가 실제 공정 물리와 맞는지 검증이 필요하다.</li>
+<li>장기 시계열 패턴이나 공정 drift 반영이 부족할 수 있다.</li>
+</ul>
+<h3 id="gan">8.3 GAN</h3>
+<p>GAN은 생성자와 판별자가 경쟁하며 학습한다.</p>
+<pre class="text"><code>Generator: 가짜 데이터를 생성
+Discriminator: 진짜와 가짜를 구분</code></pre>
+<p>이미지 생성에서는 강력하지만 학습이 불안정할 수 있다.</p>
+<h3 id="diffusion">8.4 Diffusion</h3>
+<p>Diffusion 모델은 데이터에 노이즈를 점점 추가한 뒤, 다시 노이즈를
+제거하는 과정을 학습한다.</p>
+<p>장점:</p>
+<ul>
+<li>고품질 생성 가능</li>
+<li>안정적인 학습이 가능한 편</li>
+</ul>
+<p>단점:</p>
+<ul>
+<li>추론 비용이 큼</li>
+<li>온디바이스에서 직접 실행하려면 경량화가 필요함</li>
+</ul>
+<hr />
+<h2 id="반도체-공정-데이터와-ai">9. 반도체 공정 데이터와 AI</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="application-semiconductor-revenue-validation.html">AI 반도체 매출 검증</a> <a href="global-semi-market-summary-202605.html">글로벌 반도체 시장 요약</a> <a href="edge-ai-onprem-physical-ai-expansion-202605.html">Edge AI와 Physical AI</a></div>
+
+<h3 id="반도체-데이터의-특징">9.1 반도체 데이터의 특징</h3>
+<p>반도체 제조 공정은 센서가 많고, 공정 단계가 길고, 불량 데이터가
+적다.</p>
+<p>주요 특징:</p>
+<ul>
+<li>고차원 센서 데이터</li>
+<li>시계열 패턴</li>
+<li>공정 drift</li>
+<li>장비별 편차</li>
+<li>불량 class 불균형</li>
+<li>설명 가능성 요구</li>
+</ul>
+<h3 id="이상-탐지">9.2 이상 탐지</h3>
+<p>이상 탐지는 정상과 다른 패턴을 찾는 문제다.</p>
+<p>방법:</p>
+<ul>
+<li>통계 기반 threshold</li>
+<li>PCA 기반 이상 탐지</li>
+<li>Autoencoder reconstruction error</li>
+<li>VAE 기반 synthetic defect 생성</li>
+<li>분류 모델의 recall/F1-score 개선</li>
+</ul>
+<h3 id="불균형-데이터">9.3 불균형 데이터</h3>
+<p>반도체 불량 데이터는 정상 데이터에 비해 매우 적다. 이때 단순
+accuracy는 위험하다.</p>
+<p>해결 방법:</p>
+<ul>
+<li>SMOTE 같은 오버샘플링</li>
+<li>class weight</li>
+<li>anomaly detection</li>
+<li>VAE/GAN 기반 결함 데이터 생성</li>
+<li>recall, precision, F1-score 중심 평가</li>
+</ul>
+<h3 id="설명-가능성">9.4 설명 가능성</h3>
+<p>Fab 엔지니어 입장에서는 “모델이 맞췄다”보다 “왜 이상이라고
+판단했는가”가 중요하다. 설명 가능성이 필요한 이유:</p>
+<ul>
+<li>원인 공정 변수 파악</li>
+<li>장비 유지보수 의사결정</li>
+<li>공정 조건 개선</li>
+<li>현장 신뢰 확보</li>
+</ul>
+<hr />
+<h2 id="온디바이스-ai">10. 온디바이스 AI</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ondevice-ai-00-overview.html">온디바이스 전체 지도</a> <a href="ondevice-ai-01-rps-tflite.html">TFLite 실시간 RPS</a> <a href="gcp-vscode-rps-qat-lab.html">GCP GPU 실습</a></div>
+
+<h3 id="온디바이스-ai의-의미">10.1 온디바이스 AI의 의미</h3>
+<p>온디바이스 AI는 서버가 아니라 장치 내부에서 AI 추론을 수행하는
+방식이다.</p>
+<p>예:</p>
+<ul>
+<li>라즈베리파이에서 웹캠 입력을 받아 가위/바위/보 분류</li>
+<li>스마트폰에서 이미지 인식</li>
+<li>공정 장비 근처 edge device에서 이상 탐지</li>
+<li>로봇, 카메라, 센서 장치에서 실시간 판단</li>
+</ul>
+<h3 id="왜-필요한가-1">10.2 왜 필요한가</h3>
+<table>
+<thead>
+<tr>
+<th>이유</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>지연시간</td>
+<td>서버 왕복 없이 즉시 판단</td>
+</tr>
+<tr>
+<td>네트워크 독립성</td>
+<td>인터넷이 불안정해도 동작</td>
+</tr>
+<tr>
+<td>개인정보</td>
+<td>원본 데이터를 외부로 보내지 않음</td>
+</tr>
+<tr>
+<td>비용</td>
+<td>서버 사용량 감소</td>
+</tr>
+<tr>
+<td>안정성</td>
+<td>현장 장비에서 실시간 제어 가능</td>
+</tr>
+</tbody>
+</table>
+<h3 id="라즈베리파이-실습-흐름">10.3 라즈베리파이 실습 흐름</h3>
+<p>가위바위보 인식 실습의 전체 구조:</p>
+<pre class="text"><code>카메라 입력 → 이미지 전처리 → TFLite 모델 로드 → 추론 → 결과 출력</code></pre>
+<p>필요 요소:</p>
+<ul>
+<li>OpenCV: 카메라 입력과 이미지 전처리</li>
+<li>NumPy: 배열 계산</li>
+<li>TFLite runtime: <code>.tflite</code> 모델 추론</li>
+<li>Python 3.11 가상환경: 패키지 충돌 방지</li>
+<li>모델 파일: <code>RPS_PreTrained_DenseNet.tflite</code></li>
+</ul>
+<p>실습에서 중요했던 환경 이슈:</p>
+<ul>
+<li>Raspberry Pi OS의 기본 Python 3.13과 <code>tflite-runtime</code>
+호환성 문제</li>
+<li><code>pyenv</code>로 Python 3.11 환경 구성</li>
+<li><code>numpy==1.26.4</code>로 버전 고정</li>
+<li>SSH 환경에서 <code>cv2.imshow()</code>를 쓰려면 display 설정
+필요</li>
+<li>코드와 <code>.tflite</code> 모델 파일 경로를 맞춰야 함</li>
+</ul>
+<hr />
+<h2 id="온디바이스를-위한-모델-경량화">11. 온디바이스를 위한 모델
+경량화</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ondevice-ai-03-lightweighting.html">Quantization과 Pruning</a> <a href="ondevice-ai-lightweighting-session.html">경량화 강의자료 세션</a> <a href="ondevice-ai-04-lightweighting-qat-beginner.html">QAT 초보자용 코드</a> <a href="ondevice-ai-05-resnet-rps-qat.html">ResNet QAT 비교</a></div>
+
+<p>온디바이스에서는 정확도만 보면 안 된다. 모델이 실제 장치에서 돌아가야
+한다.</p>
+<h3 id="온디바이스-제약">11.1 온디바이스 제약</h3>
+<table>
+<thead>
+<tr>
+<th>제약</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>메모리</td>
+<td>모델 파일과 중간 feature map을 저장할 공간 제한</td>
+</tr>
+<tr>
+<td>연산량</td>
+<td>CPU/NPU가 처리할 수 있는 MAC 수 제한</td>
+</tr>
+<tr>
+<td>전력</td>
+<td>배터리 또는 발열 제한</td>
+</tr>
+<tr>
+<td>지연시간</td>
+<td>실시간 응답 필요</td>
+</tr>
+<tr>
+<td>호환성</td>
+<td>장치 런타임이 지원하는 연산만 사용 가능</td>
+</tr>
+</tbody>
+</table>
+<h3 id="양자화">11.2 양자화</h3>
+<p>양자화는 모델의 숫자 표현을 줄이는 방법이다.</p>
+<pre class="text"><code>FP32 → FP16 → INT8</code></pre>
+<p>효과:</p>
+<ul>
+<li>모델 크기 감소</li>
+<li>메모리 사용량 감소</li>
+<li>CPU/NPU 추론 속도 향상 가능</li>
+<li>전력 사용 감소 가능</li>
+</ul>
+<p>주의:</p>
+<ul>
+<li>정확도가 떨어질 수 있다.</li>
+<li>INT8 양자화는 representative dataset이 중요하다.</li>
+<li>장치가 INT8 연산을 잘 지원해야 효과가 크다.</li>
+</ul>
+<h3 id="pruning">11.3 Pruning</h3>
+<p>Pruning은 중요하지 않은 weight나 channel을 제거하는 방법이다.</p>
+<p>효과:</p>
+<ul>
+<li>파라미터 수 감소</li>
+<li>모델 크기 감소</li>
+<li>구조적 pruning을 잘 적용하면 속도도 개선 가능</li>
+</ul>
+<p>주의:</p>
+<ul>
+<li>단순히 weight를 0으로 만드는 비구조적 pruning은 실제 장치에서 속도
+개선이 작을 수 있다.</li>
+<li>pruning 후에는 fine-tuning이 필요하다.</li>
+</ul>
+<h3 id="knowledge-distillation">11.4 Knowledge Distillation</h3>
+<p>Distillation은 큰 모델의 지식을 작은 모델에 전달하는 방법이다.</p>
+<pre class="text"><code>Teacher model: 크고 정확한 모델
+Student model: 작고 빠른 모델</code></pre>
+<p>장점:</p>
+<ul>
+<li>작은 모델이 단순 label보다 teacher의 soft output을 학습해 성능을
+보완한다.</li>
+<li>MobileNet, EfficientNet-lite 같은 작은 모델과 함께 쓰기 좋다.</li>
+</ul>
+<h3 id="경량-모델-구조">11.5 경량 모델 구조</h3>
+<p>온디바이스에서는 처음부터 작은 구조를 선택하는 것도 중요하다.</p>
+<p>대표 구조:</p>
+<ul>
+<li>MobileNet</li>
+<li>EfficientNet-Lite</li>
+<li>ShuffleNet</li>
+<li>SqueezeNet</li>
+<li>Tiny CNN</li>
+</ul>
+<p>핵심 아이디어:</p>
+<ul>
+<li>depthwise separable convolution으로 연산량 감소</li>
+<li>channel 수 축소</li>
+<li>입력 해상도 축소</li>
+<li>불필요한 dense layer 제거</li>
+</ul>
+<h3 id="tflite-변환">11.6 TFLite 변환</h3>
+<p>TensorFlow/Keras 모델을 라즈베리파이나 모바일에서 실행하려면 보통
+TFLite로 변환한다.</p>
+<pre class="text"><code>Keras model → TFLite converter → .tflite model → TFLite runtime</code></pre>
+<p>검증해야 할 것:</p>
+<ul>
+<li>변환 전후 정확도 비교</li>
+<li>모델 파일 크기</li>
+<li>추론 latency</li>
+<li>메모리 사용량</li>
+<li>실제 카메라 입력에서 동작 여부</li>
+</ul>
+<hr />
+<h2 id="핵심-수식-모음">12. 핵심 수식 모음</h2>
+<h3 id="선형-모델">선형 모델</h3>
+<pre class="text"><code>y = wx + b</code></pre>
+<h3 id="다변수-선형-모델">다변수 선형 모델</h3>
+<pre class="text"><code>y = w1*x1 + w2*x2 + ... + wn*xn + b</code></pre>
+<h3 id="행렬-표현">행렬 표현</h3>
+<pre class="text"><code>Y = XW + b</code></pre>
+<h3 id="mse">MSE</h3>
+<pre class="text"><code>MSE = (1/n) * Σ(y_i - y_hat_i)^2</code></pre>
+<h3 id="경사하강법-1">경사하강법</h3>
+<pre class="text"><code>w_new = w_old - learning_rate * gradient</code></pre>
+<h3 id="퍼셉트론-1">퍼셉트론</h3>
+<pre class="text"><code>z = Wx + b
+a = activation(z)</code></pre>
+<h3 id="cnn-출력-크기">CNN 출력 크기</h3>
+<pre class="text"><code>output = floor((input - filter + 2*padding) / stride) + 1</code></pre>
+<h3 id="softmax">Softmax</h3>
+<pre class="text"><code>softmax(z_i) = exp(z_i) / Σ exp(z_j)</code></pre>
+<hr />
+<h2 id="핵심-질문">13. 핵심 질문</h2>
+<p>다음 질문에 1-2문장으로 답할 수 있으면 전체 흐름을 이해한 것이다.</p>
+<ol type="1">
+<li>벡터와 행렬이 AI에서 왜 중요한가?</li>
+<li><code>y = ax + b</code>에서 <code>a</code>와 <code>b</code>는 각각
+무엇을 의미하는가?</li>
+<li>손실함수는 왜 필요한가?</li>
+<li>경사하강법은 어떤 방향으로 가중치를 바꾸는가?</li>
+<li>머신러닝과 딥러닝의 가장 큰 구조적 차이는 무엇인가?</li>
+<li>퍼셉트론 하나가 XOR 문제를 풀 수 없는 이유는 무엇인가?</li>
+<li>활성화 함수가 없으면 깊은 신경망이 왜 의미가 약해지는가?</li>
+<li>CNN이 이미지 처리에 적합한 이유는 무엇인가?</li>
+<li>데이터 증강은 왜 train 데이터에만 적용해야 하는가?</li>
+<li>Accuracy가 높은데도 반도체 불량 탐지 모델이 나쁠 수 있는 이유는
+무엇인가?</li>
+<li>VAE를 반도체 결함 데이터 생성에 쓸 때 한계는 무엇인가?</li>
+<li>온디바이스 AI가 서버 AI와 다른 점은 무엇인가?</li>
+<li>TFLite를 사용하는 이유는 무엇인가?</li>
+<li>양자화가 모델 크기와 추론 속도에 어떤 영향을 주는가?</li>
+<li>경량화에서 정확도, latency, memory, power 사이의 trade-off는
+무엇인가?</li>
+</ol>
+<hr />
+<h2 id="요약">14. 요약</h2>
+<p>선형대수는 AI 데이터를 표현하는 언어다. 벡터는 하나의 데이터, 행렬은
+여러 데이터를 담는다. 모델은 입력과 가중치의 내적, 즉 가중합으로
+출발한다.</p>
+<p>미분과 경사하강법은 모델을 학습시키는 방법이다. 손실함수가 현재
+모델의 틀린 정도를 나타내면, 경사하강법은 손실을 줄이는 방향으로
+가중치를 수정한다.</p>
+<p>머신러닝은 사람이 feature를 만들고 모델이 그 feature로 예측한다. 정형
+데이터와 반도체 공정 데이터에는 유용하지만, 이미지처럼 복잡한
+데이터에서는 feature engineering이 병목이 된다.</p>
+<p>딥러닝은 feature를 모델이 스스로 학습한다. 퍼셉트론은 입력에 가중치를
+곱하고 bias를 더한 뒤 활성화 함수를 통과시키는 기본 단위다. 여러 층을
+쌓으면 비선형 문제를 풀 수 있다.</p>
+<p>CNN은 이미지의 공간 구조를 활용한다. convolution은 지역 패턴을 찾고,
+pooling은 크기를 줄이며, 뒤 layer로 갈수록 더 복잡한 feature를
+학습한다.</p>
+<p>데이터 증강은 실제 환경의 변화에 강한 모델을 만들기 위한 방법이다.
+밝기, 위치, 회전, 확대, 가림 같은 변형을 학습 데이터에 적용해 일반화
+성능을 높인다.</p>
+<p>생성모델은 데이터 분포를 학습하고 새로운 샘플을 만든다. Autoencoder는
+복원 오차로 이상 탐지에 쓸 수 있고, VAE는 결함 데이터가 부족한 반도체
+공정에서 synthetic data 생성에 활용될 수 있다. 하지만 생성 데이터의
+다양성, 물리적 타당성, 설명 가능성을 반드시 검토해야 한다.</p>
+<p>온디바이스 AI는 모델을 서버가 아니라 장치에서 직접 실행하는 방식이다.
+라즈베리파이 실습에서는 카메라 입력을 OpenCV로 처리하고, TFLite 모델로
+추론해 가위바위보를 분류했다.</p>
+<p>온디바이스에서는 정확도만으로는 부족하다. 모델 크기, 메모리,
+지연시간, 전력, 런타임 호환성을 함께 봐야 한다. 이를 위해 양자화,
+pruning, distillation, MobileNet 계열 경량 모델, TFLite 변환을
+사용한다.</p>
+<p>한 학기 전체의 결론은 다음이다.</p>
+<pre class="text"><code>수학 기초 → 데이터 이해 → ML/DL 모델 학습 → CNN/생성모델 활용
+→ 반도체와 이미지 실습 → TFLite 배포 → 온디바이스 경량화</code></pre>
+<hr />
+<h2 id="암기-문장">15. 암기 문장</h2>
+<ul>
+<li>AI 모델의 기본 계산은 <code>입력 × 가중치 + bias</code>다.</li>
+<li>학습은 손실을 줄이는 방향으로 가중치를 바꾸는 과정이다.</li>
+<li>머신러닝은 feature를 사람이 만들고, 딥러닝은 feature를 모델이
+배운다.</li>
+<li>CNN은 이미지의 공간적 패턴을 convolution으로 학습한다.</li>
+<li>데이터 증강은 실제 환경 변화에 견디는 모델을 만들기 위한
+방법이다.</li>
+<li>반도체 데이터는 고차원, 시계열, 불균형, 설명 가능성이 핵심
+이슈다.</li>
+<li>온디바이스 AI는 정확도뿐 아니라 속도, 메모리, 전력, 호환성이
+중요하다.</li>
+<li>경량화의 목표는 성능을 최대한 유지하면서 모델을 작고 빠르게 만드는
+것이다.</li>
+</ul>
+<script src="assets/protect.js" defer></script>
+</body>
+</html>
