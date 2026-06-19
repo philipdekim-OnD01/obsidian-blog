@@ -64,12 +64,7 @@ unzip RSP_SSD_LAB.zip
 cd RSP_SSD_LAB
 ```
 
-GitHub 저장소를 사용하는 경우에는 다음 흐름으로 받을 수 있다.
-
-```bash
-git clone https://github.com/philipdekim-OnD01/RSP_SSD_LAB.git
-cd RSP_SSD_LAB
-```
+GitHub 원격 저장소가 별도로 제공되는 경우에는 같은 폴더 구조를 `git clone`으로 받아도 된다.
 
 ## 2. Raspberry Pi 준비
 
