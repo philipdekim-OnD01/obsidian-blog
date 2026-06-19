@@ -1297,6 +1297,102 @@ alt="NotebookLM 전체 마인드맵" />
 <figcaption aria-hidden="true">NotebookLM 전체 마인드맵</figcaption>
 </figure>
 </details>
+<hr />
+<h2 id="참고자료.-퍼셉트론과-딥러닝-연구-흐름">참고자료. 퍼셉트론과
+딥러닝 연구 흐름</h2>
+<div class="lecture-links"><strong>관련 블로그 강의자료</strong><a href="ai-math/12-tiny-neural-network.html">작은 신경망</a> <a href="ai-math/06-gradient-backpropagation.html">Backpropagation</a> <a href="ai-math/07-gradient-descent.html">Gradient Descent</a> <a href="ondevice-ai-01-rps-tflite.html">CNN/TFLite 실습</a></div>
+
+<p>출처: <code>8주차강의/퍼셉트론연구자들.pptx</code></p>
+<p>퍼셉트론과 딥러닝은 한 사람이 갑자기 만든 기술이 아니라, 생물학적
+뉴런 모델, 최적화 이론, 퍼셉트론의 한계 분석, 역전파, GPU와 대규모
+데이터가 이어지면서 발전한 흐름이다. 이 표는 “왜 단층 퍼셉트론에서 다층
+신경망과 딥러닝으로 넘어갔는가”를 이해하기 위한 역사적 참고자료다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>시기</th>
+<th>인물</th>
+<th>전공/배경</th>
+<th>주요 연구 주제</th>
+<th>핵심 기여</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1957~1958</td>
+<td>Frank Rosenblatt</td>
+<td>심리학 + 수학</td>
+<td>인간 학습 메커니즘, 신경모델</td>
+<td>퍼셉트론 제안, 학습 가능한 인공 뉴런 개념 도입</td>
+</tr>
+<tr>
+<td>1960</td>
+<td>Henry J. Kelley</td>
+<td>항공공학 / 제어이론</td>
+<td>최적 제어, gradient 방법</td>
+<td>오차 역전파 개념의 수학적 기반 제공</td>
+</tr>
+<tr>
+<td>1960s</td>
+<td>Arthur E. Bryson</td>
+<td>제어공학</td>
+<td>최적 제어, 시스템 최적화</td>
+<td>chain rule 기반 최적화 정립</td>
+</tr>
+<tr>
+<td>1969</td>
+<td>Marvin Minsky</td>
+<td>수학 + 컴퓨터과학</td>
+<td>AI 이론, 기호주의</td>
+<td>단층 퍼셉트론의 한계, 특히 XOR 문제를 명확히 지적</td>
+</tr>
+<tr>
+<td>1974</td>
+<td>Paul Werbos</td>
+<td>응용수학 / 시스템공학</td>
+<td>신경망 + 역전파 학습</td>
+<td>역전파를 신경망 학습에 적용</td>
+</tr>
+<tr>
+<td>1986</td>
+<td>Geoffrey Hinton</td>
+<td>심리학 + 인지과학</td>
+<td>신경망 학습 구조</td>
+<td>역전파를 실용화하고 신경망 연구 부활에 기여</td>
+</tr>
+<tr>
+<td>2006 이후</td>
+<td>Geoffrey Hinton</td>
+<td>Deep Learning 연구</td>
+<td>깊은 신경망 구조</td>
+<td>딥러닝 시대 개막에 핵심 역할</td>
+</tr>
+</tbody>
+</table>
+<p>이 흐름에서 중요한 포인트는 다음이다.</p>
+<ol type="1">
+<li>퍼셉트론은 입력에 가중치를 곱하고 더해 판단하는 기본 구조를
+제시했다.</li>
+<li>단층 퍼셉트론은 직선 하나로 나눌 수 있는 문제에는 강하지만, XOR처럼
+선형 분리 불가능한 문제에는 한계가 있다.</li>
+<li>이 한계 때문에 여러 층을 쌓은 다층 신경망이 필요해졌다.</li>
+<li>다층 신경망을 학습시키려면 각 가중치가 손실에 얼마나 영향을 주는지
+계산해야 하고, 이를 가능하게 한 핵심 방법이 역전파다.</li>
+<li>현대 딥러닝은 퍼셉트론, chain rule, gradient descent,
+backpropagation, 대규모 데이터, GPU/NPU 연산이 결합된 결과다.</li>
+</ol>
+<p>수업 내용과 연결하면 다음과 같다.</p>
+<pre class="text"><code>퍼셉트론 → XOR 한계 → 다층 신경망 → 역전파 → 딥러닝 → CNN → 온디바이스 AI</code></pre>
+<p>따라서 딥러닝을 단순히 “최신 AI 기술”로 외우기보다, <strong>선형
+모델의 한계를 비선형 표현과 학습 알고리즘으로 극복한 흐름</strong>으로
+이해하는 것이 중요하다.</p>
 <script src="assets/protect.js" defer></script>
 </body>
 </html>
