@@ -15,7 +15,9 @@
     .insight-box{margin:28px 0;padding:20px 22px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px}
     .insight-box strong{color:#9a3412}
     .chart-panel{margin:28px 0 34px;padding:18px;background:#fff;border:1px solid #d9e2ec;border-radius:10px}
+    .chart-panel img{display:block;width:100%;height:auto;border-radius:8px}
     .chart-panel svg{display:block;width:100%;height:auto}
+    .figure-caption{margin:12px 0 0;color:#64748b;font-size:.92rem}
     .source-note a{color:#0b63ce}
     @media (max-width:700px){.flow-label{font-size:17px}.flow-small{font-size:14px}}
   </style>
@@ -28,6 +30,14 @@
       <p class="lead">클라우드 중심 AI가 기업 내부, 개인 기기, 산업 현장, 물리 세계로 확산할 때 새롭게 부상하는 병목과 수혜 산업을 정리한다.</p>
       <p class="meta">영상 기반 리포트 · 한경 글로벌마켓 「"10년도 부족하다" 젠슨황이 찍어준 AI 랠리 다음 무대」</p>
     </section>
+
+    <div class="chart-panel">
+      <img src="assets/DataCenterToEdge.png" alt="데이터센터 중심 AI에서 피지컬 AI 시스템으로 확장되는 흐름과 2030년 메모리 및 온디바이스 칩 시장 전망">
+      <p class="figure-caption">그림: 데이터센터 중심 AI에서 온디바이스와 피지컬 AI 시스템으로 확장되는 수요 구조.</p>
+    </div>
+
+    <p>위 도표는 AI 컴퓨팅의 중심축이 PC, 모바일, AI 데이터센터를 거쳐 2030년 전후 피지컬 AI 시스템으로 확장되는 흐름을 시각화한다. 핵심은 데이터센터 수요가 사라지는 것이 아니라, 클라우드에서 학습된 지능이 차량, 로봇, 자율주행, AMR, 산업 현장 장비로 내려오면서 새로운 반도체 수요층을 만든다는 점이다.</p>
+    <p>특히 2030년 구간에서 메모리 수요와 온디바이스 칩 시장이 함께 제시된 것은 중요하다. 피지컬 AI는 대형 모델 학습용 HBM만으로 설명되지 않는다. 현장 장비 안의 DRAM, NAND, 임베디드 스토리지, 저전력 SoC, 센서 처리 칩, 전력반도체가 동시에 필요하다. 따라서 투자 해석은 "데이터센터 GPU 사이클" 하나가 아니라 "클라우드-온프레미스-엣지-디바이스"로 이어지는 다층 수요 구조로 봐야 한다.</p>
 
     <div class="chart-panel">
       <svg viewBox="0 0 1120 430" role="img" aria-label="AI infrastructure expansion from cloud to physical AI">
@@ -143,14 +153,18 @@
     </table>
     <p><a href="ai-datacenter-power-bottleneck-energy-infra-202605.html">AI 데이터센터 전력 병목 리포트</a>와 함께 보면 병목이 사라지는 것이 아니라 분산된다는 점이 중요하다. 대형 데이터센터에서는 계통 연결, 전력, 냉각이 제약이고, 엣지에서는 저전력, 발열, 실시간성, 내구성, 통신 안정성이 제약이다.</p>
 
-    <h2>투자 해석 시 주의점</h2>
+    <p>도표의 2030년 메모리 수요 전망은 세부 수치 자체보다 방향성이 더 중요하다. AMR, 휴머노이드, 자율주행은 각각 요구하는 메모리 구조가 다르다. AMR은 산업 현장 내 경로 계획과 비전 인식, 휴머노이드는 멀티모달 센서 처리와 행동 제어, 자율주행은 고신뢰 실시간 추론과 데이터 기록이 핵심이다. 공통적으로 로컬 추론 성능, 메모리 대역폭, 저장 용량, 전력 효율이 제품 경쟁력으로 연결된다.</p>
+
+    <h2>체크포인트</h2>
     <ol>
       <li>엣지 AI 매출이 기존 제품의 재분류인지 신규 수요인지 구분해야 한다.</li>
-      <li>기술 채택 속도와 실제 매출 인식 시점은 다를 수 있다.</li>
-      <li>소형주는 고객 집중도, 유동성, 밸류에이션 변동성이 크다.</li>
-      <li>AI PC는 출하량보다 AI 기능의 실제 사용 빈도와 평균판매단가 기여도를 봐야 한다.</li>
-      <li>피지컬 AI는 안전성, 규제, 유지보수 비용 때문에 상용화 시간이 길 수 있다.</li>
-      <li>클라우드와 엣지는 대체 관계보다 보완 관계로 보는 것이 합리적이다.</li>
+      <li>메모리 수요 전망은 단위와 전제를 확인해야 한다. GB, billion GB, 탑재량, 출하대수, 시장 규모가 혼용되면 투자 결론이 왜곡될 수 있다.</li>
+      <li>기술 채택 속도와 실제 매출 인식 시점은 다를 수 있다. 로봇과 자율주행은 PoC, 파일럿, 양산, 반복 매출 사이의 간격이 길다.</li>
+      <li>소형주는 고객 집중도, 유동성, 밸류에이션 변동성이 크다. 테마 확산기에는 수주 품질과 매출총이익률 확인이 필요하다.</li>
+      <li>AI PC와 온디바이스 AI는 출하량보다 AI 기능의 실제 사용 빈도, NPU 활용률, 평균판매단가 기여도를 봐야 한다.</li>
+      <li>피지컬 AI는 안전성, 규제, 유지보수 비용 때문에 소프트웨어 AI보다 상용화 시간이 길 수 있다.</li>
+      <li>클라우드와 엣지는 대체 관계보다 보완 관계로 보는 것이 합리적이다. 학습과 대규모 추론은 클라우드, 실시간 판단과 민감 데이터 처리는 현장에 남을 가능성이 높다.</li>
+      <li>반도체 수혜는 계층별로 다르다. 데이터센터는 HBM과 고성능 네트워크, 엣지는 저전력 SoC와 임베디드 메모리, 피지컬 AI는 센서와 전력 관리까지 함께 봐야 한다.</li>
     </ol>
 
     <h2>후속 검증 체크리스트</h2>
