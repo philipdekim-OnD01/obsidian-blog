@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const namespace = 'philipkim-blog';
 const apiBase = 'https://api.counterapi.dev/v1';
@@ -30,7 +30,7 @@ async function fetchCount(name) {
   });
 
   if (!response.ok) {
-    if (response.status === 404) {
+    if (response.status === 404 || response.status === 400) {
       return 0;
     }
     throw new Error(`Failed to fetch ${name}: HTTP ${response.status}`);
@@ -40,17 +40,77 @@ async function fetchCount(name) {
   return Number(data.count ?? data.value ?? 0);
 }
 
+async function readExistingSnapshot() {
+  try {
+    return JSON.parse(await readFile(outFile, 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return {};
+    }
+    throw error;
+  }
+}
+
+function snapshotsFromHistory(existing, total) {
+  const snapshots = Array.isArray(existing.snapshots)
+    ? existing.snapshots
+      .map((entry) => ({
+        date: entry.date,
+        total: Number(entry.total),
+      }))
+      .filter((entry) => entry.date && Number.isFinite(entry.total))
+    : [];
+
+  if (snapshots.length > 0) {
+    return snapshots;
+  }
+
+  const history = Array.isArray(existing.history)
+    ? existing.history
+      .map((entry) => ({
+        date: entry.date,
+        count: Number(entry.count) || 0,
+      }))
+      .filter((entry) => entry.date)
+    : [];
+
+  if (history.length === 0) {
+    return [];
+  }
+
+  const historyTotal = history.reduce((sum, entry) => sum + entry.count, 0);
+  let runningTotal = Math.max(0, Number(total) - historyTotal);
+  return history.map((entry) => {
+    runningTotal += entry.count;
+    return {
+      date: entry.date,
+      total: runningTotal,
+    };
+  });
+}
+
+function buildHistory(snapshots) {
+  return snapshots.slice(1).map((entry, index) => ({
+    date: entry.date,
+    count: Math.max(0, entry.total - snapshots[index].total),
+  }));
+}
+
 const total = await fetchCount('home-total');
-const history = await Promise.all(
-  Array.from({ length: historyDays }, (_, index) => {
-    const offset = historyDays - index;
-    const day = dayKey(offset);
-    return fetchCount(`home-${day.iso}`).then((count) => ({
-      date: day.iso,
-      count,
-    }));
-  }),
+const existing = await readExistingSnapshot();
+const snapshotDate = dayKey(1).iso;
+const snapshotsByDate = new Map(
+  snapshotsFromHistory(existing, total).map((entry) => [entry.date, entry]),
 );
+snapshotsByDate.set(snapshotDate, {
+  date: snapshotDate,
+  total,
+});
+
+const snapshots = Array.from(snapshotsByDate.values())
+  .sort((a, b) => a.date.localeCompare(b.date))
+  .slice(-(historyDays + 1));
+const history = buildHistory(snapshots).slice(-historyDays);
 
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });
 await writeFile(
@@ -60,6 +120,7 @@ await writeFile(
       updatedAt: new Date().toISOString(),
       timezone: 'Asia/Seoul',
       total,
+      snapshots,
       history,
     },
     null,

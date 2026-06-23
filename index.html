@@ -558,7 +558,7 @@
         <section class="panel stats">
             <div class="stats-head">
                 <h2>Visitors</h2>
-                <div class="stats-note">Live total + stored daily history</div>
+                <div class="stats-note">Live total + stable daily history</div>
             </div>
             <div class="stats-grid">
                 <div class="metric">
@@ -626,15 +626,6 @@
             return Number(data.count ?? data.value ?? 0);
         }
 
-        async function getCount(name) {
-            try {
-                const data = await fetchJson(`${apiBase}/${namespace}/${name}`);
-                return Number(data.count ?? data.value ?? 0);
-            } catch (error) {
-                return 0;
-            }
-        }
-
         function renderChart(points) {
             const width = 640;
             const height = 88;
@@ -670,9 +661,17 @@
             try {
                 const history = await fetchVisitorHistory();
                 const historyMap = new Map((history?.history ?? []).map((entry) => [entry.date, Number(entry.count) || 0]));
+                const snapshots = Array.isArray(history?.snapshots) ? history.snapshots : [];
+                const latestSnapshot = snapshots
+                    .map((entry) => ({ date: entry.date, total: Number(entry.total) || 0 }))
+                    .filter((entry) => entry.date && Number.isFinite(entry.total))
+                    .sort((a, b) => a.date.localeCompare(b.date))
+                    .at(-1);
                 const today = dayKey(0);
                 const totalValue = await increment(totalCounter);
-                const todayValue = await increment(`home-${today.iso}`);
+                const todayValue = latestSnapshot && latestSnapshot.date < today.iso
+                    ? Math.max(0, totalValue - latestSnapshot.total)
+                    : 0;
 
                 totalEl.textContent = totalValue.toLocaleString('en-US');
                 todayEl.textContent = `Today: ${todayValue.toLocaleString('en-US')}`;
@@ -682,7 +681,7 @@
                     const day = dayKey(offset);
                     const value = offset === 0
                         ? todayValue
-                        : (historyMap.has(day.iso) ? historyMap.get(day.iso) : await getCount(`home-${day.iso}`));
+                        : (historyMap.has(day.iso) ? historyMap.get(day.iso) : 0);
                     points.push({ label: day.label, value });
                 }
 
