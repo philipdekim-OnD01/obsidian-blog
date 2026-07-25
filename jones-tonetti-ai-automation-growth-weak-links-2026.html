@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, noimageindex">
+  <title>Jones & Tonetti 2026 쉽게 읽기</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5d6a75;
+      --line: #d9e1e8;
+      --paper: #f7f4ee;
+      --panel: #ffffff;
+      --accent: #0f766e;
+      --accent-2: #a44927;
+      --accent-3: #245c9c;
+      --soft: #e8f4f1;
+      --warn: #fff1dc;
+      --shadow: 0 14px 34px rgba(26, 37, 48, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    a { color: var(--accent-3); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      background: #19242f;
+      color: #f7fbff;
+      overflow: auto;
+    }
+
+    aside h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    aside .meta {
+      margin: 0 0 22px;
+      color: #b7c4ce;
+      font-size: 13px;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    nav a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 6px;
+      color: #eaf2f8;
+      font-size: 14px;
+    }
+
+    nav a:hover { background: rgba(255, 255, 255, 0.09); text-decoration: none; }
+
+    main { padding: 34px min(5vw, 58px) 70px; }
+
+    .hero {
+      max-width: 1120px;
+      padding: 18px 0 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-weight: 750;
+      font-size: 14px;
+    }
+
+    .hero h2 {
+      max-width: 980px;
+      margin: 0;
+      font-size: clamp(33px, 5vw, 63px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 880px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    section {
+      max-width: 1120px;
+      padding: 42px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      line-height: 1.26;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0 0 14px; }
+    .lead { max-width: 900px; color: var(--muted); font-size: 17px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .card, .author-card, .explain {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 5px 18px rgba(24, 35, 44, 0.05);
+    }
+
+    .card { padding: 18px; }
+    .card strong { display: block; margin-bottom: 6px; font-size: 17px; }
+
+    .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .formula {
+      margin: 16px 0;
+      padding: 17px 20px;
+      background: #101820;
+      color: #f6fbff;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 17px;
+      line-height: 1.75;
+      white-space: nowrap;
+    }
+
+    .formula .hint {
+      display: block;
+      color: #a9c6d7;
+      font-size: 13px;
+      white-space: normal;
+    }
+
+    .callout {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-left: 5px solid var(--accent);
+      background: var(--soft);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .warning { border-left-color: var(--accent-2); background: var(--warn); }
+
+    .edit-note {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: 1px solid #b9d7cf;
+      border-radius: 8px;
+      background: #eef9f6;
+      color: #173b38;
+      font-size: 15px;
+    }
+
+    .author-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .author-card { padding: 22px; }
+    .author-card .role { margin: 0 0 14px; color: var(--accent); font-weight: 760; font-size: 14px; }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mini-list li {
+      padding-left: 15px;
+      border-left: 3px solid var(--line);
+      color: #334351;
+    }
+
+    .figure-block {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 22px;
+      margin-top: 20px;
+      align-items: start;
+    }
+
+    figure {
+      margin: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: white;
+    }
+
+    figcaption {
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .wide-figure { margin-top: 20px; }
+
+    .slide-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .slide-gallery figure { box-shadow: 0 5px 18px rgba(24, 35, 44, 0.06); }
+
+    .explain {
+      border-top: 4px solid var(--accent);
+      padding: 20px;
+      box-shadow: 0 8px 22px rgba(24, 35, 44, 0.06);
+    }
+
+    .explain ul, .simple-table ul { margin: 8px 0 0; padding-left: 19px; }
+    .explain li, .simple-table li { margin-bottom: 8px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 5px 18px rgba(24, 35, 44, 0.05);
+    }
+
+    th, td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eaf0f4;
+      color: #233240;
+      font-size: 14px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e5eff8;
+      color: #214f7d;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .two-col { columns: 2 340px; column-gap: 34px; }
+
+    .footer {
+      max-width: 1120px;
+      padding-top: 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; }
+      nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid, .cards, .figure-block, .author-grid, .slide-gallery { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      main { padding: 24px 18px 48px; }
+      nav { grid-template-columns: 1fr; }
+      .hero h2 { font-size: 33px; }
+      h2 { font-size: 25px; }
+      .formula { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <h1>Jones & Tonetti 2026</h1>
+      <p class="meta">Past Automation and Future A.I.<br>쉽게 읽는 강의 노트</p>
+      <nav aria-label="문서 목차">
+        <a href="#authors">저자와 공신성</a>
+        <a href="#one-line">핵심 결론</a>
+        <a href="#visual-brief">Infographic</a>
+        <a href="#model">모형의 뼈대</a>
+        <a href="#formulas">핵심 공식</a>
+        <a href="#evidence">역사 데이터</a>
+        <a href="#future">미래 시나리오</a>
+        <a href="#ai-ideas">AI와 아이디어</a>
+        <a href="#semiconductor">반도체 적용</a>
+        <a href="#takeaways">요약</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero" id="top">
+        <p class="eyebrow">Charles I. Jones & Christopher Tonetti, May 2026, Version 0.5</p>
+        <h2>Jones & Tonetti : <em>Past Automation and Future A.I.: How Weak Links Tame the Growth Explosion</em></h2>
+        <p>
+          AI가 경제성장을 폭발시킬 수는 있지만, 그 속도는 자동화되지 않은 “약한 고리”에 의해 늦춰진다.
+          이 자료는 논문의 주요 공식, 그림, 표를 기반으로 핵심 논리를 쉽게 설명한다.
+        </p>
+      </header>
+
+      <section id="authors">
+        <h2>1. 저자와 공신성</h2>
+        <p class="lead">
+          이 논문의 저자는 스탠퍼드대학교 경영대학원에서 장기 경제성장과 기술혁신을 연구하는
+          두 거시경제학자, <strong>찰스 I. 존스(Charles I. “Chad” Jones)</strong>와
+          <strong>크리스토퍼 토네티(Christopher Tonetti)</strong>이다. 두 사람 모두 Stanford GSB와
+          NBER 소속으로 논문에 명시되어 있다.
+        </p>
+
+        <div class="author-grid">
+          <article class="author-card">
+            <h3>Charles I. “Chad” Jones</h3>
+            <p class="role">Stanford GSB STANCO 25 Professor of Economics · NBER Research Associate</p>
+            <p>찰스 I. 존스는 현대 성장경제학의 대표 연구자다. 장기 성장론, 아이디어 생산함수, 연구생산성 하락, 인구와 성장, AI의 거시경제 효과를 연결해 왔다.</p>
+            <ul class="mini-list">
+              <li>Harvard 경제학 A.B., MIT 경제학 Ph.D.</li>
+              <li><em>Are Ideas Getting Harder to Find?</em>로 연구생산성 저하 문제를 실증적으로 제기.</li>
+              <li><em>The End of Economic Growth?</em>에서 인구 감소와 아이디어 생산의 관계를 분석.</li>
+              <li><em>The AI Dilemma</em>에서 AI의 성장 편익과 실존적 위험을 함께 모형화.</li>
+              <li>이번 논문의 약한 고리, 내생적 성장, 아이디어 생산 자동화 해석의 이론적 축.</li>
+            </ul>
+          </article>
+
+          <article class="author-card">
+            <h3>Christopher Tonetti</h3>
+            <p class="role">Stanford GSB Associate Professor of Economics · NBER Research Associate</p>
+            <p>크리스토퍼 토네티는 기술 확산, 기업의 기술 채택, 데이터의 비경합성, 동태 거시모형을 연구하는 거시경제학자다.</p>
+            <ul class="mini-list">
+              <li>Columbia 경제학·수학 학사, New York University 경제학 Ph.D.</li>
+              <li><em>Equilibrium Technology Diffusion, Trade, and Growth</em>로 기술 확산과 성장의 일반균형 효과를 분석.</li>
+              <li><em>Reconciling Models of Diffusion and Innovation</em>으로 혁신과 확산 모형을 연결.</li>
+              <li>존스와 함께 AER 논문 <em>Nonrivalry and the Economics of Data</em>를 발표.</li>
+              <li>이번 논문의 기술 확산, 데이터·비경합성, 산업별 자동화율 정량화와 연결.</li>
+            </ul>
+          </article>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>연구 축</th>
+              <th>존스의 강점</th>
+              <th>토네티의 강점</th>
+              <th>이번 논문에서의 결합</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>장기 경제성장</td>
+              <td>아이디어와 인구가 성장률을 결정하는 구조</td>
+              <td>기업의 기술 채택이 총성장으로 이어지는 경로</td>
+              <td>자동화가 미국 장기 TFP 성장에 기여한 정도를 성장회계로 추정</td>
+            </tr>
+            <tr>
+              <td>약한 고리</td>
+              <td>보완적 투입요소와 경제발전의 병목 연구</td>
+              <td>기술 확산이 불완전할 때 생기는 생산성 격차 분석</td>
+              <td>자동화되지 않은 소수 과제가 전체 산출을 제약한다는 핵심 논리</td>
+            </tr>
+            <tr>
+              <td>아이디어 생산</td>
+              <td>연구생산성, 내생적 성장, AI 성장 폭발 조건</td>
+              <td>아이디어와 기술의 확산, 비경합적 자산</td>
+              <td>상품 생산뿐 아니라 아이디어 생산도 자동화되는 모형 구축</td>
+            </tr>
+            <tr>
+              <td>데이터와 측정</td>
+              <td>거시 장기자료와 간결한 성장모형</td>
+              <td>산업·기업·가계의 미시자료와 정량모형</td>
+              <td>BEA, BLS, USDA 자료와 LLM 기반 업무 측정을 결합</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warning callout">
+          <strong>공신성과 한계는 함께 봐야 합니다.</strong>
+          이 파일은 2026년 5월 Version 0.5 작업논문이고, 부록 일부 증명은 아직 완성 전이다.
+          특히 LLM으로 업무별 자동화율을 추정한 부분은 창의적이지만, 측정 타당성, 프롬프트 재현성,
+          대체탄력성 σ=0.2의 민감도를 별도로 검토해야 한다.
+        </div>
+
+        <p class="lead">
+          참고 프로필:
+          <a href="https://www.gsb.stanford.edu/faculty-research/faculty/chad-jones">Stanford GSB Charles I. Jones</a>,
+          <a href="https://web.stanford.edu/~chadj/cv.html">Charles I. Jones CV</a>,
+          <a href="https://www.gsb.stanford.edu/faculty-research/faculty/christopher-tonetti">Stanford GSB Christopher Tonetti</a>,
+          <a href="https://siepr.stanford.edu/people/christopher-tonetti">SIEPR Christopher Tonetti</a>.
+        </p>
+      </section>
+
+      <section id="one-line">
+        <h2>핵심 결론</h2>
+        <div class="callout">
+          <strong>AI 생산성의 관건은 “업무 몇 개를 자동화했는가”가 아니라 “마지막 약한 고리와 아이디어 생산까지 자동화할 수 있는가”이다.</strong>
+        </div>
+        <p class="lead">
+          AI가 일부 일을 아주 잘해도 전체 경제는 아직 자동화되지 않은 필수 과제에 묶인다.
+          서비스, 현장 작업, 신뢰와 책임, 조직 의사결정, 연구 방향 설정 같은 약한 고리가 남으면
+          AI의 빠른 발전이 GDP 전체로는 천천히 전달된다.
+        </p>
+        <div class="cards">
+          <div class="card"><span class="number">1</span><strong>자동화는 중요하다</strong><p>과거 성장은 사람이 하던 과제를 빠르게 개선되는 기계가 대신하면서 만들어졌다.</p></div>
+          <div class="card"><span class="number">2</span><strong>하지만 병목이 있다</strong><p>경제는 여러 필수 과제의 결합이다. 한 과제가 느리면 전체 산출이 제약된다.</p></div>
+          <div class="card"><span class="number">3</span><strong>아이디어가 승부처다</strong><p>AI가 연구와 아이디어 생산까지 자동화하면 성장 동학이 달라진다.</p></div>
+        </div>
+      </section>
+
+      <section id="visual-brief">
+        <h2>2. Infographic of The_AI_Growth_Paradox</h2>
+        <p class="lead">
+          업로드된 인포그래픽과 <em>The_AI_Growth_Paradox.pdf</em>는 논문의 메시지를 강의용으로 압축한 자료다.
+        </p>
+        <figure class="wide-figure">
+          <img src="assets/jones-tonetti/ai_growth_paradox_infographic.png" alt="약한 고리 혁명 인포그래픽">
+          <figcaption>업로드 이미지. 논문의 핵심 메시지를 한 장으로 정리한 강의용 인포그래픽.</figcaption>
+        </figure>
+        <div class="callout">
+          <strong>이 그림의 핵심:</strong>
+          기계 과제 생산성은 노동보다 빠르게 개선된다. 하지만 경제 전체는 가장 느리거나 희소한 필수 과제에 의해 제약된다.
+          AI가 소프트웨어를 크게 개선해도 곧바로 무한한 부를 만들지는 못하고, 약한 고리를 순차적으로 제거할 때 성장 가속이 커진다.
+        </div>
+
+        <h3>PDF 슬라이드 전체 보기</h3>
+        <p>PDF 슬라이드 전체 이미지는 <code>assets/jones-tonetti/paradox_pdf/</code>에 저장되어 있다.</p>
+        <div class="slide-gallery">
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-01.png" alt="The AI Growth Paradox page 1"><figcaption>Slide 1</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-02.png" alt="The AI Growth Paradox page 2"><figcaption>Slide 2</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-03.png" alt="The AI Growth Paradox page 3"><figcaption>Slide 3</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-04.png" alt="The AI Growth Paradox page 4"><figcaption>Slide 4</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-05.png" alt="The AI Growth Paradox page 5"><figcaption>Slide 5</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-06.png" alt="The AI Growth Paradox page 6"><figcaption>Slide 6</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-07.png" alt="The AI Growth Paradox page 7"><figcaption>Slide 7</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-08.png" alt="The AI Growth Paradox page 8"><figcaption>Slide 8</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-09.png" alt="The AI Growth Paradox page 9"><figcaption>Slide 9</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-10.png" alt="The AI Growth Paradox page 10"><figcaption>Slide 10</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-11.png" alt="The AI Growth Paradox page 11"><figcaption>Slide 11</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-12.png" alt="The AI Growth Paradox page 12"><figcaption>Slide 12</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-13.png" alt="The AI Growth Paradox page 13"><figcaption>Slide 13</figcaption></figure>
+          <figure><img src="assets/jones-tonetti/paradox_pdf/page-14.png" alt="The AI Growth Paradox page 14"><figcaption>Slide 14</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="model">
+        <h2>3. 모형의 뼈대</h2>
+        <p>
+          논문은 경제 전체를 “수많은 과제(task)”의 조합으로 본다. 제품 하나를 만들려면 설계, 생산, 검사,
+          수리, 운송, 판매, 관리가 모두 필요하다. 이 과제들은 서로 대체재가 아니라 보완재에 가깝다.
+          그래서 어느 한 과제가 충분히 공급되지 않으면 전체 산출이 막힌다.
+        </p>
+        <div class="formula">
+          Y<sub>t</sub> = Z<sub>t</sub>
+          [ ∫<sub>0</sub><sup>1</sup> α<sub>i</sub>Y<sub>it</sub><sup>(σ-1)/σ</sup> di ]<sup>σ/(σ-1)</sup>, &nbsp; σ &lt; 1
+          <span class="hint">전체 산출 Y는 여러 과제 Yᵢ의 조합이다. σ가 1보다 작으면 과제들이 강한 보완재가 되어 약한 고리가 중요해진다.</span>
+        </div>
+        <div class="formula">
+          Y<sub>it</sub> = ψ<sub>kit</sub>K<sub>it</sub> + ψ<sub>ℓit</sub>L<sub>it</sub>
+          <span class="hint">각 과제는 기계 K 또는 노동 L로 수행할 수 있다. 자동화란 어떤 과제를 노동에서 기계로 넘기는 것이다.</span>
+        </div>
+        <table>
+          <thead><tr><th>기호</th><th>쉬운 의미</th><th>논문에서 중요한 이유</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Y</strong></td><td>GDP 또는 산출</td><td>AI가 최종적으로 높이고 싶은 대상</td></tr>
+            <tr><td><strong>Y<sub>i</sub></strong></td><td>개별 과제의 산출</td><td>느린 과제가 전체를 제약하는 약한 고리</td></tr>
+            <tr><td><strong>ψ<sub>k</sub></strong></td><td>기계가 과제를 수행하는 생산성</td><td>AI와 로봇, 소프트웨어가 빨리 개선되는 영역</td></tr>
+            <tr><td><strong>ψ<sub>ℓ</sub></strong></td><td>사람이 과제를 수행하는 생산성</td><td>논문은 초기값을 연 0.5%로 둔다</td></tr>
+            <tr><td><strong>β</strong></td><td>기계가 맡는 과제의 비중</td><td>1950년 28%에서 2023년 75%로 보정</td></tr>
+            <tr><td><strong>σ</strong></td><td>과제 간 대체 가능성</td><td>σ=0.2이면 약한 고리 효과가 강하다</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="formulas">
+        <h2>4. 핵심 공식</h2>
+        <div class="grid">
+          <div class="card"><h3>4.1 자동화 조건</h3><div class="formula">ψ<sub>kit</sub> / ψ<sub>ℓit</sub> = r<sub>t</sub> / w<sub>t</sub></div><p>기계가 사람보다 충분히 싸고 효율적이면 그 과제는 자동화된다.</p></div>
+          <div class="card"><h3>4.2 직접 전환 효과는 0</h3><div class="formula">smooth automation ⇒ direct TFP effect = 0</div><p>막 자동화되는 순간에는 사람 비용과 기계 비용이 같기 때문에, 그 순간 자체는 TFP를 올리지 않는다.</p></div>
+          <div class="card"><h3>4.3 기계 생산성 우위</h3><div class="formula">ψ̂<sub>k</sub> - ψ̂<sub>ℓ</sub> = 3.8%p 또는 10.7%p</div><p>역사적 민간 비즈니스 기준은 3.8%p, 컴퓨터 산업 기준은 10.7%p다.</p></div>
+          <div class="card"><h3>4.4 아이디어 생산함수</h3><div class="formula">Q̇<sub>t</sub> = q̄ R<sub>t</sub><sup>λ</sup> Q<sub>t</sub><sup>ϕ</sup></div><p>AI가 R&D 자체를 자동화하면 단순 업무 자동화와 완전히 다른 성장 동학이 생긴다.</p></div>
+          <div class="card"><h3>4.5 성장 폭발 조건</h3><div class="formula">Φ = λ/(1-ϕ) · [ θ<sub>ℓ</sub> + s<sub>K</sub>*/(1-s<sub>K</sub>*) · θ<sub>k</sub> ]</div><p>Φ가 1보다 작으면 반내생적 성장, 1보다 크면 폭발적 성장 가능성이 생긴다.</p></div>
+          <div class="card"><h3>4.6 장기 성장률</h3><div class="formula">g<sub>y</sub> = Φn / (1 - Φ)</div><p>“폭발 가능성”과 “곧 폭발”은 같은 말이 아니다. 전환 속도는 별개의 문제다.</p></div>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>5. 역사 데이터</h2>
+        <p class="lead">논문은 미국 민간 비즈니스, 농업, 컴퓨터, 자동차, 소매, 소프트웨어를 비교한다. 중요한 관찰은 “기계가 수행하는 과제의 생산성”이 사람보다 훨씬 빠르게 좋아졌다는 점이다.</p>
+        <div class="figure-block">
+          <figure><img src="assets/jones-tonetti/table2-16.png" alt="Table 2"><figcaption>Table 2. 산업별 TFP, 자본증강 생산성, 노동증강 생산성, 요소소득 비중.</figcaption></figure>
+          <div class="explain">
+            <h3>Table 2 읽는 법</h3>
+            <ul>
+              <li>민간 비즈니스 TFP 성장률은 연 1.2%다.</li>
+              <li>노동증강 생산성 A는 연 2.3%지만, 자본증강 생산성 B는 -1.0%로 나온다.</li>
+              <li>이상해 보이지만 논문은 이것을 자동화의 흔적으로 해석한다.</li>
+              <li>자동화가 진행되면 자본은 더 많은 과제에 나뉘어 투입된다.</li>
+              <li>핵심은 표면적 TFP보다 “어떤 과제를 누가 수행하게 되었는가”다.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout"><strong>역사적 해석:</strong> 성장의 상당 부분은 “기계가 좋아졌다”만이 아니라 “기계가 맡는 과제가 늘었다”에서 나온다.</div>
+      </section>
+
+      <section id="future">
+        <h2>6. 미래 시나리오</h2>
+        <p>논문에서 자주 오해되는 부분이 95% 자동화와 0.5% 성장률이다. 95%는 역사 데이터가 발견한 마법의 임계값이 아니다. “5%의 과제가 영원히 인간에게 남는다면?”이라는 시나리오다.</p>
+
+        <div class="figure-block">
+          <figure><img src="assets/jones-tonetti/figure4-35.png" alt="Figure 4"><figcaption>Figure 4. 장기 자동화의 세 가지 가능성.</figcaption></figure>
+          <div class="explain"><h3>Figure 4 읽는 법</h3><ul><li><span class="tag">초록</span> 일부 과제는 끝까지 인간만 수행한다.</li><li><span class="tag">보라</span> 모든 과제가 유한 시간 안에 자동화된다.</li><li><span class="tag">파랑</span> 인간 과제가 계속 남지만 그 비중은 점점 0에 가까워진다.</li></ul></div>
+        </div>
+
+        <div class="figure-block">
+          <figure><img src="assets/jones-tonetti/table10-38.png" alt="Table 10"><figcaption>Table 10. 동태모형 보정값.</figcaption></figure>
+          <div class="explain"><h3>Table 10 핵심 숫자</h3><ul><li>자동화 과제 비중 β: 1950년 0.28, 1975년 0.45, 2000년 0.63, 2023년 0.75.</li><li>기계의 과제 생산성 우위: 민간 비즈니스 기준 3.8%p, 컴퓨터 산업 기준 10.7%p.</li><li>사람이 수행하는 과제의 생산성 증가율: 0.5%.</li><li>0.5%는 “GDP 성장률”이 아니라 “남은 인간 과제의 개선 속도”로 해석해야 한다.</li></ul></div>
+        </div>
+
+        <div class="figure-block">
+          <figure><img src="assets/jones-tonetti/figure5-40.png" alt="Figure 5"><figcaption>Figure 5. AI가 과거 민간 비즈니스 자동화 패턴의 연장일 때.</figcaption></figure>
+          <div class="explain"><h3>Figure 5 읽는 법</h3><ul><li>기본 성장률은 약 2%에서 시작한다.</li><li>역사 패턴을 연장하면 2075년에도 성장률은 약 2.6% 수준이다.</li><li>2050년 GDP는 기존 추세보다 약 4% 높을 뿐이다.</li><li>거시적으로는 생산성 개선이 매우 천천히 보일 수 있다.</li></ul></div>
+        </div>
+
+        <div class="figure-block">
+          <figure><img src="assets/jones-tonetti/figure6-42.png" alt="Figure 6"><figcaption>Figure 6. AI가 “Moore’s Law Everywhere”처럼 작동하는 공격적 시나리오.</figcaption></figure>
+          <div class="explain"><h3>Figure 6 읽는 법</h3><ul><li>이 시나리오는 매우 공격적인 상한선에 가깝다.</li><li>성장률은 2020년 4.7%, 2030년 7.3%, 2040년 13.0%로 빠르게 올라간다.</li><li>모든 과제가 자동화되면 2060년 전후 무한 소득 경로가 나온다.</li><li>그래도 즉각 폭발보다 느리다. 이유는 여전히 약한 고리다.</li></ul></div>
+        </div>
+
+        <div class="warning callout">
+          <strong>정확한 해석:</strong>
+          “95% 자동화까지 GDP 성장은 0.5%”가 아니다. 정확히는 “일부 인간 과제가 끝까지 남으면,
+          장기 성장률은 그 인간 과제의 생산성 증가율 0.5%에 가까워질 수 있다”이다.
+          또한 “75년”은 확정 예측이 아니라, 역사 패턴을 따르는 기본 시나리오에서 성장 경로 차이가 오래 작게 보인다는 의미다.
+        </div>
+      </section>
+
+      <section id="ai-ideas">
+        <h2>7. AI와 아이디어 생산</h2>
+        <p>존스 성장론에서 장기 성장은 아이디어가 만든다. 이 논문이 중요한 이유는 AI를 단순한 자동화 도구가 아니라 아이디어 생산함수까지 자동화할 수 있는 기술로 다룬다는 점이다.</p>
+        <div class="formula">자동화 → 더 많은 아이디어 → 더 빠른 기계 개선 → 더 많은 자동화<span class="hint">논문은 이것을 flywheel, 즉 자기강화 루프로 본다.</span></div>
+        <table>
+          <thead><tr><th>AI의 역할</th><th>경제 효과</th><th>성장론적 의미</th></tr></thead>
+          <tbody>
+            <tr><td>사무·코딩 보조</td><td>일부 부문 생산성 상승</td><td>약한 고리 때문에 거시 효과는 제한적일 수 있음</td></tr>
+            <tr><td>소프트웨어 완전 자동화</td><td>소프트웨어 비용 급락</td><td>소프트웨어가 GDP의 작은 비중이면 전체 GDP 효과는 제한됨</td></tr>
+            <tr><td>연구개발 자동화</td><td>아이디어 생산 속도 상승</td><td>성장률 자체가 가속될 수 있음</td></tr>
+            <tr><td>AI가 더 좋은 AI를 설계</td><td>자기강화 루프 형성</td><td>Φ &gt; 1이면 폭발적 성장 가능</td></tr>
+            <tr><td>현장·돌봄·책임 과제는 인간 의존</td><td>자동화 효과가 병목에 막힘</td><td>성장 폭발이 늦어지거나 사라질 수 있음</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="semiconductor">
+        <h2>8. 반도체 산업에 적용</h2>
+        <p class="lead">이 논문은 반도체 연구에도 바로 연결된다. 반도체에서는 AI가 설계, 공정조건 탐색, 결함 분석, 수율 개선, 장비 유지보수, 공급망 의사결정까지 어디를 자동화하는지 보아야 한다.</p>
+        <div class="grid">
+          <div class="card"><h3>단순 자동화 지표</h3><div class="formula">자동화율 = AI 또는 기계가 맡는 과제 비중</div><p>이 지표만으로는 부족하다. 자동화된 과제가 병목인지, 주변 업무인지가 더 중요하다.</p></div>
+          <div class="card"><h3>존스식 생산성 지표</h3><div class="formula">혁신생산성 = 기술 성능 향상 / R&amp;D 투입</div><p>연구자와 연구비가 늘었는데 성능 개선률이 그대로라면 아이디어 생산성은 하락한 것이다.</p></div>
+        </div>
+        <table>
+          <thead><tr><th>반도체 지표</th><th>논문 관점의 질문</th><th>해석</th></tr></thead>
+          <tbody>
+            <tr><td>EDA 자동화율</td><td>설계 병목을 실제로 줄였나?</td><td>소프트웨어 자동화만으로는 전체 공정 병목이 남을 수 있음</td></tr>
+            <tr><td>수율 개선 속도</td><td>AI가 양산 전환의 약한 고리를 해결했나?</td><td>실질 생산성에 직접 연결되는 핵심 지표</td></tr>
+            <tr><td>공정 세대 전환기간</td><td>새 아이디어가 생산으로 전환되는 시간이 줄었나?</td><td>아이디어 생산과 실행 자동화가 함께 작동하는지 확인</td></tr>
+            <tr><td>Capex 대비 비트 생산 증가</td><td>자본 투입이 실제 산출로 바뀌었나?</td><td>Capacity Conversion Efficiency와 직접 연결</td></tr>
+            <tr><td>AI 도입 전후 R&amp;D 생산성</td><td>AI가 연구생산성 하락을 반전시켰나?</td><td>존스 이론의 핵심 검증 지점</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="takeaways">
+        <h2>9. 요약</h2>
+        <div class="two-col">
+          <p>첫째, 이 논문은 AI 낙관론과 비관론 사이의 중간 지점을 제시한다. AI가 성장 폭발을 만들 수 있다는 가능성은 인정하지만, 경제 전체가 곧바로 폭발하지는 않는다고 본다.</p>
+          <p>둘째, 이유는 약한 고리다. 경제는 가장 빠른 부문이 아니라, 아직 자동화되지 않은 필수 과제에 의해 제약된다.</p>
+          <p>셋째, 0.5%는 전체 GDP 성장률이 아니라 인간이 수행하는 남은 과제의 생산성 개선 속도다.</p>
+          <p>넷째, 75년은 확정 예측이 아니라 시뮬레이션의 메시지다. 역사적 자동화 패턴을 따르는 경우, 성장 폭발이 매우 늦게 나타나며 초반 수십 년은 기존 추세와 구별하기 어렵다.</p>
+          <p>다섯째, 진짜 질문은 AI가 아이디어를 만들 수 있는가다. AI가 연구개발과 과학적 발견, 더 나아가 AI 자체의 개선을 자동화하면 성장 공식의 구조가 바뀐다.</p>
+          <p>여섯째, 반도체 산업에서는 “AI 도입 여부”보다 “AI가 어떤 약한 고리를 제거했는가”를 측정해야 한다.</p>
+        </div>
+        <div class="callout"><strong>최종 문장:</strong> Jones & Tonetti의 메시지는 “AI는 과장이다”가 아니라 “AI의 거시 생산성 효과는 마지막 병목과 아이디어 생산 자동화 여부에 의해 결정된다”이다.</div>
+      </section>
+
+      <div class="footer">
+        <p>
+          원문: Charles I. Jones and Christopher Tonetti, <em>Past Automation and Future A.I.:
+          How Weak Links Tame the Growth Explosion</em>, May 2026, Version 0.5.
+          같은 폴더의 PDF와 추출 이미지에 기반해 작성한 강의용 설명 HTML입니다.
+        </p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
