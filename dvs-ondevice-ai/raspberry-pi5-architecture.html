@@ -62,7 +62,7 @@
   </header>
   <main>
     <section class="block hero-photo">
-      <figure><img src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo"><figcaption>실물 보드 전체 사진. DVS-CIS 합성 장비를 구성할 때는 이 사진처럼 CAM/DISP FFC, USB 3.0, GPIO, Ethernet, PCIe FFC, USB-C 전원 위치를 먼저 잡아야 한다.</figcaption></figure>
+      <figure><img src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo"><figcaption>실물 보드 전체 사진. DVS-CIS 합성 장비를 구성할 때는 이 사진처럼 CAM/DISP FFC, GPIO, Ethernet, PCIe FFC, USB-C 전원 위치를 먼저 잡아야 한다. DVS가 MIPI CSI-2를 지원하면 USB보다 MIPI 직결이 우선이다.</figcaption></figure>
     </section>
 
     <section class="block image-grid">
@@ -81,7 +81,7 @@
           <tr><td>GPU/영상 처리</td><td>VideoCore VII GPU, OpenGL ES 3.1, Vulkan 1.3, 4Kp60 HEVC decode</td><td>고품질 neural interpolation 전용 NPU는 아니다. 표시, decode, 일부 GPU compute 실험은 가능하지만 200FPS 이상 합성은 C++/NEON 또는 외부 가속기 검토가 필요하다.</td></tr>
           <tr><td>메모리</td><td>LPDDR4X-4267, 1GB/2GB/4GB/8GB/16GB 모델</td><td>DVS event buffer, CIS frame buffer, accumulation map, encoder queue가 동시에 올라간다. 실험은 8GB 이상, 긴 event 저장과 웹 데모 병행은 16GB가 유리하다.</td></tr>
           <tr><td>CAM/DISP FFC 2개</td><td>2x 4-lane MIPI transceiver, CSI-2 camera 또는 DSI display로 선택 사용</td><td>CIS는 MIPI CSI-2로 연결하는 것이 가장 안정적이다. 두 포트를 모두 camera로 쓰면 stereo/dual CIS 가능, 하나는 display로 쓰는 구성도 가능하다.</td></tr>
-          <tr><td>USB 3.0 포트</td><td>2x USB 3.0, 각 5Gbps급 SuperSpeed 포트. 추가로 2x USB 2.0 제공</td><td>DVS 센서를 USB event stream으로 받을 때 현실적인 경로다. CIS를 MIPI, DVS를 USB 3.0으로 분리하면 입력 대역폭과 드라이버 경합을 줄일 수 있다.</td></tr>
+          <tr><td>USB 3.0 포트</td><td>2x USB 3.0, 각 5Gbps급 SuperSpeed 포트. 추가로 2x USB 2.0 제공</td><td>MIPI가 없는 USB형 DVS 카메라 또는 FPGA/USB bridge를 붙일 때 쓰는 대안이다. 변환기가 들어가면 latency, packetization overhead, CPU interrupt 부하가 늘어 MIPI 직결보다 불리하다.</td></tr>
           <tr><td>Ethernet</td><td>Gigabit Ethernet, PoE+ HAT 지원</td><td>실시간 상태 페이지, 생성 MP4 배포, event summary 전송은 Wi-Fi보다 유선이 안정적이다. 원격 장비는 영상 전체보다 event crop, 판단 결과, 압축 클립 위주로 보내는 것이 낫다.</td></tr>
           <tr><td>Wi-Fi / Bluetooth</td><td>2.4/5GHz dual-band 802.11ac Wi-Fi 5, 공식 표기 300Mb/s. Bluetooth 5.0/BLE.</td><td>설정, SSH, 저대역 telemetry에는 편리하다. 300Mb/s는 무선 링크 기준 수치라 실제 TCP 처리량과 지연은 낮고 흔들릴 수 있다. 고속 DVS event stream 또는 영상 전송은 Gigabit Ethernet을 우선한다.</td></tr>
           <tr><td>40-pin GPIO 헤더</td><td>3.3V GPIO, UART, SPI, I2C, I2S, PWM 등 mux 기능</td><td>DVS와 CIS의 trigger, PPS, external sync, interrupt line 연결에 쓴다. 전압은 3.3V 기준이라 5V 센서는 level shifter가 필요하다.</td></tr>
@@ -90,7 +90,7 @@
           <tr><td>USB-C 전원 입력</td><td>5V/5A USB-C Power Delivery 권장. 5A 전원 사용 시 downstream USB peripheral에 최대 1.6A, 3A 전원 사용 시 600mA 제한.</td><td>카메라, DVS, NVMe, 팬, accelerator를 동시에 쓰면 전원 margin이 중요하다. 저전원 어댑터는 USB 재연결, throttling, 프레임 드롭의 원인이 된다.</td></tr>
         </tbody>
       </table>
-      <p>따라서 실험용 배선은 CIS camera를 MIPI CAM 포트에, DVS를 USB 3.0에, 동기화 신호를 GPIO에, 결과 전송은 Ethernet에 두는 구성이 가장 단순하다. 이 구성은 Pi 5의 장점을 잘 쓰지만, 200FPS 이상 고품질 합성은 CPU만으로는 어렵기 때문에 C++/NEON 최적화나 외부 AI accelerator를 함께 검토해야 한다.</p>
+      <p>따라서 실험용 배선의 정답은 CIS camera와 MIPI 출력 DVS를 각각 CAM/DISP MIPI 포트에 물리고, 동기화 신호는 GPIO/PPS로 맞추며, 결과 전송은 Ethernet으로 분리하는 구성이다. USB는 MIPI를 직접 받을 수 없는 DVS 모듈에서 변환기나 FPGA bridge를 쓸 때의 fallback으로 보는 것이 맞다.</p>
     </section>
 
     <section class="block">
@@ -145,7 +145,7 @@ External PCIe FPC:
         <thead><tr><th>Interface</th><th>Raspberry Pi 5 Spec</th><th>Notes For This Project</th></tr></thead>
         <tbody>
           <tr><td>MIPI camera/display</td><td>2x 4-lane MIPI transceivers, each usable as CSI-2 camera or DSI display</td><td>CIS camera input에 핵심. 두 커넥터를 모두 camera로 쓰거나 camera+display 조합 가능.</td></tr>
-          <tr><td>USB</td><td>2x USB 3.0 ports, simultaneous 5Gbps operation; 2x USB 2.0 ports</td><td>USB DVS sensor 또는 USB camera 입력 가능. USB DVS + MIPI CIS 조합이 현실적.</td></tr>
+          <tr><td>USB</td><td>2x USB 3.0 ports, simultaneous 5Gbps operation; 2x USB 2.0 ports</td><td>USB형 DVS 카메라나 FPGA/USB bridge 입력에는 사용 가능. 단, MIPI 출력 DVS라면 USB 변환보다 MIPI CSI-2 직결이 속도와 지연 측면에서 유리.</td></tr>
           <tr><td>Ethernet</td><td>Gigabit Ethernet with PoE+ support via HAT</td><td>웹 대시보드, event packet 전송, remote monitoring에 사용.</td></tr>
           <tr><td>PCIe external</td><td>PCIe 2.0 x1 FPC connector, adapter/HAT required</td><td>NVMe 저장장치 또는 AI accelerator 연결 가능. 외부 대역폭은 x1 한계가 있음.</td></tr>
           <tr><td>microSD</td><td>High-speed SDR104 mode support</td><td>OS/간단 저장에는 충분하지만 event/video 장기 저장은 NVMe 권장.</td></tr>
@@ -171,7 +171,8 @@ External PCIe FPC:
         <ul>
           <li>카메라 모듈은 Pi 5용 22-pin FFC/adapter compatibility를 확인해야 한다.</li>
           <li>두 MIPI 포트 모두 camera로 쓰면 dual-CIS 입력 실험 가능.</li>
-          <li>DVS가 USB라면 CIS는 MIPI, DVS는 USB3로 분리하는 구성이 안정적이다.</li>
+          <li>DVS가 MIPI CSI-2를 지원하면 DVS도 MIPI에 직접 연결하는 것이 우선이다.</li>
+          <li>DVS를 USB로 연결하려면 USB형 DVS 카메라 또는 FPGA/USB 변환기가 필요하며, 변환 지연과 처리량 저하가 생길 수 있다.</li>
           <li>DVS와 CIS의 timestamp sync는 GPIO trigger/PPS 또는 host monotonic clock 보정이 필요하다.</li>
         </ul>
       </div>
@@ -182,8 +183,11 @@ External PCIe FPC:
 MIPI CAM0:
   CIS camera, 50FPS or burst capture
 
-USB 3.0:
-  DVS sensor event stream
+MIPI CAM1:
+  DVS event sensor, CSI-2 event/frame-like packet stream
+
+Optional USB 3.0:
+  USB DVS camera or FPGA/USB bridge only
 
 GPIO:
   trigger / sync pulse / event interrupt
@@ -204,7 +208,7 @@ Cooling:
       <h2>Pi 5 In This Project: Strengths And Limits</h2>
       <div class="cards">
         <div class="card"><b>Strength: fast prototyping</b><p>Python, OpenCV, web server, camera stack을 빠르게 붙여 실험 가능.</p></div>
-        <div class="card"><b>Strength: flexible I/O</b><p>MIPI CIS, USB DVS, Ethernet dashboard, GPIO sync를 한 보드에서 구성 가능.</p></div>
+        <div class="card"><b>Strength: flexible I/O</b><p>MIPI CIS, MIPI DVS, Ethernet dashboard, GPIO sync를 한 보드에서 구성 가능. USB DVS는 bridge가 필요한 대안.</p></div>
         <div class="card"><b>Limit: no large NPU</b><p>고품질 neural interpolation을 온디바이스 200FPS로 돌리기에는 AI 가속 구조가 부족.</p></div>
         <div class="card"><b>Limit: memory scatter</b><p>DVS event accumulation은 random write가 많아 Python/NumPy에서 병목이 큼.</p></div>
         <div class="card"><b>Limit: thermal</b><p>장시간 합성/인코딩/USB 입력 부하에서는 active cooling과 안정 전원 필요.</p></div>

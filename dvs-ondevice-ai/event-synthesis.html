@@ -67,10 +67,10 @@
   </span>
 </div>
   <div class="system-strip">
-    <span class="sys">CPU <b id="es-cpu">22.6%</b></span>
-    <span class="sys">Memory <b id="es-mem">626 / 2010 MB</b></span>
-    <span class="sys">Temp <b id="es-temp">46.6&#x27;C</b></span>
-    <span class="sys">Clock <b id="es-clock">2000020352</b></span>
+    <span class="sys">CPU <b id="es-cpu">21.8%</b></span>
+    <span class="sys">Memory <b id="es-mem">687 / 2010 MB</b></span>
+    <span class="sys">Temp <b id="es-temp">47.2&#x27;C</b></span>
+    <span class="sys">Clock <b id="es-clock">2000027008</b></span>
     <span class="sys">Throttle <b id="es-throttle">0x0</b></span>
   </div>
   <header>
@@ -398,14 +398,15 @@ For 2000 frames / 5s:
       <h2>Hardware Architecture For Real-Time Dual-Stream Fusion</h2>
       <p>현실적으로 두 개의 영상/센서 스트림을 동시에 받으면서 합성하려면 Raspberry Pi 하나에 모든 처리를 몰아넣기보다, 입력 수집, timestamp 동기화, 이벤트 누적, 인코딩을 분리해야 한다.</p>
       <div class="flow">
-        <div class="step"><b>1. Sensor input</b><p>CIS 카메라는 MIPI CSI-2 또는 USB3로 받고, DVS는 USB3, MIPI, FPGA bridge, 또는 Ethernet 기반 event packet으로 받는다.</p></div>
+        <div class="step"><b>1. Sensor input</b><p>CIS 카메라와 MIPI 출력 DVS는 MIPI CSI-2로 직접 받는 구성이 우선이다. USB 연결은 USB형 DVS 카메라 또는 FPGA/USB bridge가 있을 때의 대안이며, 변환 지연과 대역폭 손실을 고려해야 한다.</p></div>
         <div class="step"><b>2. Time sync</b><p>두 센서에 공통 PPS/trigger/GPIO timestamp를 넣는다. 소프트웨어 수신 시간만 쓰면 frame-event alignment가 흔들린다.</p></div>
         <div class="step"><b>3. Fusion compute</b><p>CPU는 orchestration, GPU/ISP/FPGA/NPU는 누적, warp, interpolation, encode 같은 병렬 작업을 맡긴다.</p></div>
         <div class="step"><b>4. Output service</b><p>실시간 스트림은 raw frame 저장이 아니라 ring buffer와 H.264/H.265 hardware encoder로 바로 웹에 제공한다.</p></div>
       </div>
       <h3>Recommended practical build</h3>
       <pre>CIS camera -> MIPI CSI-2 -> ISP / DMA buffer
-DVS sensor -> USB3 or FPGA bridge -> event packet ring buffer
+DVS sensor -> MIPI CSI-2 event path -> DMA / event packet ring buffer
+Optional USB path -> FPGA/USB bridge -> event packet ring buffer
 Common trigger/PPS -> shared monotonic timestamp
 Fusion engine -> C++/NEON or FPGA/GPU tile accumulator
 Video output -> hardware H.264/H.265 encoder -> WebRTC or HLS
