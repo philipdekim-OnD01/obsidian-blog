@@ -33,6 +33,9 @@
     .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; }
     .card { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:12px; }
     .card b { color:var(--accent); display:block; margin-bottom:4px; }
+    .hero-photo { display:flex; justify-content:center; }
+    .hero-photo figure { width:min(100%,980px); }
+    .hero-photo img { width:100%; max-height:620px; object-fit:contain; display:block; background:#0b0d10; }
     .image-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:12px; }
     figure { margin:0; border:1px solid var(--line); border-radius:8px; background:#11151a; overflow:hidden; }
     figure img { width:100%; aspect-ratio:16/10; object-fit:contain; display:block; background:#0b0d10; }
@@ -58,8 +61,11 @@
     </div>
   </header>
   <main>
+    <section class="block hero-photo">
+      <figure><img src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo"><figcaption>실물 보드 전체 사진. DVS-CIS 합성 장비를 구성할 때는 이 사진처럼 CAM/DISP FFC, USB 3.0, GPIO, Ethernet, PCIe FFC, USB-C 전원 위치를 먼저 잡아야 한다.</figcaption></figure>
+    </section>
+
     <section class="block image-grid">
-      <figure><img src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo"><figcaption>실물 보드 전체 사진. 커넥터 위치와 포트 배치를 한눈에 보기 위한 참고 이미지.</figcaption></figure>
       <figure><img src="assets/pi5/raspberry-pi-5.png" alt="Raspberry Pi 5 board"><figcaption>Raspberry Pi 5 board image, source: Raspberry Pi official product assets.</figcaption></figure>
       <figure><img src="assets/pi5/bcm2712.png" alt="BCM2712 SoC"><figcaption>BCM2712 application processor close-up. CPU, GPU, memory, HDMI, PCIe root-side functions are centered here.</figcaption></figure>
       <figure><img src="assets/pi5/rp1.png" alt="RP1 I/O controller"><figcaption>RP1 I/O controller close-up. RP1 handles much of the external I/O including USB, Ethernet, GPIO, and MIPI transceivers.</figcaption></figure>
@@ -69,14 +75,19 @@
       <h2>실물 보드 사진에서 확인할 포인트</h2>
       <p>위 실물 사진은 DVS-CIS 합성 장비를 만들 때 더 직관적이다. 문서상의 블록 다이어그램은 BCM2712, RP1, MIPI, USB, PCIe 역할을 보여주지만, 실제 제작에서는 어느 케이블을 어디에 꽂고 열과 전원을 어떻게 처리할지가 더 중요하다.</p>
       <table>
-        <thead><tr><th>사진에서 볼 부분</th><th>역할</th><th>DVS-CIS 합성 장비에서의 의미</th></tr></thead>
+        <thead><tr><th>사진에서 볼 부분</th><th>주요 스펙</th><th>DVS-CIS 합성 장비에서의 의미</th></tr></thead>
         <tbody>
-          <tr><td>보드 중앙의 큰 SoC/방열 위치</td><td>BCM2712가 CPU/GPU/메모리 주변 처리를 담당</td><td>event accumulation, frame fusion, encode handoff가 몰리는 영역이다. 장시간 실시간 합성은 방열판과 팬이 필요하다.</td></tr>
-          <tr><td>두 개의 CAM/DISP FFC 커넥터</td><td>각각 4-lane MIPI CSI-2 camera 또는 DSI display로 사용 가능</td><td>CIS 센서는 이 포트에 연결하는 구성이 가장 안정적이다. dual camera도 가능하지만 DVS와 timestamp 동기화가 별도 과제다.</td></tr>
-          <tr><td>USB 3.0 포트</td><td>고속 외부 장치 입력</td><td>DVS 센서를 USB event stream으로 받을 때 가장 현실적인 입력 경로다. CIS는 MIPI, DVS는 USB로 분리하면 병목을 줄일 수 있다.</td></tr>
-          <tr><td>40-pin GPIO 헤더</td><td>3.3V GPIO, UART, SPI, I2C, PWM, trigger line</td><td>DVS와 CIS의 촬영 시작 신호, PPS, 외부 인터럽트, 보조 MCU 동기화에 사용한다.</td></tr>
-          <tr><td>PCIe FFC 커넥터</td><td>외부 PCIe 2.0 x1 확장</td><td>NVMe 저장장치 또는 AI accelerator HAT 연결 후보지만 대역폭은 x1이다. 고속 저장에는 유용하지만 대형 NPU급 처리 성능을 기대하면 안 된다.</td></tr>
-          <tr><td>USB-C 전원 입력</td><td>5V/5A PD 전원 권장</td><td>카메라, DVS, NVMe, 팬을 동시에 쓰면 전원 여유가 중요하다. 저전원 어댑터는 프레임 드롭과 USB 불안정 원인이 된다.</td></tr>
+          <tr><td>보드 중앙 SoC/방열 영역</td><td>Broadcom BCM2712, quad-core Arm Cortex-A76 64-bit, 2.4GHz</td><td>event accumulation, lightweight reconstruction, frame fusion, web preview orchestration이 몰리는 영역이다. 지속 부하에서는 active cooler가 사실상 필수다.</td></tr>
+          <tr><td>GPU/영상 처리</td><td>VideoCore VII GPU, OpenGL ES 3.1, Vulkan 1.3, 4Kp60 HEVC decode</td><td>고품질 neural interpolation 전용 NPU는 아니다. 표시, decode, 일부 GPU compute 실험은 가능하지만 200FPS 이상 합성은 C++/NEON 또는 외부 가속기 검토가 필요하다.</td></tr>
+          <tr><td>메모리</td><td>LPDDR4X-4267, 1GB/2GB/4GB/8GB/16GB 모델</td><td>DVS event buffer, CIS frame buffer, accumulation map, encoder queue가 동시에 올라간다. 실험은 8GB 이상, 긴 event 저장과 웹 데모 병행은 16GB가 유리하다.</td></tr>
+          <tr><td>CAM/DISP FFC 2개</td><td>2x 4-lane MIPI transceiver, CSI-2 camera 또는 DSI display로 선택 사용</td><td>CIS는 MIPI CSI-2로 연결하는 것이 가장 안정적이다. 두 포트를 모두 camera로 쓰면 stereo/dual CIS 가능, 하나는 display로 쓰는 구성도 가능하다.</td></tr>
+          <tr><td>USB 3.0 포트</td><td>2x USB 3.0, 각 5Gbps급 SuperSpeed 포트. 추가로 2x USB 2.0 제공</td><td>DVS 센서를 USB event stream으로 받을 때 현실적인 경로다. CIS를 MIPI, DVS를 USB 3.0으로 분리하면 입력 대역폭과 드라이버 경합을 줄일 수 있다.</td></tr>
+          <tr><td>Ethernet</td><td>Gigabit Ethernet, PoE+ HAT 지원</td><td>실시간 상태 페이지, 생성 MP4 배포, event summary 전송은 Wi-Fi보다 유선이 안정적이다. 원격 장비는 영상 전체보다 event crop, 판단 결과, 압축 클립 위주로 보내는 것이 낫다.</td></tr>
+          <tr><td>Wi-Fi / Bluetooth</td><td>2.4/5GHz dual-band 802.11ac Wi-Fi 5, 공식 표기 300Mb/s. Bluetooth 5.0/BLE.</td><td>설정, SSH, 저대역 telemetry에는 편리하다. 300Mb/s는 무선 링크 기준 수치라 실제 TCP 처리량과 지연은 낮고 흔들릴 수 있다. 고속 DVS event stream 또는 영상 전송은 Gigabit Ethernet을 우선한다.</td></tr>
+          <tr><td>40-pin GPIO 헤더</td><td>3.3V GPIO, UART, SPI, I2C, I2S, PWM 등 mux 기능</td><td>DVS와 CIS의 trigger, PPS, external sync, interrupt line 연결에 쓴다. 전압은 3.3V 기준이라 5V 센서는 level shifter가 필요하다.</td></tr>
+          <tr><td>PCIe FFC 커넥터</td><td>외부 PCIe 2.0 x1, HAT/adapter 필요</td><td>NVMe 저장장치 또는 AI accelerator HAT 후보. 다만 x1 대역폭이라 event 저장과 경량 가속에는 좋지만 대형 GPU처럼 쓰는 구조는 아니다.</td></tr>
+          <tr><td>microSD</td><td>SDR104 high-speed mode 지원</td><td>OS와 설정에는 충분하지만 장시간 raw event/video 기록은 NVMe가 낫다. microSD에 고속 쓰기를 계속하면 프레임 드롭과 수명 문제가 생길 수 있다.</td></tr>
+          <tr><td>USB-C 전원 입력</td><td>5V/5A USB-C Power Delivery 권장. 5A 전원 사용 시 downstream USB peripheral에 최대 1.6A, 3A 전원 사용 시 600mA 제한.</td><td>카메라, DVS, NVMe, 팬, accelerator를 동시에 쓰면 전원 margin이 중요하다. 저전원 어댑터는 USB 재연결, throttling, 프레임 드롭의 원인이 된다.</td></tr>
         </tbody>
       </table>
       <p>따라서 실험용 배선은 CIS camera를 MIPI CAM 포트에, DVS를 USB 3.0에, 동기화 신호를 GPIO에, 결과 전송은 Ethernet에 두는 구성이 가장 단순하다. 이 구성은 Pi 5의 장점을 잘 쓰지만, 200FPS 이상 고품질 합성은 CPU만으로는 어렵기 때문에 C++/NEON 최적화나 외부 AI accelerator를 함께 검토해야 한다.</p>
@@ -141,7 +152,8 @@ External PCIe FPC:
           <tr><td>GPIO</td><td>Raspberry Pi 40-pin header, 3.3V GPIO</td><td>DVS/CIS trigger, PPS, external sync, interrupt line 연결에 사용.</td></tr>
           <tr><td>Low-speed buses</td><td>UART, SPI, I2C, I2S, PWM via GPIO mux</td><td>sensor control, IMU, temperature sensor, external MCU, lens control 등에 사용.</td></tr>
           <tr><td>Power</td><td>5V/5A USB-C with Power Delivery support</td><td>카메라, USB 센서, NVMe, HAT 사용 시 전원 margin 중요. Active cooling 권장.</td></tr>
-          <tr><td>Wireless</td><td>Dual-band 802.11ac Wi-Fi, Bluetooth 5.0/BLE</td><td>개발/저대역 원격 접속에는 편리하지만 안정적 영상/이벤트 전송은 Ethernet 권장.</td></tr>
+          <tr><td>Wi-Fi</td><td>2.4/5GHz dual-band 802.11ac Wi-Fi 5, official 300Mb/s link-class figure. 실제 처리량은 AP, 거리, 채널폭, 간섭에 따라 낮아짐.</td><td>SSH, dashboard, telemetry에는 충분하다. 실시간 DVS event stream과 CIS 영상 동시 전송은 지연 변동이 커서 Ethernet 권장.</td></tr>
+          <tr><td>Bluetooth</td><td>Bluetooth 5.0 / BLE</td><td>키보드, 설정 장치, 저속 센서 제어에는 적합하지만 영상 또는 고속 event 전송 경로로는 부적합.</td></tr>
         </tbody>
       </table>
     </section>
