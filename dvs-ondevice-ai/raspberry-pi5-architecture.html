@@ -36,6 +36,17 @@
     .hero-photo { display:flex; justify-content:center; }
     .hero-photo figure { width:min(100%,980px); }
     .hero-photo img { width:100%; max-height:620px; object-fit:contain; display:block; background:#0b0d10; }
+    .board-map { position:relative; background:#0b0d10; }
+    .board-map .board-image { width:100%; max-height:620px; object-fit:contain; display:block; }
+    .hotspot { position:absolute; width:30px; height:30px; border-radius:999px; border:2px solid rgba(255,255,255,.88); background:rgba(92,200,167,.92); color:#07100d; font-weight:900; font-size:13px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.38); display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%); }
+    .hotspot:hover, .hotspot:focus { outline:0; background:#f6c96d; z-index:4; }
+    .hotspot-card { position:absolute; left:50%; bottom:calc(100% + 10px); width:min(320px,42vw); transform:translateX(-50%); display:none; padding:12px; border:1px solid #51606c; border-radius:8px; background:rgba(17,21,26,.97); color:var(--text); text-align:left; box-shadow:0 16px 42px rgba(0,0,0,.45); z-index:5; }
+    .hotspot:hover .hotspot-card, .hotspot:focus .hotspot-card { display:block; }
+    .hotspot-card b { display:block; color:#7dd3fc; margin-bottom:4px; font-size:13px; }
+    .hotspot-card span { display:block; color:#d8dee5; font-size:12px; line-height:1.45; font-weight:500; }
+    .hotspot-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-top:12px; }
+    .hotspot-list div { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:10px; color:#d8dee5; font-size:12px; line-height:1.5; }
+    .hotspot-list b { color:var(--accent); }
     .image-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:12px; }
     figure { margin:0; border:1px solid var(--line); border-radius:8px; background:#11151a; overflow:hidden; }
     figure img { width:100%; aspect-ratio:16/10; object-fit:contain; display:block; background:#0b0d10; }
@@ -62,7 +73,32 @@
   </header>
   <main>
     <section class="block hero-photo">
-      <figure><img src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo"><figcaption>실물 보드 전체 사진. DVS-CIS 합성 장비를 구성할 때는 이 사진처럼 CAM/DISP FFC, GPIO, Ethernet, PCIe FFC, USB-C 전원 위치를 먼저 잡아야 한다. DVS가 MIPI CSI-2를 지원하면 USB보다 MIPI 직결이 우선이다.</figcaption></figure>
+      <figure>
+        <div class="board-map">
+          <img class="board-image" src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo with interactive hotspots">
+          <button class="hotspot" style="left:50%;top:48%" aria-label="BCM2712 CPU and GPU">1<span class="hotspot-card"><b>BCM2712 CPU/GPU</b><span>Quad-core Cortex-A76 2.4GHz, VideoCore VII GPU. DVS event accumulation, lightweight reconstruction, frame fusion orchestration이 몰리는 핵심 처리부다. 지속 부하에는 active cooling이 필요하다.</span></span></button>
+          <button class="hotspot" style="left:39%;top:24%" aria-label="LPDDR4X memory">2<span class="hotspot-card"><b>LPDDR4X-4267 Memory</b><span>1GB부터 16GB 모델까지 존재한다. CIS frame buffer, DVS event buffer, accumulation map, encoder queue가 동시에 올라가므로 실험 장비는 8GB 이상이 유리하다.</span></span></button>
+          <button class="hotspot" style="left:26%;top:28%" aria-label="CAM DISP MIPI connectors">3<span class="hotspot-card"><b>CAM/DISP MIPI FFC</b><span>2개의 4-lane MIPI transceiver. CIS와 MIPI 출력 DVS를 각각 MIPI에 직접 연결하는 구성이 우선이다. USB 변환은 fallback으로 본다.</span></span></button>
+          <button class="hotspot" style="left:67%;top:69%" aria-label="USB 3 ports">4<span class="hotspot-card"><b>USB 3.0 / USB 2.0</b><span>USB 3.0은 5Gbps급 SuperSpeed 포트 2개다. MIPI가 없는 USB형 DVS나 FPGA/USB bridge에 쓸 수 있지만 변환 지연과 CPU interrupt 부하가 늘 수 있다.</span></span></button>
+          <button class="hotspot" style="left:81%;top:68%" aria-label="Gigabit Ethernet">5<span class="hotspot-card"><b>Gigabit Ethernet</b><span>웹 대시보드, event summary, 생성 MP4 배포에는 Wi-Fi보다 안정적이다. 실시간 장비에서는 원본 전체보다 판단 결과와 짧은 압축 클립 전송이 낫다.</span></span></button>
+          <button class="hotspot" style="left:22%;top:66%" aria-label="Forty pin GPIO">6<span class="hotspot-card"><b>40-pin GPIO</b><span>3.3V GPIO, UART, SPI, I2C, PWM 등을 제공한다. DVS-CIS trigger, PPS, external sync, interrupt line을 맞추는 데 사용한다.</span></span></button>
+          <button class="hotspot" style="left:42%;top:86%" aria-label="PCIe FFC">7<span class="hotspot-card"><b>PCIe 2.0 x1 FFC</b><span>NVMe 저장장치나 AI accelerator HAT 연결 후보. x1 대역폭이라 저장과 경량 가속에는 유용하지만 대형 GPU급 가속 경로는 아니다.</span></span></button>
+          <button class="hotspot" style="left:11%;top:51%" aria-label="USB C power">8<span class="hotspot-card"><b>USB-C Power</b><span>5V/5A USB-C PD 권장. 카메라, DVS, NVMe, 팬을 동시에 쓰면 전원 margin이 중요하며 저전원 어댑터는 throttling과 frame drop의 원인이 된다.</span></span></button>
+          <button class="hotspot" style="left:76%;top:30%" aria-label="Wireless module">9<span class="hotspot-card"><b>Wi-Fi / Bluetooth</b><span>2.4/5GHz 802.11ac Wi-Fi 5, 공식 300Mb/s 표기, Bluetooth 5.0/BLE. telemetry와 설정에는 좋지만 고속 event/video 전송은 Ethernet이 안정적이다.</span></span></button>
+        </div>
+        <figcaption>실물 보드 전체 사진. 번호에 마우스를 올리거나 탭하면 각 블록의 역할과 DVS-CIS 합성 장비 관점의 스펙을 볼 수 있다. DVS가 MIPI CSI-2를 지원하면 USB보다 MIPI 직결이 우선이다.</figcaption>
+        <div class="hotspot-list">
+          <div><b>1 BCM2712</b><br>CPU/GPU 처리부, 2.4GHz Cortex-A76. 합성 루프와 웹 preview의 중심.</div>
+          <div><b>2 Memory</b><br>LPDDR4X-4267. event/frame/encoder buffer 동시 운용.</div>
+          <div><b>3 MIPI</b><br>2x 4-lane CAM/DISP. CIS + MIPI DVS 직결 우선.</div>
+          <div><b>4 USB</b><br>2x USB 3.0 5Gbps급. USB형 DVS/bridge용 대안.</div>
+          <div><b>5 Ethernet</b><br>Gigabit. 안정적인 결과 전송과 대시보드용.</div>
+          <div><b>6 GPIO</b><br>3.3V trigger/PPS/sync/interrupt 연결.</div>
+          <div><b>7 PCIe</b><br>PCIe 2.0 x1. NVMe 또는 accelerator HAT 후보.</div>
+          <div><b>8 Power</b><br>5V/5A USB-C PD 권장. 팬과 주변장치 동시 사용 대비.</div>
+          <div><b>9 Wireless</b><br>802.11ac Wi-Fi 5 300Mb/s 표기, Bluetooth 5.0/BLE.</div>
+        </div>
+      </figure>
     </section>
 
     <section class="block image-grid">
@@ -158,6 +194,66 @@ External PCIe FPC:
       </table>
     </section>
 
+    <section class="block">
+      <h2>MIPI CSI-2 / DSI Interface Detail</h2>
+      <p>Raspberry Pi 5의 CAM/DISP0, CAM/DISP1은 각각 22-pin 0.5mm FFC 커넥터이며, 각 포트가 4-lane MIPI transceiver로 동작한다. 같은 커넥터를 CSI-2 camera 입력 또는 DSI display 출력으로 선택해 쓸 수 있다. DVS가 MIPI CSI-2 출력을 지원한다면 USB 변환기보다 이 포트에 직접 연결하는 구성이 지연과 대역폭 측면에서 유리하다.</p>
+      <table>
+        <thead><tr><th>항목</th><th>스펙</th><th>DVS-CIS 설계 의미</th></tr></thead>
+        <tbody>
+          <tr><td>Connector</td><td>22-pin FPC/FFC, 0.5mm pitch, Raspberry Pi 5 CAM/DISP0 and CAM/DISP1</td><td>Pi 5용 22-pin 케이블과 센서 보드 pinout 호환성을 먼저 확인해야 한다. 15-pin 변환 케이블을 쓰면 lane 수가 줄 수 있다.</td></tr>
+          <tr><td>Lane 구성</td><td>1 clock differential pair + up to 4 data differential pairs</td><td>clock pair는 타이밍 기준, data lane 0~3은 payload를 분산 전송한다. 4-lane을 모두 쓰면 2-lane 대비 대역폭이 두 배다.</td></tr>
+          <tr><td>Lane 속도</td><td>Pi 5 CSI-2 receiver 기준 최대 1.5Gbps per lane로 보는 것이 현실적</td><td>4-lane 원시 D-PHY 대역폭은 약 6Gbps다. 실제 사용 가능 payload는 blanking, packet header, ECC/CRC, ISP 경로 병목 때문에 이보다 낮다.</td></tr>
+          <tr><td>2-lane 대역폭</td><td>1.5Gbps x 2 = 3Gbps raw D-PHY</td><td>저해상도 CIS 또는 event density가 낮은 DVS에는 가능하지만, 고속/고해상도 센서는 fps를 낮춰야 할 수 있다.</td></tr>
+          <tr><td>4-lane 대역폭</td><td>1.5Gbps x 4 = 6Gbps raw D-PHY</td><td>DVS를 MIPI로 직접 받을 때 목표 구성이다. CIS와 DVS를 동시에 쓰려면 각 센서를 별도 CAM/DISP 포트에 배정한다.</td></tr>
+          <tr><td>Control bus</td><td>I2C SCL/SDA, 3.3V pull-up on Raspberry Pi side</td><td>sensor register 설정, exposure/gain, mode 전환, DVS event mode 설정에 사용한다.</td></tr>
+          <tr><td>GPIO control</td><td>CAM_IO0, CAM_IO1, bidirectional 3.3V GPIO</td><td>power enable, reset, trigger, LED, sync 보조 신호로 쓸 수 있다. 센서 보드별 기능 매핑이 다르다.</td></tr>
+          <tr><td>전원</td><td>3.3V supply pin available on connector</td><td>소형 카메라 모듈 제어 전원에는 쓰지만, 별도 DVS 보드가 전류를 많이 먹으면 외부 전원을 설계하는 편이 안전하다.</td></tr>
+        </tbody>
+      </table>
+      <h3>22-pin CSI connector pinout</h3>
+      <table>
+        <thead><tr><th>Pin</th><th>Name</th><th>역할</th><th>Direction / Type</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>GND</td><td>Ground</td><td>Ground</td></tr>
+          <tr><td>2</td><td>CAM_DN0</td><td>D-PHY data lane 0 negative</td><td>Input, D-PHY</td></tr>
+          <tr><td>3</td><td>CAM_DP0</td><td>D-PHY data lane 0 positive</td><td>Input, D-PHY</td></tr>
+          <tr><td>4</td><td>GND</td><td>Ground between high-speed pairs</td><td>Ground</td></tr>
+          <tr><td>5</td><td>CAM_DN1</td><td>D-PHY data lane 1 negative</td><td>Input, D-PHY</td></tr>
+          <tr><td>6</td><td>CAM_DP1</td><td>D-PHY data lane 1 positive</td><td>Input, D-PHY</td></tr>
+          <tr><td>7</td><td>GND</td><td>Ground between high-speed pairs</td><td>Ground</td></tr>
+          <tr><td>8</td><td>CAM_CN</td><td>D-PHY clock lane negative</td><td>Input, D-PHY</td></tr>
+          <tr><td>9</td><td>CAM_CP</td><td>D-PHY clock lane positive</td><td>Input, D-PHY</td></tr>
+          <tr><td>10</td><td>GND</td><td>Ground</td><td>Ground</td></tr>
+          <tr><td>11</td><td>CAM_DN2</td><td>D-PHY data lane 2 negative</td><td>Input, D-PHY</td></tr>
+          <tr><td>12</td><td>CAM_DP2</td><td>D-PHY data lane 2 positive</td><td>Input, D-PHY</td></tr>
+          <tr><td>13</td><td>GND</td><td>Ground between high-speed pairs</td><td>Ground</td></tr>
+          <tr><td>14</td><td>CAM_DN3</td><td>D-PHY data lane 3 negative</td><td>Input, D-PHY</td></tr>
+          <tr><td>15</td><td>CAM_DP3</td><td>D-PHY data lane 3 positive</td><td>Input, D-PHY</td></tr>
+          <tr><td>16</td><td>GND</td><td>Ground</td><td>Ground</td></tr>
+          <tr><td>17</td><td>CAM_IO0</td><td>GPIO, often power enable or reset</td><td>Bidirectional, 3.3V</td></tr>
+          <tr><td>18</td><td>CAM_IO1</td><td>GPIO, often clock, LED, trigger, or reset</td><td>Bidirectional, 3.3V</td></tr>
+          <tr><td>19</td><td>GND</td><td>Ground</td><td>Ground</td></tr>
+          <tr><td>20</td><td>SCL</td><td>I2C clock for sensor control</td><td>Bidirectional, 3.3V</td></tr>
+          <tr><td>21</td><td>SDA</td><td>I2C data for sensor control</td><td>Bidirectional, 3.3V</td></tr>
+          <tr><td>22</td><td>3V3</td><td>3.3V supply</td><td>Output</td></tr>
+        </tbody>
+      </table>
+      <h3>Bandwidth calculation</h3>
+      <pre>raw_mipi_bandwidth = lane_count * lane_rate
+Pi 5 2-lane raw  = 2 * 1.5Gbps = 3.0Gbps
+Pi 5 4-lane raw  = 4 * 1.5Gbps = 6.0Gbps
+
+sensor_payload = width * height * bits_per_pixel * fps
+required_lane_rate = sensor_payload / lane_count / protocol_efficiency</pre>
+      <p>예를 들어 RAW10 1920x1080 200FPS는 순수 pixel payload만 약 4.15Gbps다. 4-lane이면 lane당 약 1.04Gbps라 이론상 범위 안에 들어오지만, blanking과 packet overhead, ISP/driver 경로 병목을 포함하면 여유가 작아진다. DVS는 일반 frame sensor와 다르게 event density에 따라 payload가 변하므로, 최악 이벤트율 기준으로 lane 수와 packet format을 잡아야 한다.</p>
+      <ul>
+        <li>MIPI differential pair는 P/N 극성이 맞아야 하며 lane swap 지원 여부는 센서/드라이버에 따라 다르다.</li>
+        <li>고속 D-PHY 신호라 케이블 길이, 임피던스, 접지, bend radius가 안정성에 직접 영향을 준다.</li>
+        <li>DVS를 MIPI로 붙일 때는 CSI-2 packet의 data type, virtual channel, timestamp embedding 방식을 드라이버에서 해석해야 한다.</li>
+        <li>CIS와 DVS를 동시에 쓰려면 CAM/DISP0, CAM/DISP1에 각각 배정하고 GPIO/PPS로 공통 시간 기준을 넣는 구성이 가장 명확하다.</li>
+      </ul>
+    </section>
+
     <section class="block two">
       <div>
         <h2>CIS Camera Interface Detail</h2>
@@ -221,6 +317,8 @@ Cooling:
       <ul>
         <li><a href="https://www.raspberrypi.com/products/raspberry-pi-5/" target="_blank">Raspberry Pi 5 product specification</a></li>
         <li><a href="https://www.raspberrypi.com/news/introducing-raspberry-pi-5/" target="_blank">Raspberry Pi 5 launch article: BCM2712, RP1, DA9091 architecture</a></li>
+        <li><a href="https://www.raspberrypi.com/documentation/accessories/camera.html" target="_blank">Raspberry Pi camera documentation: Pi 5 CAM/DISP location and 22-pin CSI pinout</a></li>
+        <li><a href="https://forums.raspberrypi.com/viewtopic.php?t=390479" target="_blank">Raspberry Pi forum note: Pi 5 CSI-2 lane rate and ISP-FE bandwidth discussion</a></li>
         <li><a href="https://www.raspberrypi.com/documentation/computers/io-controllers.html" target="_blank">Raspberry Pi RP1 I/O controller documentation</a></li>
         <li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html" target="_blank">Raspberry Pi hardware documentation, PCIe connector</a></li>
       </ul>
