@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Realtime Event Synthesis Algorithm</title>
+  <style>
+    :root { color-scheme:dark; --bg:#0f1114; --panel:#191d22; --panel2:#222832; --line:#343b45; --text:#edf2f4; --muted:#a6b0b8; --accent:#5cc8a7; --blue:#7bb7ff; --warn:#f6c96d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .global-nav { position:sticky; top:0; z-index:30; display:flex; justify-content:center; align-items:center; gap:8px; padding:10px 12px; background:#111318; border-bottom:1px solid #30343d; flex-wrap:wrap; }
+    .global-nav a { display:inline-flex; align-items:center; justify-content:center; min-width:86px; height:34px; padding:0 14px; border:1px solid #343d46; border-radius:6px; background:#1a1f25; color:#dbeafe; text-decoration:none; font-weight:700; font-size:14px; line-height:1; white-space:nowrap; }
+    .global-nav a:hover { background:#22303a; border-color:#5cc8a7; color:#fff; }
+    .nav-group { display:flex; align-items:center; gap:6px; padding-left:8px; border-left:1px solid #343d46; }
+    .nav-label { color:#91a0ad; font-size:12px; font-weight:800; white-space:nowrap; }
+    header { border-bottom:1px solid var(--line); background:#15191f; }
+    .hero { max-width:1380px; margin:0 auto; padding:28px 18px 24px; }
+    h1 { margin:0 0 10px; font-size:31px; line-height:1.16; letter-spacing:0; }
+    h2 { margin:0 0 10px; font-size:20px; letter-spacing:0; }
+    h3 { margin:18px 0 8px; font-size:15px; color:#d9e4ea; }
+    .lead, p, li { color:var(--muted); line-height:1.68; }
+    .lead { max-width:980px; font-size:15px; margin:0; }
+    main { max-width:1380px; margin:0 auto; padding:18px; display:grid; gap:18px; }
+    .block { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+    .card { background:#11151a; border:1px solid var(--line); border-radius:8px; padding:13px; }
+    .card b { color:var(--accent); display:block; margin-bottom:5px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border-bottom:1px solid var(--line); padding:9px 8px; text-align:left; vertical-align:top; font-size:13px; }
+    th { background:#11151a; color:#c7d2dc; }
+    td { color:#edf2f4; }
+    pre { margin:10px 0 0; padding:12px; border:1px solid var(--line); border-radius:8px; background:#0b0d10; color:#d8dee5; overflow:auto; white-space:pre; line-height:1.45; font-size:13px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; color:#d8f3ff; }
+    .formula { background:#101820; border:1px solid #4d5b66; border-radius:8px; padding:12px; color:#e6f2f6; }
+    .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; }
+    .step { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:12px; }
+    .step span { display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:999px; background:var(--accent); color:#07100d; font-weight:900; margin-bottom:8px; }
+    a { color:#7dd3fc; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="global-nav">
+    <a href="dashboard.html">Home</a>
+    <span class="nav-group"><span class="nav-label">기능</span><a href="person.html">Person</a><a href="raspberry-pi5-architecture.html">Pi 5 Architecture</a><a href="realtime-synthesis-algorithm.html">Algorithm</a><a href="event-synthesis.html">Event Synthesis</a><a href="synthetic-grid.html">Synthetic</a></span>
+    <span class="nav-group"><span class="nav-label">제안서</span><a href="space-edge-proposal.html">Space Edge</a><a href="fall-plan.html">Fall Plan</a></span>
+  </div>
+  <header>
+    <div class="hero">
+      <h1>Realtime Event Synthesis Demo 코드 구조와 합성 알고리즘</h1>
+      <p class="lead">이 페이지는 <code>/home/philip/bin/realtime_event_synthesis_demo.py</code>의 실제 구현을 기준으로, 이미지가 행렬로 바뀌고, DVS event가 누적/감쇠되며, 비어 있는 timestamp의 배경 이미지가 보간되고, 최종 합성 프레임이 만들어지는 과정을 쉽게 설명한다.</p>
+    </div>
+  </header>
+  <main>
+    <section class="block">
+      <h2>1. 코드 전체 구조</h2>
+      <div class="flow">
+        <div class="step"><span>1</span><b>환경 설정</b><p><code>EVENT_DEMO_WIDTH</code>, <code>TARGET_OUTPUT_FPS</code>, <code>WALL_SECONDS</code>로 출력 해상도와 목표 FPS를 정한다.</p></div>
+        <div class="step"><span>2</span><b>입력 로드</b><p><code>timestamp.txt</code>, CIS 이미지 <code>*.jpg</code>, DVS event <code>*.npz</code>를 읽는다.</p></div>
+        <div class="step"><span>3</span><b>좌표 스케일링</b><p>원본 DVS 좌표 1920x1080을 출력 이미지 크기 <code>w x h</code>로 변환한다.</p></div>
+        <div class="step"><span>4</span><b>event memory</b><p><code>event_memory[h,w]</code> 행렬에 양/음 이벤트를 누적하고 매 프레임 감쇠한다.</p></div>
+        <div class="step"><span>5</span><b>배경 보간</b><p>현재 CIS 이미지와 다음 CIS 이미지를 약하게 섞어 anchor frame을 만든다.</p></div>
+        <div class="step"><span>6</span><b>합성/인코딩</b><p>anchor에 event contrast를 더하고, 양/음 이벤트를 색으로 표시한 뒤 MP4에 기록한다.</p></div>
+      </div>
+      <pre>main()
+  load timestamp.txt, image_paths, event_paths
+  first = cv2.imread(...)
+  first = fit_width(first)
+  sx = output_width / SOURCE_WIDTH
+  sy = output_height / SOURCE_HEIGHT
+  event_memory = zeros(h, w)
+
+  while wall clock time remains:
+      target_t = first_timestamp + frame_count / target_fps
+      interval = timestamp interval containing target_t
+      load base image, next image, and interval event npz
+      scale event x/y coordinates
+      event_memory *= EVENT_DECAY
+      add events up to target_t into event_memory
+      alpha = position between base and next timestamp
+      anchor = weak interpolation(base, next_img)
+      synth = anchor + event_memory * CONTRAST_GAIN
+      write synth frame to video</pre>
+    </section>
+
+    <section class="block">
+      <h2>2. 처음 들어온 이미지가 행렬로 변환되는 과정</h2>
+      <p>CIS 이미지는 일반적으로 JPEG/BMP 같은 파일이다. OpenCV의 <code>cv2.imread</code>는 이 파일을 숫자 행렬로 읽는다. 컬러 이미지는 보통 <code>height x width x 3</code> 배열이고, 각 픽셀은 B, G, R 세 채널의 밝기값 0~255를 가진다.</p>
+      <pre>first = cv2.imread(str(image_paths[0]), cv2.IMREAD_COLOR)
+first = fit_width(first)
+h, w = first.shape[:2]
+base = first.astype(np.float32)</pre>
+      <p>예를 들어 2x2 컬러 이미지는 개념적으로 아래처럼 바뀐다.</p>
+      <pre>이미지 픽셀:
+  좌상단 어두움, 우상단 회색, 좌하단 파랑, 우하단 흰색
+
+행렬 BGR:
+[
+  [[ 10,  10,  10], [120, 120, 120]],
+  [[255,  20,  20], [255, 255, 255]]
+]
+
+float32 변환:
+[
+  [[ 10.0,  10.0,  10.0], [120.0, 120.0, 120.0]],
+  [[255.0,  20.0,  20.0], [255.0, 255.0, 255.0]]
+]</pre>
+      <p><code>astype(np.float32)</code>를 쓰는 이유는 event 값을 더하고 보간할 때 소수점 연산과 clipping이 필요하기 때문이다. 마지막에만 다시 <code>uint8</code>로 바꿔 MP4에 기록한다.</p>
+    </section>
+
+    <section class="block">
+      <h2>3. 센서 해상도 차이와 좌표 스케일링</h2>
+      <p>코드에서는 DVS 원본 좌표계를 <code>SOURCE_WIDTH=1920</code>, <code>SOURCE_HEIGHT=1080</code>으로 가정한다. 출력 영상은 <code>TARGET_WIDTH</code>에 맞춰 줄어든다. 그래서 event 좌표도 같은 비율로 줄여야 한다.</p>
+      <div class="formula">
+        sx = output_width / source_width<br>
+        sy = output_height / source_height<br>
+        x_out = round(x_event * sx)<br>
+        y_out = round(y_event * sy)
+      </div>
+      <pre>sx = w / SOURCE_WIDTH
+sy = h / SOURCE_HEIGHT
+
+xs = np.rint(z["x"] * sx).astype(np.int32)
+ys = np.rint(z["y"] * sy).astype(np.int32)
+valid = (0 <= xs) & (xs < w) & (0 <= ys) & (ys < h)
+xs, ys = xs[valid], ys[valid]</pre>
+      <p>가상 예시: DVS가 1920x1080이고 출력이 480x270이면 <code>sx=0.25</code>, <code>sy=0.25</code>다. event 좌표 <code>(1000, 400)</code>은 출력 좌표 <code>(250, 100)</code>이 된다.</p>
+      <pre>SOURCE = 1920 x 1080
+OUTPUT = 480 x 270
+sx = 480 / 1920 = 0.25
+sy = 270 / 1080 = 0.25
+
+event (x=1000, y=400)
+=> (round(1000*0.25), round(400*0.25))
+=> (250, 100)</pre>
+      <p>이 구현은 가장 단순한 비례 스케일링이다. 두 센서의 화각, 렌즈 왜곡, 장착 위치가 완전히 같다는 가정을 깔고 있다. 실제 하드웨어에서는 이보다 더 정확한 homography, undistortion, calibration matrix가 필요할 수 있다.</p>
+    </section>
+
+    <section class="block">
+      <h2>4. 이벤트 누적과 감쇠</h2>
+      <p>DVS 이벤트 하나는 보통 <code>(x, y, t, p)</code> 형태다. <code>x,y</code>는 위치, <code>t</code>는 timestamp, <code>p</code>는 밝기가 증가했는지 감소했는지를 뜻한다. 코드에서는 <code>event_memory</code>라는 2D 행렬에 이 이벤트들을 누적한다.</p>
+      <pre>event_memory = np.zeros((h, w), np.float32)
+
+event_memory *= EVENT_DECAY
+np.add.at(event_memory, (slice_y[pos], slice_x[pos]), 1.0)
+np.add.at(event_memory, (slice_y[~pos], slice_x[~pos]), -1.0)</pre>
+      <p><code>EVENT_DECAY=0.70</code>은 이전 이벤트 흔적을 매 프레임 70%만 남긴다는 뜻이다. 그러면 움직임 흔적이 잠깐 남았다가 사라진다.</p>
+      <pre>가상 3x3 event_memory 시작:
+[
+  [0, 0, 0],
+  [0, 0, 0],
+  [0, 0, 0]
+]
+
+양 이벤트: (x=1, y=1, p=+1)
+음 이벤트: (x=2, y=1, p=-1)
+
+누적 후:
+[
+  [0,  0,  0],
+  [0, +1, -1],
+  [0,  0,  0]
+]
+
+다음 프레임 감쇠 EVENT_DECAY=0.70:
+[
+  [0,   0,    0],
+  [0, +0.7, -0.7],
+  [0,   0,    0]
+]</pre>
+      <p><code>np.add.at</code>을 쓰는 이유는 같은 픽셀에 여러 이벤트가 동시에 들어와도 덮어쓰지 않고 모두 더하기 위해서다. 예를 들어 같은 좌표에 양 이벤트 3개가 들어오면 값이 1이 아니라 3이 된다.</p>
+    </section>
+
+    <section class="block">
+      <h2>5. 비어 있는 timestamp의 이미지를 만드는 수학적 적분 구조</h2>
+      <p>CIS는 낮은 FPS로 들어오고 DVS는 그 사이의 변화량을 촘촘하게 준다. 그래서 없는 중간 이미지는 “이전 CIS 이미지에, 그 이후 발생한 밝기 변화 이벤트를 시간 방향으로 적분해서 더한다”라고 생각하면 쉽다.</p>
+      <div class="formula">
+        I(x,y,t) = I(x,y,t0) + k * integral E(x,y,tau) d tau<br>
+        discrete version:<br>
+        I_hat[x,y,t] = anchor[x,y,t] + gain * sum(decayed polarity events at x,y)
+      </div>
+      <p>코드에서는 완전한 물리 기반 로그 밝기 복원까지 하지는 않고, 실시간 데모에 맞춰 간단한 근사식을 쓴다.</p>
+      <pre>signed = np.clip(event_memory, -10.0, 10.0)
+synth = np.clip(anchor + signed[:, :, None] * CONTRAST_GAIN, 0.0, 255.0)</pre>
+      <p>여기서 <code>event_memory</code>는 “시간 적분된 변화량”이고, <code>CONTRAST_GAIN=4.8</code>은 이벤트 변화량을 실제 픽셀 밝기 변화처럼 보이게 키우는 계수다. 양 이벤트는 밝게, 음 이벤트는 어둡게 또는 다른 색으로 표시된다.</p>
+      <pre>예시:
+anchor pixel = [100, 100, 100]
+event_memory = +2
+CONTRAST_GAIN = 4.8
+
+synth = [100,100,100] + 2*4.8
+      = [109.6,109.6,109.6]
+      => 약간 밝아진 픽셀
+
+event_memory = -3 이면:
+synth = [100,100,100] - 14.4
+      = [85.6,85.6,85.6]
+      => 어두워진 픽셀</pre>
+    </section>
+
+    <section class="block">
+      <h2>6. 배경 이미지 보간과 결합</h2>
+      <p>코드는 현재 CIS 이미지 <code>base</code>와 다음 CIS 이미지 <code>next_img</code> 사이의 시간 위치를 <code>alpha</code>로 계산한다. 다만 데모에서는 과도한 잔상을 막기 위해 다음 이미지를 아주 약하게만 섞는다.</p>
+      <pre>alpha = clip((target_t - t0) / (t1 - t0), 0, 1)
+anchor = cv2.addWeighted(base, 1.0 - 0.12 * alpha,
+                         next_img, 0.12 * alpha,
+                         0.0)</pre>
+      <p>일반적인 선형 보간은 <code>(1-alpha)*base + alpha*next</code>다. 이 데모는 <code>next_img</code> 반영률을 최대 12%로 제한한다. 이유는 실제 event overlay 효과를 보여주는 데 집중하고, 서로 다른 시간의 CIS 이미지가 많이 섞여 흐릿해지는 것을 줄이기 위해서다.</p>
+      <pre>base pixel = 100
+next pixel = 160
+alpha = 0.5
+
+일반 보간:
+  100*(1-0.5) + 160*0.5 = 130
+
+현재 코드:
+  base weight = 1 - 0.12*0.5 = 0.94
+  next weight = 0.12*0.5 = 0.06
+  100*0.94 + 160*0.06 = 103.6</pre>
+      <p>그 다음 event_memory를 더하고, 이벤트 위치를 색으로 강조한다.</p>
+      <pre>pos_map = event_memory > 0.5
+neg_map = event_memory < -0.5
+
+synth[pos_map] = synth[pos_map] * (1 - OVERLAY_GAIN) + red_color * OVERLAY_GAIN
+synth[neg_map] = synth[neg_map] * (1 - OVERLAY_GAIN) + blue_color * OVERLAY_GAIN</pre>
+    </section>
+
+    <section class="block">
+      <h2>7. 아주 작은 숫자로 보는 전체 합성 예시</h2>
+      <p>1채널 3x3 이미지라고 가정하면 전체 구조가 더 쉽게 보인다.</p>
+      <pre>base image:
+[
+  [100,100,100],
+  [100,100,100],
+  [100,100,100]
+]
+
+next image:
+[
+  [120,120,120],
+  [120,120,120],
+  [120,120,120]
+]
+
+alpha=0.5, 현재 코드의 next 반영률=0.06
+anchor:
+[
+  [101.2,101.2,101.2],
+  [101.2,101.2,101.2],
+  [101.2,101.2,101.2]
+]
+
+event_memory after accumulation:
+[
+  [ 0,  0,  0],
+  [ 0, +2, -1],
+  [ 0,  0,  0]
+]
+
+CONTRAST_GAIN=4.8
+synth = anchor + event_memory * 4.8
+[
+  [101.2, 101.2, 101.2],
+  [101.2, 110.8,  96.4],
+  [101.2, 101.2, 101.2]
+]</pre>
+      <p>이렇게 하면 CIS가 찍지 못한 중간 시점에서도 DVS가 알려준 변화 위치를 이용해 “어디가 밝아졌고 어두워졌는지”가 반영된 중간 프레임을 만들 수 있다.</p>
+    </section>
+
+    <section class="block">
+      <h2>8. 실제 구현 방식과 한계</h2>
+      <table>
+        <thead><tr><th>처리</th><th>현재 코드 구현</th><th>의미와 한계</th></tr></thead>
+        <tbody>
+          <tr><td>프레임 시간 생성</td><td><code>target_t = timestamps[0] + frame_count * 1_000_000 / TARGET_OUTPUT_FPS</code></td><td>원하는 출력 FPS에 맞춰 가상의 프레임 timestamp를 만든다.</td></tr>
+          <tr><td>이벤트 구간 선택</td><td><code>np.searchsorted(timestamps, target_t)</code></td><td>현재 target timestamp가 어느 CIS 이미지 사이에 있는지 찾는다.</td></tr>
+          <tr><td>좌표 스케일링</td><td><code>np.rint(z["x"] * sx)</code>, <code>np.rint(z["y"] * sy)</code></td><td>단순 비례 변환이다. 화각/왜곡/센서 위치 차이는 보정하지 않는다.</td></tr>
+          <tr><td>이벤트 정렬</td><td><code>np.argsort(ts, kind="stable")</code></td><td>timestamp 순서대로 누적하기 위한 단계다.</td></tr>
+          <tr><td>누적/감쇠</td><td><code>event_memory *= 0.70</code>, <code>np.add.at(...)</code></td><td>실시간 데모에는 직관적이지만 Python/NumPy random scatter 병목이 생긴다.</td></tr>
+          <tr><td>배경 보간</td><td><code>cv2.addWeighted(base, 1-0.12a, next, 0.12a, 0)</code></td><td>중간 프레임의 배경을 약하게 보간한다. 정밀 optical flow는 아니다.</td></tr>
+          <tr><td>결합</td><td><code>anchor + event_memory * CONTRAST_GAIN</code></td><td>밝기 변화량을 시각적으로 강조하는 lightweight reconstruction이다.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <h2>9. 상황별 이상적인 매칭 전략</h2>
+      <p>해상도 매칭의 기본 원리는 “두 센서의 픽셀 좌표를 같은 물리 좌표계로 보내는 것”이다. 단순히 해상도만 맞추는 것이 아니라, 같은 물체의 같은 점이 두 센서에서 같은 좌표에 오도록 만들어야 한다.</p>
+      <table>
+        <thead><tr><th>상황</th><th>권장 매칭</th><th>이유</th></tr></thead>
+        <tbody>
+          <tr><td>같은 렌즈/같은 광축, 해상도만 다름</td><td>비례 스케일링</td><td><code>x'=x*sx</code>, <code>y'=y*sy</code>로 충분할 수 있다. 현재 코드가 이 방식이다.</td></tr>
+          <tr><td>렌즈 화각이 약간 다름</td><td>crop + scale</td><td>넓은 센서 쪽을 crop해서 공통 FOV를 맞춘 뒤 scale한다.</td></tr>
+          <tr><td>센서 위치가 조금 다름</td><td>homography</td><td>평면 장면이나 멀리 있는 장면에서는 3x3 변환 행렬로 좌표계를 맞춘다.</td></tr>
+          <tr><td>렌즈 왜곡이 있음</td><td>camera calibration + undistortion</td><td>체커보드로 내부 파라미터를 구하고 왜곡을 제거한 뒤 매칭한다.</td></tr>
+          <tr><td>가까운 물체, 깊이 변화 큼</td><td>stereo/depth-aware warp</td><td>시차가 커서 단일 homography로는 맞지 않는다. depth 또는 다중 plane 보정이 필요하다.</td></tr>
+          <tr><td>최고 정합 필요</td><td>beam splitter</td><td>CIS와 DVS가 같은 렌즈/같은 광축을 공유하게 만들어 화각 불일치와 parallax를 크게 줄인다.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <h2>10. 해상도 차이 처리 시 주의사항</h2>
+      <div class="grid">
+        <div class="card"><b>화각 불일치</b><p>DVS와 CIS가 서로 다른 렌즈를 쓰면 같은 물체도 크기와 위치가 달라진다. 단순 resize만 하면 가장자리에서 오차가 커진다.</p></div>
+        <div class="card"><b>양자화 오차</b><p><code>round(x*sx)</code>는 여러 원본 이벤트를 같은 출력 픽셀에 몰아넣는다. 작은 해상도로 줄일수록 event density와 aliasing을 조심해야 한다.</p></div>
+        <div class="card"><b>렌즈 왜곡</b><p>광각 렌즈는 중앙과 가장자리 scale이 다르다. 먼저 undistortion을 한 뒤 event 좌표를 변환하는 편이 좋다.</p></div>
+        <div class="card"><b>시간 정합</b><p>좌표가 맞아도 timestamp가 틀리면 움직이는 물체는 어긋난다. GPIO trigger, PPS, hardware timestamp가 중요하다.</p></div>
+        <div class="card"><b>빔스플리터</b><p>두 센서가 같은 광축을 공유하게 해 parallax를 줄인다. 대신 광량이 나뉘므로 노출, 노이즈, DVS threshold 설정을 다시 잡아야 한다.</p></div>
+        <div class="card"><b>실시간 구현</b><p>Python <code>np.add.at</code>는 이해하기 쉽지만 고속에서는 느리다. C++ tile accumulation, SIMD histogram, GPU/FPGA path가 필요하다.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>11. 코드 예시: 좌표 정합 후 합성</h2>
+      <pre>import numpy as np
+
+# 4x4 grayscale CIS frame
+base = np.array([
+    [100,100,100,100],
+    [100,100,100,100],
+    [100,100,100,100],
+    [100,100,100,100],
+], dtype=np.float32)
+
+# DVS source resolution 8x8, output resolution 4x4
+sx = 4 / 8
+sy = 4 / 8
+
+events = [
+    # x, y, polarity
+    (2, 2, +1),
+    (3, 2, +1),
+    (6, 4, -1),
+]
+
+event_memory = np.zeros((4, 4), dtype=np.float32)
+for x, y, p in events:
+    xo = round(x * sx)
+    yo = round(y * sy)
+    xo = min(max(xo, 0), 3)
+    yo = min(max(yo, 0), 3)
+    event_memory[yo, xo] += 1 if p > 0 else -1
+
+gain = 5.0
+synth = np.clip(base + event_memory * gain, 0, 255)
+
+print(event_memory)
+print(synth)</pre>
+      <p>이 예시에서 DVS 8x8 좌표가 CIS/output 4x4 좌표로 줄어든다. 같은 출력 좌표로 모인 양 이벤트는 밝기를 올리고, 음 이벤트는 밝기를 낮춘다. 실제 코드는 이 과정을 매 target timestamp마다 반복하고, 이전 event_memory를 계속 감쇠시킨다.</p>
+    </section>
+
+    <section class="block">
+      <h2>12. 고해상도 실시간 합성 설계 메모</h2>
+      <p>결론부터 정리하면, 온디바이스에서 대형 AI 인터폴레이터를 풀프레임으로 돌리는 구조는 채택하지 않는다. 1080p 이상에서 매 출력 프레임마다 neural interpolation을 실행하면 inference latency보다 먼저 메모리 이동, event preprocessing, 후처리, encoder handoff가 병목이 된다. 이 페이지의 데모 구조는 실시간 preview용 경량 합성을 기본 경로로 두고, AI는 움직임 ROI 보정에만 제한해서 사용한다.</p>
+      <div class="formula">
+        설계 원칙:<br>
+        full_frame_ai = disabled_by_default<br>
+        realtime_output = lightweight_event_synthesis(full_frame)<br>
+        enhanced_output = realtime_output + ai_residual(roi_only)
+      </div>
+      <h3>Target Pipeline</h3>
+      <pre>CIS MIPI frame
+        |
+        v
+Low-latency base frame buffer
+        |
+DVS MIPI event stream
+        |
+        v
+Event accumulation + decay
+        |
+        v
+Motion ROI detector
+        |
+        +--> Full-frame lightweight synthesis --> realtime preview
+        |
+        +--> ROI crop only --> tiny AI interpolator / residual model
+                              |
+                              v
+                    ROI enhanced patch
+                              |
+                              v
+                    composite back to frame</pre>
+      <div class="grid">
+        <div class="card"><b>Realtime path</b><p>CIS 최신 프레임을 기준 이미지로 유지한다. DVS event accumulation/decay로 움직임 영역만 갱신한다. 이 경로는 항상 target FPS를 만족해야 한다.</p></div>
+        <div class="card"><b>AI path</b><p>AI 입력은 active tile 또는 object crop으로 제한한다. 기본 crop 크기는 256x256 또는 384x384로 시작한다. 풀프레임 입력은 benchmark 용도 외에는 사용하지 않는다.</p></div>
+        <div class="card"><b>Pyramid path</b><p>motion/flow는 저해상도에서 계산한다. 고해상도에서는 edge/detail residual만 보정한다. 필요하면 1/4 scale inference 후 guided upsampling을 적용한다.</p></div>
+        <div class="card"><b>Residual model</b><p>모델은 새 프레임을 생성하지 않는다. 입력은 lightweight synthesis 결과, event map, ROI mask이고 출력은 correction residual이다.</p></div>
+        <div class="card"><b>Async enhancement</b><p>preview frame은 즉시 내보낸다. enhanced clip은 N 프레임 늦어도 된다. 웹 UI도 realtime preview와 enhanced result를 분리한다.</p></div>
+        <div class="card"><b>Thread boundary</b><p>capture, event accumulation, AI inference, encode를 같은 loop에 넣지 않는다. 각 단계는 ring buffer와 timestamp로 연결한다.</p></div>
+      </div>
+      <h3>Implementation Priority</h3>
+      <table>
+        <thead><tr><th>우선순위</th><th>전략</th><th>이유</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>MIPI direct input + DMA + zero-copy</td><td>CIS/DVS 입력을 CPU memcpy 없이 fusion buffer까지 전달한다.</td></tr>
+          <tr><td>2</td><td>Event tile index</td><td>이벤트가 있는 tile만 dirty로 표시한다. dirty tile 외 배경은 재계산하지 않는다.</td></tr>
+          <tr><td>3</td><td>Remove full-frame AI from realtime loop</td><td>AI가 느려져도 preview FPS가 떨어지면 안 된다.</td></tr>
+          <tr><td>4</td><td>C++/NEON tile accumulation</td><td><code>np.add.at</code> random scatter를 C++ tile histogram으로 교체한다.</td></tr>
+          <tr><td>5</td><td>ROI residual inference</td><td>작은 ROI에서만 INT8/FP16 모델을 실행한다. 출력은 correction patch다.</td></tr>
+          <tr><td>6</td><td>Encoder thread separation</td><td>hardware encoder queue가 막혀도 fusion thread는 다음 frame을 계속 만든다.</td></tr>
+        </tbody>
+      </table>
+      <h3>Budget Formula</h3>
+      <pre>full_pixels = W * H
+roi_pixels = sum(width_i * height_i for active_rois)
+
+ai_cost_ratio = roi_pixels / full_pixels
+
+device_is_possible if:
+  lightweight_fusion_fps >= realtime_target_fps
+  and roi_ai_latency_ms <= roi_update_budget_ms
+  and encoder_fps >= output_stream_fps
+  and memory_bandwidth has 30%+ headroom</pre>
+      <p>1080p 한 장은 약 207만 픽셀이다. 320x320 ROI 두 개면 약 20만 픽셀이고 전체의 9.9%다. AI 처리 픽셀 수를 이 수준으로 제한해야 온디바이스 고해상도 합성이 검토 가능한 범위에 들어온다.</p>
+      <h3>Milestone</h3>
+      <table>
+        <thead><tr><th>단계</th><th>작업</th><th>완료 기준</th></tr></thead>
+        <tbody>
+          <tr><td>M1</td><td>Python PoC 유지, ROI tile mask 추가</td><td>active tile 비율과 event density 로그 저장</td></tr>
+          <tr><td>M2</td><td>C++ tile accumulator 작성</td><td>Python 대비 5배 이상 event/sec 처리</td></tr>
+          <tr><td>M3</td><td>ROI crop/composite path 구현</td><td>dirty ROI만 갱신하고 full frame copy 최소화</td></tr>
+          <tr><td>M4</td><td>작은 residual model 연결</td><td>ROI inference가 preview loop를 block하지 않음</td></tr>
+          <tr><td>M5</td><td>hardware encoder 분리</td><td>fusion FPS와 encode FPS를 별도 측정</td></tr>
+        </tbody>
+      </table>
+      <h3>Hardware Direction</h3>
+      <p>Raspberry Pi 5는 PoC와 경량 preview 장비로 둔다. 고해상도 AI 보정까지 제품 목표에 넣으면 ISP, NPU/DSP, memory bandwidth, hardware encoder를 같이 봐야 한다. 후보는 IQ8, Jetson Orin, FPGA+NPU SoC, Qualcomm RB 계열이다. 선택 기준은 TOPS 숫자 하나가 아니라 CSI 입력 수, DMA 경로, encoder, sustained memory bandwidth, INT8/FP16 ROI inference latency다.</p>
+    </section>
+  </main>
+<div style="position:fixed;right:12px;bottom:12px;z-index:9999"><a href="index.html" style="display:inline-block;padding:8px 10px;border-radius:7px;background:#111827;color:#fff;text-decoration:none;font:13px Arial">DVS Pages</a></div></body>
+</html>

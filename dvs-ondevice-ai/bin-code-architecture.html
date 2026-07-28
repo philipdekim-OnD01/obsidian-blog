@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bin Code Architecture</title>
+  <style>
+    :root { color-scheme:dark; --bg:#0f1114; --panel:#191d22; --panel2:#222832; --line:#343b45; --text:#edf2f4; --muted:#a6b0b8; --accent:#5cc8a7; --blue:#7bb7ff; --warn:#f6c96d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .global-nav { position:sticky; top:0; z-index:30; display:flex; justify-content:center; align-items:center; gap:8px; padding:10px 12px; background:#111318; border-bottom:1px solid #30343d; flex-wrap:wrap; }
+    .global-nav a { display:inline-flex; align-items:center; justify-content:center; min-width:86px; height:34px; padding:0 14px; border:1px solid #343d46; border-radius:6px; background:#1a1f25; color:#dbeafe; text-decoration:none; font-weight:700; font-size:14px; line-height:1; white-space:nowrap; }
+    .global-nav a:hover { background:#22303a; border-color:#5cc8a7; color:#fff; }
+    .nav-group { display:flex; align-items:center; gap:6px; padding-left:8px; border-left:1px solid #343d46; }
+    .nav-label { color:#91a0ad; font-size:12px; font-weight:800; white-space:nowrap; }
+    header { background:#15191f; border-bottom:1px solid var(--line); }
+    .hero { max-width:1400px; margin:0 auto; padding:30px 18px 24px; }
+    h1 { margin:0 0 10px; font-size:32px; line-height:1.15; letter-spacing:0; }
+    h2 { margin:0 0 10px; font-size:20px; letter-spacing:0; }
+    h3 { margin:18px 0 8px; font-size:15px; color:#d9e4ea; }
+    p, li { color:var(--muted); line-height:1.68; }
+    .lead { max-width:1020px; margin:0; color:var(--muted); line-height:1.68; font-size:15px; }
+    main { max-width:1400px; margin:0 auto; padding:18px; display:grid; gap:18px; }
+    .block { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+    .card { background:#11151a; border:1px solid var(--line); border-radius:8px; padding:13px; }
+    .card b { color:var(--accent); display:block; margin-bottom:5px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border-bottom:1px solid var(--line); padding:9px 8px; text-align:left; vertical-align:top; font-size:13px; }
+    th { background:#11151a; color:#c7d2dc; }
+    td { color:#edf2f4; }
+    pre { margin:10px 0 0; padding:12px; border:1px solid var(--line); border-radius:8px; background:#0b0d10; color:#d8dee5; overflow:auto; white-space:pre; line-height:1.45; font-size:13px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; color:#d8f3ff; }
+    .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+    .step { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:12px; }
+    .step span { display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:999px; background:var(--accent); color:#07100d; font-weight:900; margin-bottom:8px; }
+  </style>
+</head>
+<body>
+  <div class="global-nav">
+    <a href="dashboard.html">Home</a>
+    <span class="nav-group"><span class="nav-label">기능</span><a href="person.html">Person</a><a href="raspberry-pi5-architecture.html">Pi 5 Architecture</a><a href="bin-code-architecture.html">Bin Architecture</a><a href="realtime-synthesis-algorithm.html">Algorithm</a><a href="event-synthesis.html">Event Synthesis</a><a href="synthetic-grid.html">Synthetic</a></span>
+    <span class="nav-group"><span class="nav-label">제안서</span><a href="space-edge-proposal.html">Space Edge</a><a href="fall-plan.html">Fall Plan</a></span>
+  </div>
+  <header>
+    <div class="hero">
+      <h1>/home/philip/bin 코드 아키텍처</h1>
+      <p class="lead">이 페이지는 라즈베리파이의 <code>/home/philip/bin</code> 폴더에 있는 운영 코드의 역할과 연결 구조를 정리한 문서다. 핵심은 8080 웹 대시보드, 카메라 촬영, 사람 감지, synthetic DVS 합성, event synthesis 데모, 정리/변환/헬스체크 작업자가 느슨하게 연결된 구조다.</p>
+    </div>
+  </header>
+  <main>
+    <section class="block">
+      <h2>1. 전체 실행 구조</h2>
+      <pre>camera_snapshot.sh
+  -> /home/philip/camera_snapshots/*.jpg
+  -> detect-queue event
+
+person_yolo_worker.py
+  -> person_detect.py
+  -> /home/philip/person_snapshots/*.jpg
+  -> synthesis-queue event
+
+person_synthesis_worker.py
+  -> trigger_person_synthesis.py
+  -> synthesize_virtual_dvs_grid.py
+  -> /home/philip/synthetic_frames/{id}/
+
+camera_gallery_server.py  : port 8080 main dashboard
+synthetic_grid_server.py  : port 8081 synthetic video browser
+
+event_synthesis_demo.py / realtime_event_synthesis_demo.py
+  -> /home/philip/event_synthesis_demo/output/*.mp4 + metrics json
+
+maintenance
+  -> disk_usage_guard.py
+  -> prune_similar_snapshots.py
+  -> convert_*_h264.py
+  -> camera_stack_healthcheck.sh</pre>
+      <div class="grid">
+        <div class="card"><b>데이터 중심 구조</b><p>스크립트들이 직접 서로를 오래 붙잡고 호출하기보다, 이미지 폴더와 queue 폴더를 통해 느슨하게 연결된다.</p></div>
+        <div class="card"><b>웹서버는 표시 담당</b><p><code>camera_gallery_server.py</code>는 합성 계산을 직접 하지 않고, 이미 생성된 이미지/영상/메트릭을 읽어 보여준다.</p></div>
+        <div class="card"><b>합성은 별도 작업</b><p>synthetic DVS와 event synthesis는 별도 스크립트가 생성하고, 결과물만 웹에 붙는다.</p></div>
+        <div class="card"><b>운영 안정성</b><p>disk guard, prune, healthcheck, h264 변환 스크립트가 저장공간과 재생 호환성을 관리한다.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>2. 코드 역할 요약</h2>
+      <table>
+        <thead><tr><th>파일</th><th>역할</th><th>주요 입력</th><th>주요 출력</th></tr></thead>
+        <tbody>
+          <tr><td><code>camera_gallery_server.py</code></td><td>8080 메인 웹서비스. 카메라 스냅샷, 사람 이벤트, event synthesis, Pi 5 구조, 알고리즘 문서, 제안서 페이지를 제공한다.</td><td>snapshot/person/synthetic/event output 폴더, system 상태 파일</td><td>HTML, JSON status, image/video static response</td></tr>
+          <tr><td><code>synthetic_grid_server.py</code></td><td>8081 synthetic DVS 결과 브라우저. 생성된 synthetic_frames 결과를 목록/플레이어로 보여준다.</td><td><code>/home/philip/synthetic_frames</code></td><td>HTML, MP4, JPG</td></tr>
+          <tr><td><code>camera_snapshot.sh</code></td><td>주기적 카메라 촬영 entrypoint. 이미지를 저장하고 person detection queue를 만든다.</td><td>Pi camera, timer 실행</td><td><code>camera_snapshots</code>, detect queue, power log</td></tr>
+          <tr><td><code>person_yolo_worker.py</code></td><td>감지 queue를 감시하고 person detector를 실행한다. 감지 결과가 있으면 synthesis queue로 넘긴다.</td><td><code>detect-queue</code></td><td><code>person_snapshots</code>, <code>synthesis-queue</code></td></tr>
+          <tr><td><code>person_detect.py</code></td><td>YOLOv5n ONNX 기반 사람 감지. letterbox, ONNX inference, burst capture, detection 저장을 담당한다.</td><td>snapshot image, YOLO model</td><td>person snapshot, burst frames</td></tr>
+          <tr><td><code>person_synthesis_worker.py</code></td><td>synthesis queue를 coalescing해서 합성 trigger를 실행한다.</td><td><code>synthesis-queue</code></td><td>trigger script 실행</td></tr>
+          <tr><td><code>trigger_person_synthesis.py</code></td><td>합성에 쓸 source image를 고르고 synthetic DVS grid 합성을 실행한다. 필요하면 mail queue도 만든다.</td><td>person snapshots, burst frames</td><td>synthetic output, mail queue item</td></tr>
+          <tr><td><code>synthesize_virtual_dvs_grid.py</code></td><td>가상 DVS 데이터를 만들고 synthetic DVS video를 생성한다. 로그차분, 노이즈, 가속 trajectory, accumulation/decay, additive rendering을 담당한다.</td><td>camera/person snapshots</td><td><code>synthetic_frames/{id}</code>, virtual DVS npz, MP4</td></tr>
+          <tr><td><code>event_synthesis_demo.py</code></td><td>저장된 CIS/DVS dataset 기반 비실시간 합성 데모. 프레임 생성과 성능 metric 저장을 담당한다.</td><td><code>event_synthesis_demo/data</code></td><td>MP4, metrics JSON</td></tr>
+          <tr><td><code>realtime_event_synthesis_demo.py</code></td><td>wall clock 기준 실시간 합성 성능 테스트. 목표 FPS, 해상도, CPU/memory/temp metric을 측정한다.</td><td>event synthesis dataset</td><td>realtime MP4, realtime metrics JSON</td></tr>
+          <tr><td><code>convert_event_videos_h264.py</code></td><td>event synthesis MP4를 브라우저 호환 H.264로 변환한다.</td><td>event output MP4</td><td>H.264 MP4</td></tr>
+          <tr><td><code>convert_realtime_videos_h264.py</code></td><td>realtime demo MP4를 H.264로 변환한다.</td><td>realtime output MP4</td><td>H.264 MP4</td></tr>
+          <tr><td><code>disk_usage_guard.py</code></td><td>저장공간 사용률을 감시하고 오래된 결과를 삭제한다.</td><td>camera/person/synthetic/event 폴더</td><td>삭제 로그, 여유 공간 확보</td></tr>
+          <tr><td><code>prune_similar_snapshots.py</code></td><td>perceptual hash로 유사한 snapshot을 정리한다.</td><td>snapshot directory</td><td>중복/유사 이미지 삭제</td></tr>
+          <tr><td><code>camera_stack_healthcheck.sh</code></td><td>웹서비스, synthetic 서버, ssh, 온도 상태를 확인하고 실패 누적 시 로그를 남긴다.</td><td>systemd 상태, thermal 상태</td><td>healthcheck log</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <h2>3. 웹서비스 계층</h2>
+      <h3>camera_gallery_server.py</h3>
+      <p>가장 큰 파일이고 8080 포트의 메인 UI다. Python <code>ThreadingHTTPServer</code>와 <code>BaseHTTPRequestHandler</code>를 사용한다. 페이지 렌더링도 이 파일 안에서 문자열 HTML로 직접 만든다.</p>
+      <pre>주요 데이터 경로:
+SNAPSHOT_DIR            = /home/philip/camera_snapshots
+PERSON_DIR              = /home/philip/person_snapshots
+EVENT_SYNTH_OUTPUT_DIR  = /home/philip/event_synthesis_demo/output
+PI5_ARCH_ASSET_DIR      = /home/philip/pi5_arch_assets
+
+주요 route:
+/                         Camera Snapshots dashboard
+/status.json              CPU/memory/temp/service status
+/person                   person event gallery
+/event-synthesis          CIS-DVS synthesis demo
+/realtime-synthesis-algorithm
+/raspberry-pi5-architecture
+/bin-code-architecture
+/space-edge-proposal
+/fall-plan
+/event-synthesis-video/*
+/pi5-asset/*</pre>
+      <p><code>get_status()</code>는 CPU, memory, 온도, throttling, 서비스 상태, USB 장치, 최근 로그, snapshot 목록을 모은다. 이 값은 홈 화면과 event synthesis 페이지 상단 상태 표시줄에서 사용된다.</p>
+      <h3>synthetic_grid_server.py</h3>
+      <p>8081 포트의 가벼운 synthetic 결과 브라우저다. <code>/home/philip/synthetic_frames</code> 아래 결과 폴더를 읽고 최신 영상/프레임을 보여준다. 메인 8080 웹서비스와 계산은 분리되어 있다.</p>
+    </section>
+
+    <section class="block">
+      <h2>4. 카메라 촬영과 사람 감지 파이프라인</h2>
+      <pre>systemd timer
+  -> camera_snapshot.sh
+      -> save JPG to /home/philip/camera_snapshots
+      -> write detect-queue item
+      -> append power/capture log
+
+person_yolo_worker.py
+  -> read detect-queue
+  -> run person_detect.py
+  -> enqueue synthesis if person exists
+
+person_detect.py
+  -> load /home/philip/models/yolov5n.onnx
+  -> preprocess with letterbox
+  -> OpenCV DNN inference
+  -> save person crop/frame
+  -> capture burst sequence</pre>
+      <div class="grid">
+        <div class="card"><b>camera_snapshot.sh</b><p>중복 실행을 막기 위해 lock file을 사용한다. 촬영 결과를 snapshot 폴더에 저장하고, 후속 감지를 위해 queue 파일을 만든다.</p></div>
+        <div class="card"><b>person_yolo_worker.py</b><p>queue worker다. 감지 작업이 많아져도 촬영 루프와 분리된다. 감지 성공 시 합성 queue를 만든다.</p></div>
+        <div class="card"><b>person_detect.py</b><p>YOLO 모델을 직접 실행하는 파일이다. detector, burst capture, detection save, synthesis trigger 연결이 포함된다.</p></div>
+        <div class="card"><b>person_synthesis_worker.py</b><p>합성 요청을 모아서 실행한다. 같은 시간에 여러 감지 이벤트가 몰려도 합성을 과도하게 중복 실행하지 않게 한다.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>5. Synthetic DVS 생성 계층</h2>
+      <p><code>synthesize_virtual_dvs_grid.py</code>는 실제 DVS 센서가 없는 상황에서, CIS 이미지 변화로부터 가상의 DVS event stream과 DVS 스타일 영상을 만든다. 지금 수정된 방향은 흰 배경이 아니라 어두운 DVS grid 위에 additive event trail을 렌더링하는 구조다.</p>
+      <pre>입력:
+  /home/philip/camera_snapshots/*.jpg
+  /home/philip/person_snapshots/*.jpg
+
+주요 처리:
+  make_virtual_event_mask()
+    -> 두 CIS 이미지 차이에서 움직임 mask 추출
+
+  make_virtual_dvs_npz()
+    -> log(after) - log(before)
+    -> random noise injection
+    -> acceleration curve + jitter trajectory
+    -> virtual DVS npz 저장: x, y, t, p
+
+  window_dvs_npz()
+    -> target time 주변 event 선택
+    -> accumulation + exponential decay
+    -> positive/negative event heat 생성
+
+  synth_between()
+    -> dark DVS grid background
+    -> additive blending
+    -> label + frame 저장
+
+출력:
+  /home/philip/synthetic_frames/{id}/
+    {id}.mp4
+    {id}_*.jpg
+    virtual_dvs/{id}_pair*.npz
+    meta.json</pre>
+      <p><code>trigger_person_synthesis.py</code>는 이 합성을 직접 호출하는 orchestration 파일이다. 최신 person snapshot과 burst frame을 골라 source sequence를 만들고, 합성 결과가 생기면 mail queue까지 연결할 수 있다.</p>
+    </section>
+
+    <section class="block">
+      <h2>6. CIS-DVS Event Synthesis 데모 계층</h2>
+      <p>이 계층은 <code>/home/philip/event_synthesis_demo</code> 아래의 demo dataset을 사용한다. synthetic DVS grid와 다르게, 이미 준비된 CIS 이미지와 DVS event npz를 합성해서 성능과 품질을 보여준다.</p>
+      <table>
+        <thead><tr><th>파일</th><th>핵심 알고리즘</th><th>특징</th></tr></thead>
+        <tbody>
+          <tr><td><code>event_synthesis_demo.py</code></td><td><code>event_memory *= EVENT_DECAY</code>, <code>np.add.at</code>, <code>anchor + event_memory * CONTRAST_GAIN</code></td><td>저장 dataset 기반 합성. 기본 target width는 960. 영상과 metrics JSON을 출력한다.</td></tr>
+          <tr><td><code>realtime_event_synthesis_demo.py</code></td><td>wall clock loop, target timestamp 생성, interval event loading, CPU/memory/temp 측정</td><td>온디바이스에서 특정 해상도와 목표 FPS가 실시간으로 가능한지 측정한다.</td></tr>
+          <tr><td><code>convert_event_videos_h264.py</code></td><td>ffmpeg 변환</td><td>브라우저 재생 호환성을 위해 MP4를 H.264로 변환한다.</td></tr>
+          <tr><td><code>convert_realtime_videos_h264.py</code></td><td>ffmpeg 변환</td><td>realtime demo 결과도 같은 방식으로 웹 재생 가능하게 만든다.</td></tr>
+        </tbody>
+      </table>
+      <pre>event synthesis core:
+event_memory = zeros(h, w)
+event_memory *= 0.70
+np.add.at(event_memory, positive_event_coords, +1)
+np.add.at(event_memory, negative_event_coords, -1)
+
+anchor = weak_interpolation(base_cis, next_cis)
+synth = clip(anchor + event_memory[..., None] * 4.8)</pre>
+    </section>
+
+    <section class="block">
+      <h2>7. 유지보수와 보호 장치</h2>
+      <div class="grid">
+        <div class="card"><b>disk_usage_guard.py</b><p>저장공간 사용률이 목표치 이상 올라가면 오래된 후보를 지운다. synthetic result, snapshots, logs가 계속 쌓이는 구조라 필수다.</p></div>
+        <div class="card"><b>prune_similar_snapshots.py</b><p>PIL 기반 difference hash를 사용해 유사한 snapshot을 줄인다. 같은 장면이 반복 저장되는 문제를 완화한다.</p></div>
+        <div class="card"><b>camera_stack_healthcheck.sh</b><p>8080 웹서비스, 8081 synthetic 서버, ssh, thermal 상태를 확인한다. 실패가 누적되면 로그로 남긴다.</p></div>
+        <div class="card"><b>*.bak_20260728_*</b><p>작업 중 생성한 백업 파일이다. 실행 대상이 아니라 rollback/reference 용도다. 운영 설명에서는 원본 파일만 실행 코드로 본다.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>8. 디렉터리와 데이터 계약</h2>
+      <table>
+        <thead><tr><th>경로</th><th>소유/생성자</th><th>사용자</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr><td><code>/home/philip/camera_snapshots</code></td><td><code>camera_snapshot.sh</code></td><td>웹, person detector, synthetic generator</td><td>원본 CIS snapshot 저장소</td></tr>
+          <tr><td><code>/home/philip/person_snapshots</code></td><td><code>person_detect.py</code></td><td>웹, trigger_person_synthesis</td><td>사람 감지 결과 저장소</td></tr>
+          <tr><td><code>/home/philip/synthetic_frames</code></td><td><code>synthesize_virtual_dvs_grid.py</code></td><td>8081 synthetic server</td><td>가상 DVS 합성 결과</td></tr>
+          <tr><td><code>/home/philip/event_synthesis_demo/data</code></td><td>수동/데모 dataset</td><td>event/realtime synthesis scripts</td><td>CIS 이미지와 DVS npz 입력</td></tr>
+          <tr><td><code>/home/philip/event_synthesis_demo/output</code></td><td>event/realtime synthesis scripts</td><td>8080 web page</td><td>합성 MP4와 metrics JSON</td></tr>
+          <tr><td><code>/home/philip/.local/state/camera-snapshots</code></td><td>여러 worker</td><td>worker, web status</td><td>queue, logs, temperature/power samples</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block">
+      <h2>9. 운영 관점에서 봐야 할 병목</h2>
+      <ul>
+        <li><b>촬영 병목</b>: camera capture가 느려지면 감지와 합성 모두 입력이 늦어진다.</li>
+        <li><b>YOLO 병목</b>: person detector가 queue를 처리하지 못하면 synthesis queue가 늦게 생긴다.</li>
+        <li><b>합성 병목</b>: synthetic DVS와 realtime event synthesis는 OpenCV/NumPy/ffmpeg를 사용하므로 CPU와 memory bandwidth 영향을 크게 받는다.</li>
+        <li><b>웹 병목</b>: 8080/8081은 계산보다 파일 제공이 중심이다. 대형 MP4를 여러 클라이언트가 동시에 재생하면 I/O가 병목이 될 수 있다.</li>
+        <li><b>저장공간 병목</b>: snapshot, synthetic frame, MP4, npz가 빠르게 쌓인다. disk guard와 prune 정책이 중요하다.</li>
+      </ul>
+    </section>
+  </main>
+<div style="position:fixed;right:12px;bottom:12px;z-index:9999"><a href="index.html" style="display:inline-block;padding:8px 10px;border-radius:7px;background:#111827;color:#fff;text-decoration:none;font:13px Arial">DVS Pages</a></div></body>
+</html>
