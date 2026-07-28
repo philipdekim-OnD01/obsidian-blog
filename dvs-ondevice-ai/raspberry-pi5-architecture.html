@@ -47,13 +47,20 @@
     .hotspot-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-top:12px; }
     .hotspot-list div { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:10px; color:#d8dee5; font-size:12px; line-height:1.5; }
     .hotspot-list b { color:var(--accent); }
+    .cpu-diagram { display:grid; grid-template-columns:1.1fr .9fr; gap:14px; align-items:start; }
+    .core-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; }
+    .core-box { border:1px solid #4d5b66; border-radius:8px; background:#101820; padding:12px; min-height:110px; }
+    .core-box b { color:#7dd3fc; display:block; margin-bottom:5px; }
+    .roadmap { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .roadmap span { border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:#11151a; color:#cbd5da; font-size:12px; font-weight:700; }
+    .roadmap .current { border-color:var(--accent); background:#10241f; color:#eafff8; }
     .image-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:12px; }
     figure { margin:0; border:1px solid var(--line); border-radius:8px; background:#11151a; overflow:hidden; }
     figure img { width:100%; aspect-ratio:16/10; object-fit:contain; display:block; background:#0b0d10; }
     figcaption { padding:9px 11px; color:var(--muted); font-size:12px; line-height:1.45; border-top:1px solid var(--line); }
     a { color:#7dd3fc; text-decoration:none; }
     a:hover { text-decoration:underline; }
-    @media(max-width:850px) { .hero, .two { grid-template-columns:1fr; } h1 { font-size:25px; } }
+    @media(max-width:850px) { .hero, .two, .cpu-diagram { grid-template-columns:1fr; } h1 { font-size:25px; } }
   </style>
 </head>
 <body>
@@ -76,27 +83,27 @@
       <figure>
         <div class="board-map">
           <img class="board-image" src="assets/pi5/pi5-board-retail-photo.jpg" alt="Raspberry Pi 5 board retail photo with interactive hotspots">
-          <button class="hotspot" style="left:50%;top:48%" aria-label="BCM2712 CPU and GPU">1<span class="hotspot-card"><b>BCM2712 CPU/GPU</b><span>Quad-core Cortex-A76 2.4GHz, VideoCore VII GPU. DVS event accumulation, lightweight reconstruction, frame fusion orchestration이 몰리는 핵심 처리부다. 지속 부하에는 active cooling이 필요하다.</span></span></button>
-          <button class="hotspot" style="left:39%;top:24%" aria-label="LPDDR4X memory">2<span class="hotspot-card"><b>LPDDR4X-4267 Memory</b><span>1GB부터 16GB 모델까지 존재한다. CIS frame buffer, DVS event buffer, accumulation map, encoder queue가 동시에 올라가므로 실험 장비는 8GB 이상이 유리하다.</span></span></button>
-          <button class="hotspot" style="left:26%;top:28%" aria-label="CAM DISP MIPI connectors">3<span class="hotspot-card"><b>CAM/DISP MIPI FFC</b><span>2개의 4-lane MIPI transceiver. CIS와 MIPI 출력 DVS를 각각 MIPI에 직접 연결하는 구성이 우선이다. USB 변환은 fallback으로 본다.</span></span></button>
-          <button class="hotspot" style="left:67%;top:69%" aria-label="USB 3 ports">4<span class="hotspot-card"><b>USB 3.0 / USB 2.0</b><span>USB 3.0은 5Gbps급 SuperSpeed 포트 2개다. MIPI가 없는 USB형 DVS나 FPGA/USB bridge에 쓸 수 있지만 변환 지연과 CPU interrupt 부하가 늘 수 있다.</span></span></button>
-          <button class="hotspot" style="left:81%;top:68%" aria-label="Gigabit Ethernet">5<span class="hotspot-card"><b>Gigabit Ethernet</b><span>웹 대시보드, event summary, 생성 MP4 배포에는 Wi-Fi보다 안정적이다. 실시간 장비에서는 원본 전체보다 판단 결과와 짧은 압축 클립 전송이 낫다.</span></span></button>
-          <button class="hotspot" style="left:22%;top:66%" aria-label="Forty pin GPIO">6<span class="hotspot-card"><b>40-pin GPIO</b><span>3.3V GPIO, UART, SPI, I2C, PWM 등을 제공한다. DVS-CIS trigger, PPS, external sync, interrupt line을 맞추는 데 사용한다.</span></span></button>
-          <button class="hotspot" style="left:42%;top:86%" aria-label="PCIe FFC">7<span class="hotspot-card"><b>PCIe 2.0 x1 FFC</b><span>NVMe 저장장치나 AI accelerator HAT 연결 후보. x1 대역폭이라 저장과 경량 가속에는 유용하지만 대형 GPU급 가속 경로는 아니다.</span></span></button>
-          <button class="hotspot" style="left:11%;top:51%" aria-label="USB C power">8<span class="hotspot-card"><b>USB-C Power</b><span>5V/5A USB-C PD 권장. 카메라, DVS, NVMe, 팬을 동시에 쓰면 전원 margin이 중요하며 저전원 어댑터는 throttling과 frame drop의 원인이 된다.</span></span></button>
-          <button class="hotspot" style="left:76%;top:30%" aria-label="Wireless module">9<span class="hotspot-card"><b>Wi-Fi / Bluetooth</b><span>2.4/5GHz 802.11ac Wi-Fi 5, 공식 300Mb/s 표기, Bluetooth 5.0/BLE. telemetry와 설정에는 좋지만 고속 event/video 전송은 Ethernet이 안정적이다.</span></span></button>
+          <button class="hotspot" style="left:44.8%;top:54.5%" aria-label="BCM2712 CPU and GPU">1<span class="hotspot-card"><b>BCM2712 CPU/GPU</b><span>사진 중앙의 큰 패키지. Quad-core Cortex-A76 2.4GHz와 VideoCore VII GPU가 있는 주 처리부다. DVS event accumulation, reconstruction, frame fusion orchestration이 몰린다.</span></span></button>
+          <button class="hotspot" style="left:57.8%;top:45.5%" aria-label="RP1 IO controller">2<span class="hotspot-card"><b>RP1 I/O Controller</b><span>보드 오른쪽의 검은 칩. USB, Ethernet, GPIO, MIPI 같은 외부 I/O를 맡고 BCM2712와 내부 PCIe 2.0 x4로 연결된다.</span></span></button>
+          <button class="hotspot" style="left:31.7%;top:49.5%" aria-label="PCI Express FFC connector">3<span class="hotspot-card"><b>PCIe 2.0 x1 FFC</b><span>왼쪽 세로 FFC 커넥터. NVMe 저장장치나 accelerator HAT 연결 후보지만 외부 대역폭은 x1이다.</span></span></button>
+          <button class="hotspot" style="left:53.6%;top:66.8%" aria-label="MIPI CSI DSI connectors">4<span class="hotspot-card"><b>2x 4-lane MIPI CSI/DSI</b><span>오른쪽 아래 두 개의 세로 FFC. CIS와 MIPI 출력 DVS를 각각 직접 연결하는 핵심 포트다. USB 변환보다 지연과 대역폭 측면에서 유리하다.</span></span></button>
+          <button class="hotspot" style="left:66.8%;top:54.0%" aria-label="Ethernet and USB connectors">5<span class="hotspot-card"><b>Ethernet / USB stack</b><span>오른쪽 포트 스택. Gigabit Ethernet은 결과 전송과 대시보드에 안정적이고, USB 3.0은 USB형 DVS나 bridge 장치용 대안이다.</span></span></button>
+          <button class="hotspot" style="left:44.0%;top:30.7%" aria-label="Forty pin GPIO header">6<span class="hotspot-card"><b>40-pin GPIO Header</b><span>보드 상단 핀 헤더. 3.3V GPIO, UART, SPI, I2C, PWM 등을 제공하며 DVS-CIS trigger, PPS, interrupt sync에 사용한다.</span></span></button>
+          <button class="hotspot" style="left:35.4%;top:60.0%" aria-label="Power management IC">7<span class="hotspot-card"><b>Power Management IC</b><span>왼쪽 아래의 전원 관리 칩. 카메라, DVS, NVMe, 팬을 동시에 쓰면 안정 전원과 발열 관리가 중요하다.</span></span></button>
+          <button class="hotspot" style="left:35.4%;top:71.0%" aria-label="USB C power connector">8<span class="hotspot-card"><b>USB-C Power</b><span>왼쪽 아래 USB-C 전원 포트. 5V/5A USB-C PD를 권장하며 저전원 어댑터는 throttling과 frame drop의 원인이 된다.</span></span></button>
+          <button class="hotspot" style="left:35.7%;top:39.0%" aria-label="Wireless module">9<span class="hotspot-card"><b>Wi-Fi / Bluetooth Module</b><span>왼쪽 위 금속 실드 영역. 2.4/5GHz 802.11ac Wi-Fi 5, Bluetooth 5.0/BLE. telemetry에는 좋지만 고속 event/video 전송은 Ethernet이 안정적이다.</span></span></button>
         </div>
         <figcaption>실물 보드 전체 사진. 번호에 마우스를 올리거나 탭하면 각 블록의 역할과 DVS-CIS 합성 장비 관점의 스펙을 볼 수 있다. DVS가 MIPI CSI-2를 지원하면 USB보다 MIPI 직결이 우선이다.</figcaption>
         <div class="hotspot-list">
-          <div><b>1 BCM2712</b><br>CPU/GPU 처리부, 2.4GHz Cortex-A76. 합성 루프와 웹 preview의 중심.</div>
-          <div><b>2 Memory</b><br>LPDDR4X-4267. event/frame/encoder buffer 동시 운용.</div>
-          <div><b>3 MIPI</b><br>2x 4-lane CAM/DISP. CIS + MIPI DVS 직결 우선.</div>
-          <div><b>4 USB</b><br>2x USB 3.0 5Gbps급. USB형 DVS/bridge용 대안.</div>
-          <div><b>5 Ethernet</b><br>Gigabit. 안정적인 결과 전송과 대시보드용.</div>
-          <div><b>6 GPIO</b><br>3.3V trigger/PPS/sync/interrupt 연결.</div>
-          <div><b>7 PCIe</b><br>PCIe 2.0 x1. NVMe 또는 accelerator HAT 후보.</div>
-          <div><b>8 Power</b><br>5V/5A USB-C PD 권장. 팬과 주변장치 동시 사용 대비.</div>
-          <div><b>9 Wireless</b><br>802.11ac Wi-Fi 5 300Mb/s 표기, Bluetooth 5.0/BLE.</div>
+          <div><b>1 BCM2712</b><br>중앙 큰 패키지. Cortex-A76 CPU/GPU 처리부.</div>
+          <div><b>2 RP1</b><br>오른쪽 검은 I/O controller. USB/Ethernet/GPIO/MIPI 담당.</div>
+          <div><b>3 PCIe</b><br>왼쪽 세로 FFC. PCIe 2.0 x1, NVMe/accelerator 후보.</div>
+          <div><b>4 MIPI</b><br>오른쪽 아래 두 세로 FFC. CIS + MIPI DVS 직결 우선.</div>
+          <div><b>5 Ethernet/USB</b><br>오른쪽 포트 스택. 유선 전송과 USB bridge 장치용.</div>
+          <div><b>6 GPIO</b><br>상단 40-pin header. trigger/PPS/sync/interrupt 연결.</div>
+          <div><b>7 PMIC</b><br>전원 관리 IC. 주변장치 동시 사용 시 전원 안정성 핵심.</div>
+          <div><b>8 USB-C Power</b><br>왼쪽 아래 전원 입력. 5V/5A USB-C PD 권장.</div>
+          <div><b>9 Wireless</b><br>왼쪽 위 무선 모듈. Wi-Fi 5 300Mb/s 표기, Bluetooth 5.0/BLE.</div>
         </div>
       </figure>
     </section>
@@ -173,6 +180,62 @@ External PCIe FPC:
           <tr><td>I/O controller</td><td>RP1 via internal PCIe 2.0 x4 to BCM2712</td><td>USB, Ethernet, MIPI, GPIO를 RP1이 담당. 고속 I/O 부하와 CPU 연산을 분리하는 구조.</td></tr>
         </tbody>
       </table>
+    </section>
+
+    <section class="block">
+      <h2>Broadcom BCM2712 Arm Cortex-A76 Quad-Core</h2>
+      <p>Raspberry Pi 5의 CPU 블록은 Broadcom BCM2712 안에 들어간 4개의 Arm Cortex-A76 코어다. 스마트폰 SoC처럼 big core와 little core를 섞은 8코어 구조가 아니라, 같은 계열의 A76 코어 4개를 2.4GHz로 쓰는 단순한 대칭형 쿼드코어 구성에 가깝다.</p>
+      <div class="cpu-diagram">
+        <div>
+          <pre>Broadcom BCM2712 Application Processor
+
+  +----------------------+   +----------------------+
+  | Cortex-A76 Core 0    |   | Cortex-A76 Core 1    |
+  | 64-bit Armv8-A       |   | 64-bit Armv8-A       |
+  | out-of-order         |   | out-of-order         |
+  +----------+-----------+   +----------+-----------+
+             |                          |
+  +----------+-----------+   +----------+-----------+
+  | Cortex-A76 Core 2    |   | Cortex-A76 Core 3    |
+  | 64-bit Armv8-A       |   | 64-bit Armv8-A       |
+  | out-of-order         |   | out-of-order         |
+  +----------+-----------+   +----------+-----------+
+             |                          |
+             +-----------+--------------+
+                         |
+              shared memory subsystem
+                         |
+         LPDDR4X-4267 / VideoCore VII / PCIe / RP1 I/O</pre>
+          <div class="core-grid">
+            <div class="core-box"><b>4 homogeneous cores</b>네 코어가 모두 Cortex-A76이다. 작업 스케줄링은 단순하지만, 스마트폰 big.LITTLE처럼 초저전력 little core가 따로 있는 구조는 아니다.</div>
+            <div class="core-box"><b>Out-of-order core</b>A76은 단순 in-order MCU 코어가 아니라 고성능 out-of-order 애플리케이션 코어다. Python, OpenCV, C++ fusion loop를 돌리기에 Pi 4의 A72보다 여유가 크다.</div>
+            <div class="core-box"><b>2.4GHz operating point</b>Pi 5에서는 2.4GHz로 동작한다. 장시간 100% 부하는 냉각이 없으면 throttling으로 성능이 떨어질 수 있다.</div>
+            <div class="core-box"><b>No dedicated NPU</b>CPU는 범용 연산에 강하지만 neural interpolation 전용 가속기는 아니다. 200FPS 이상 고품질 합성은 외부 accelerator나 C++/NEON 최적화가 필요하다.</div>
+          </div>
+        </div>
+        <div>
+          <h3>Arm Cortex-A Roadmap Position</h3>
+          <div class="roadmap">
+            <span>Cortex-A73</span>
+            <span>Cortex-A75<br>1st-gen DynamIQ</span>
+            <span class="current">Cortex-A76<br>2nd-gen high-performance DynamIQ</span>
+            <span>Cortex-A77<br>3rd-gen</span>
+            <span>Cortex-A78</span>
+            <span>Cortex-X / newer big cores</span>
+          </div>
+          <p>A76은 2018년에 등장한 프리미엄 모바일/PC 지향 고성능 코어다. Arm은 A76을 “laptop-class performance with mobile efficiency” 방향의 코어로 설명하며, 이전 세대보다 단일 스레드 성능과 에너지 효율을 높인 제품군으로 포지셔닝했다.</p>
+          <table>
+            <thead><tr><th>비교 대상</th><th>CPU 구조</th><th>Pi 5와의 차이</th></tr></thead>
+            <tbody>
+              <tr><td>Raspberry Pi 5 BCM2712</td><td>4x Cortex-A76 @ 2.4GHz</td><td>모든 코어가 같은 A76인 쿼드코어. 서버/데스크톱처럼 작업을 단순 분산하기 좋지만 little core가 없어 저전력 대기 효율은 스마트폰식 SoC보다 단순하다.</td></tr>
+              <tr><td>Huawei Kirin 980 계열 스마트폰</td><td>Cortex-A76 기반 big/middle cores + Cortex-A55 little cores</td><td>2018 플래그십 스마트폰은 A76을 최고성능 코어로 쓰고, A55를 저전력 작업에 썼다. Pi 5는 A55가 없어서 구조는 더 단순하지만 전력 관리 선택지는 적다.</td></tr>
+              <tr><td>Qualcomm Snapdragon 855 계열</td><td>Kryo 485 CPU, Arm Cortex technology 기반, Prime/Performance/Efficiency 계층</td><td>스마트폰은 CPU, GPU, ISP, DSP/NPU, modem까지 강하게 통합한다. Pi 5는 범용 Linux SBC라 I/O와 개발 자유도는 높지만 AI/DSP 전용 블록은 약하다.</td></tr>
+              <tr><td>최신 Cortex-X/A7xx 스마트폰</td><td>Cortex-X 또는 최신 Cortex-A7xx big core + efficient cores</td><td>순수 CPU single-thread와 AI 가속은 최신 플래그십 폰이 앞선다. Pi 5는 가격, GPIO/MIPI/PCIe 접근성, Linux 제어성이 장점이다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>DVS-CIS 합성 관점에서는 A76 네 코어를 입력 수집, event accumulation, frame blending, encoding handoff로 나눠 쓰는 구조가 합리적이다. 다만 event accumulation은 random scatter가 많아 CPU cache miss가 커지므로, Python보다 C++ tile histogram, NEON vectorization, lock-free ring buffer를 우선 적용해야 한다.</p>
     </section>
 
     <section class="block">
@@ -317,6 +380,10 @@ Cooling:
       <ul>
         <li><a href="https://www.raspberrypi.com/products/raspberry-pi-5/" target="_blank">Raspberry Pi 5 product specification</a></li>
         <li><a href="https://www.raspberrypi.com/news/introducing-raspberry-pi-5/" target="_blank">Raspberry Pi 5 launch article: BCM2712, RP1, DA9091 architecture</a></li>
+        <li><a href="https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a76" target="_blank">Arm Cortex-A76 product page: second-generation high-performance DynamIQ CPU</a></li>
+        <li><a href="https://newsroom.arm.com/news/accelerating-mobile-and-laptop-performance-arm-announces-client-cpu-roadmap" target="_blank">Arm client CPU roadmap: Cortex-A76, Deimos, Hercules context</a></li>
+        <li><a href="https://www.huawei.com/en/news/2018/10/huawei-mate20-series" target="_blank">Huawei Mate 20 / Kirin 980: Cortex-A76-based smartphone SoC comparison</a></li>
+        <li><a href="https://www.qualcomm.com/news/releases/2018/12/qualcomm-announces-new-flagship-snapdragon-855-mobile-platform-new-decade" target="_blank">Qualcomm Snapdragon 855: Kryo 485, AI engine, smartphone SoC comparison</a></li>
         <li><a href="https://www.raspberrypi.com/documentation/accessories/camera.html" target="_blank">Raspberry Pi camera documentation: Pi 5 CAM/DISP location and 22-pin CSI pinout</a></li>
         <li><a href="https://forums.raspberrypi.com/viewtopic.php?t=390479" target="_blank">Raspberry Pi forum note: Pi 5 CSI-2 lane rate and ISP-FE bandwidth discussion</a></li>
         <li><a href="https://www.raspberrypi.com/documentation/computers/io-controllers.html" target="_blank">Raspberry Pi RP1 I/O controller documentation</a></li>
