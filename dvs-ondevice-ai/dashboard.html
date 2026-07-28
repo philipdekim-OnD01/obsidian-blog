@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camera Snapshots</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:#101214; --panel:#191d21; --panel2:#20262b; --line:#303840;
+      --text:#edf2f4; --muted:#9aa6ad; --accent:#5cc8a7; --warn:#ffbf69;
+      --blue:#7bb7ff;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--text); }
+    header { position:sticky; top:0; z-index:5; background:rgba(16,18,20,.92); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+    .bar { max-width:1480px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    h1 { margin:0; font-size:20px; font-weight:720; letter-spacing:0; }
+    .sub { color:var(--muted); font-size:13px; }
+    main { max-width:1480px; margin:0 auto; padding:18px; display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:18px; align-items:start; }
+    .gallery-wrap { min-width:0; }
+    .dialog { position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.78); backdrop-filter:blur(10px); }
+    .dialog.open { display:flex; }
+    .dialog-inner { max-width:min(96vw,1280px); max-height:92vh; display:flex; flex-direction:column; gap:10px; }
+    .dialog img { max-width:100%; max-height:84vh; object-fit:contain; background:#050607; border:1px solid var(--line); border-radius:8px; }
+    .dialog-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--text); }
+    .close { border:1px solid var(--line); border-radius:8px; background:var(--panel2); color:var(--text); padding:8px 12px; cursor:pointer; }
+    .side { display:flex; flex-direction:column; gap:12px; position:sticky; top:74px; max-height:calc(100vh - 92px); overflow:auto; padding-right:2px; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:13px; box-shadow:0 10px 30px rgba(0,0,0,.18); }
+    .metric { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; margin:10px 0; }
+    .chart { width:100%; height:120px; margin-top:10px; border:1px solid var(--line); border-radius:8px; background:#0c0e10; }
+    .chart-meta { display:flex; justify-content:space-between; gap:10px; margin-top:7px; color:var(--muted); font-size:11px; }
+    .metric:first-child { margin-top:0; }
+    .label { color:var(--muted); font-size:13px; }
+    .value { font-size:13px; font-weight:700; }
+    .track { grid-column:1 / -1; height:8px; border-radius:999px; background:#0c0e10; overflow:hidden; border:1px solid #252b31; }
+    .fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--blue)); }
+    .pill { display:inline-flex; align-items:center; min-height:24px; padding:3px 8px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line); background:var(--panel2); }
+    .top-link { color:var(--accent); text-decoration:none; }
+    .top-link:hover { text-decoration:underline; }
+    .ok { color:var(--accent); }
+    .warn { color:var(--warn); }
+    .grid-title { display:flex; align-items:end; justify-content:space-between; margin:0 0 12px; }
+    h2 { margin:0; font-size:16px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(156px,1fr)); gap:12px; }
+    .thumb { background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; color:inherit; text-decoration:none; min-width:0; box-shadow:0 8px 24px rgba(0,0,0,.16); padding:0; text-align:left; cursor:pointer; font:inherit; }
+    .thumb:hover { border-color:#60717d; transform:translateY(-1px); transition:.12s ease; }
+    .thumb img { width:100%; aspect-ratio:4 / 3; object-fit:contain; display:block; background:#050607; }
+    .thumb-meta { display:block; padding:9px; min-width:0; }
+    .thumb-meta b { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+    .thumb-meta small { display:block; color:var(--muted); margin-top:3px; font-size:11px; }
+    pre { margin:8px 0 0; white-space:pre-wrap; color:#cbd5da; font-size:11px; line-height:1.45; }
+    .empty { color:var(--muted); }
+    @media (max-width:980px) {
+      main { grid-template-columns:1fr; }
+      .side { position:static; max-height:none; overflow:visible; padding-right:0; }
+    }
+  .global-nav{position:sticky;top:0;z-index:30;display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 12px;background:#111318;border-bottom:1px solid #30343d}.global-nav a{display:inline-flex;align-items:center;justify-content:center;min-width:86px;height:34px;padding:0 14px;border:1px solid #343d46;border-radius:6px;background:#1a1f25;color:#dbeafe;text-decoration:none;font-weight:700;font-size:14px;line-height:1;white-space:nowrap}.global-nav a:hover{background:#22303a;border-color:#5cc8a7;color:#ffffff}@media(max-width:520px){.global-nav{gap:6px;padding:8px}.global-nav a{min-width:auto;height:32px;padding:0 10px;font-size:13px}}
+</style>
+</head>
+<body><div class="global-nav">
+  <a href="dashboard.html">Home</a>
+  <span style="display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid #343d46">
+    <span style="color:#91a0ad;font-size:12px;font-weight:800;white-space:nowrap">기능</span>
+    <a href="person.html">Person</a>
+    <a href="raspberry-pi5-architecture.html">Pi 5 Architecture</a>
+    <a href="event-synthesis.html">Event Synthesis</a>
+    <a href="synthetic-grid.html">Synthetic</a>
+  </span>
+  <span style="display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid #343d46">
+    <span style="color:#91a0ad;font-size:12px;font-weight:800;white-space:nowrap">제안서</span>
+    <a href="space-edge-proposal.html">Space Edge</a>
+    <a href="fall-plan.html">Fall Plan</a>
+  </span>
+</div>
+  <header>
+    <div class="bar">
+      <div>
+        <h1>Camera Snapshots</h1>
+        <div class="sub">Latest: <span id="latest-name">20260728_125539.jpg</span> · <span id="latest-age">0s ago</span> · live refresh 3s</div>
+      </div>
+      <div class="pill"><a class="top-link" href="person.html">Person events: <span id="person-count">677</span></a> · <span id="image-count">234</span> images</div>
+    </div>
+  </header>
+  <main>
+    <section class="gallery-wrap">
+      <div class="grid-title"><h2>Snapshots</h2><div class="sub">Newest first · click to enlarge</div></div>
+      <section class="grid" id="snapshot-grid">
+          <a class="thumb" href="assets/dashboard-images/20260728_125539.jpg" data-src="assets/dashboard-images/20260728_125539.jpg" data-name="20260728_125539.jpg" title="20260728_125539.jpg">
+            <img src="assets/dashboard-images/20260728_125539.jpg" loading="lazy" alt="20260728_125539.jpg">
+            <span class="thumb-meta"><b>20260728_125539.jpg</b><small>0s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125535.jpg" data-src="assets/dashboard-images/20260728_125535.jpg" data-name="20260728_125535.jpg" title="20260728_125535.jpg">
+            <img src="assets/dashboard-images/20260728_125535.jpg" loading="lazy" alt="20260728_125535.jpg">
+            <span class="thumb-meta"><b>20260728_125535.jpg</b><small>4s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125531.jpg" data-src="assets/dashboard-images/20260728_125531.jpg" data-name="20260728_125531.jpg" title="20260728_125531.jpg">
+            <img src="assets/dashboard-images/20260728_125531.jpg" loading="lazy" alt="20260728_125531.jpg">
+            <span class="thumb-meta"><b>20260728_125531.jpg</b><small>8s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125527.jpg" data-src="assets/dashboard-images/20260728_125527.jpg" data-name="20260728_125527.jpg" title="20260728_125527.jpg">
+            <img src="assets/dashboard-images/20260728_125527.jpg" loading="lazy" alt="20260728_125527.jpg">
+            <span class="thumb-meta"><b>20260728_125527.jpg</b><small>12s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125523.jpg" data-src="assets/dashboard-images/20260728_125523.jpg" data-name="20260728_125523.jpg" title="20260728_125523.jpg">
+            <img src="assets/dashboard-images/20260728_125523.jpg" loading="lazy" alt="20260728_125523.jpg">
+            <span class="thumb-meta"><b>20260728_125523.jpg</b><small>16s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125519.jpg" data-src="assets/dashboard-images/20260728_125519.jpg" data-name="20260728_125519.jpg" title="20260728_125519.jpg">
+            <img src="assets/dashboard-images/20260728_125519.jpg" loading="lazy" alt="20260728_125519.jpg">
+            <span class="thumb-meta"><b>20260728_125519.jpg</b><small>20s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125515.jpg" data-src="assets/dashboard-images/20260728_125515.jpg" data-name="20260728_125515.jpg" title="20260728_125515.jpg">
+            <img src="assets/dashboard-images/20260728_125515.jpg" loading="lazy" alt="20260728_125515.jpg">
+            <span class="thumb-meta"><b>20260728_125515.jpg</b><small>25s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125511.jpg" data-src="assets/dashboard-images/20260728_125511.jpg" data-name="20260728_125511.jpg" title="20260728_125511.jpg">
+            <img src="assets/dashboard-images/20260728_125511.jpg" loading="lazy" alt="20260728_125511.jpg">
+            <span class="thumb-meta"><b>20260728_125511.jpg</b><small>28s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125507.jpg" data-src="assets/dashboard-images/20260728_125507.jpg" data-name="20260728_125507.jpg" title="20260728_125507.jpg">
+            <img src="assets/dashboard-images/20260728_125507.jpg" loading="lazy" alt="20260728_125507.jpg">
+            <span class="thumb-meta"><b>20260728_125507.jpg</b><small>32s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125503.jpg" data-src="assets/dashboard-images/20260728_125503.jpg" data-name="20260728_125503.jpg" title="20260728_125503.jpg">
+            <img src="assets/dashboard-images/20260728_125503.jpg" loading="lazy" alt="20260728_125503.jpg">
+            <span class="thumb-meta"><b>20260728_125503.jpg</b><small>36s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125459.jpg" data-src="assets/dashboard-images/20260728_125459.jpg" data-name="20260728_125459.jpg" title="20260728_125459.jpg">
+            <img src="assets/dashboard-images/20260728_125459.jpg" loading="lazy" alt="20260728_125459.jpg">
+            <span class="thumb-meta"><b>20260728_125459.jpg</b><small>40s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125455.jpg" data-src="assets/dashboard-images/20260728_125455.jpg" data-name="20260728_125455.jpg" title="20260728_125455.jpg">
+            <img src="assets/dashboard-images/20260728_125455.jpg" loading="lazy" alt="20260728_125455.jpg">
+            <span class="thumb-meta"><b>20260728_125455.jpg</b><small>44s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125451.jpg" data-src="assets/dashboard-images/20260728_125451.jpg" data-name="20260728_125451.jpg" title="20260728_125451.jpg">
+            <img src="assets/dashboard-images/20260728_125451.jpg" loading="lazy" alt="20260728_125451.jpg">
+            <span class="thumb-meta"><b>20260728_125451.jpg</b><small>48s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125447.jpg" data-src="assets/dashboard-images/20260728_125447.jpg" data-name="20260728_125447.jpg" title="20260728_125447.jpg">
+            <img src="assets/dashboard-images/20260728_125447.jpg" loading="lazy" alt="20260728_125447.jpg">
+            <span class="thumb-meta"><b>20260728_125447.jpg</b><small>52s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125443.jpg" data-src="assets/dashboard-images/20260728_125443.jpg" data-name="20260728_125443.jpg" title="20260728_125443.jpg">
+            <img src="assets/dashboard-images/20260728_125443.jpg" loading="lazy" alt="20260728_125443.jpg">
+            <span class="thumb-meta"><b>20260728_125443.jpg</b><small>56s ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125439.jpg" data-src="assets/dashboard-images/20260728_125439.jpg" data-name="20260728_125439.jpg" title="20260728_125439.jpg">
+            <img src="assets/dashboard-images/20260728_125439.jpg" loading="lazy" alt="20260728_125439.jpg">
+            <span class="thumb-meta"><b>20260728_125439.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125435.jpg" data-src="assets/dashboard-images/20260728_125435.jpg" data-name="20260728_125435.jpg" title="20260728_125435.jpg">
+            <img src="assets/dashboard-images/20260728_125435.jpg" loading="lazy" alt="20260728_125435.jpg">
+            <span class="thumb-meta"><b>20260728_125435.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125431.jpg" data-src="assets/dashboard-images/20260728_125431.jpg" data-name="20260728_125431.jpg" title="20260728_125431.jpg">
+            <img src="assets/dashboard-images/20260728_125431.jpg" loading="lazy" alt="20260728_125431.jpg">
+            <span class="thumb-meta"><b>20260728_125431.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125427.jpg" data-src="assets/dashboard-images/20260728_125427.jpg" data-name="20260728_125427.jpg" title="20260728_125427.jpg">
+            <img src="assets/dashboard-images/20260728_125427.jpg" loading="lazy" alt="20260728_125427.jpg">
+            <span class="thumb-meta"><b>20260728_125427.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125423.jpg" data-src="assets/dashboard-images/20260728_125423.jpg" data-name="20260728_125423.jpg" title="20260728_125423.jpg">
+            <img src="assets/dashboard-images/20260728_125423.jpg" loading="lazy" alt="20260728_125423.jpg">
+            <span class="thumb-meta"><b>20260728_125423.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_125419.jpg" data-src="assets/dashboard-images/20260728_125419.jpg" data-name="20260728_125419.jpg" title="20260728_125419.jpg">
+            <img src="assets/dashboard-images/20260728_125419.jpg" loading="lazy" alt="20260728_125419.jpg">
+            <span class="thumb-meta"><b>20260728_125419.jpg</b><small>1m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122136.jpg" data-src="assets/dashboard-images/20260728_122136.jpg" data-name="20260728_122136.jpg" title="20260728_122136.jpg">
+            <img src="assets/dashboard-images/20260728_122136.jpg" loading="lazy" alt="20260728_122136.jpg">
+            <span class="thumb-meta"><b>20260728_122136.jpg</b><small>34m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122132.jpg" data-src="assets/dashboard-images/20260728_122132.jpg" data-name="20260728_122132.jpg" title="20260728_122132.jpg">
+            <img src="assets/dashboard-images/20260728_122132.jpg" loading="lazy" alt="20260728_122132.jpg">
+            <span class="thumb-meta"><b>20260728_122132.jpg</b><small>34m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122124.jpg" data-src="assets/dashboard-images/20260728_122124.jpg" data-name="20260728_122124.jpg" title="20260728_122124.jpg">
+            <img src="assets/dashboard-images/20260728_122124.jpg" loading="lazy" alt="20260728_122124.jpg">
+            <span class="thumb-meta"><b>20260728_122124.jpg</b><small>34m ago · 41 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122110.jpg" data-src="assets/dashboard-images/20260728_122110.jpg" data-name="20260728_122110.jpg" title="20260728_122110.jpg">
+            <img src="assets/dashboard-images/20260728_122110.jpg" loading="lazy" alt="20260728_122110.jpg">
+            <span class="thumb-meta"><b>20260728_122110.jpg</b><small>34m ago · 39 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122100.jpg" data-src="assets/dashboard-images/20260728_122100.jpg" data-name="20260728_122100.jpg" title="20260728_122100.jpg">
+            <img src="assets/dashboard-images/20260728_122100.jpg" loading="lazy" alt="20260728_122100.jpg">
+            <span class="thumb-meta"><b>20260728_122100.jpg</b><small>34m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122056.jpg" data-src="assets/dashboard-images/20260728_122056.jpg" data-name="20260728_122056.jpg" title="20260728_122056.jpg">
+            <img src="assets/dashboard-images/20260728_122056.jpg" loading="lazy" alt="20260728_122056.jpg">
+            <span class="thumb-meta"><b>20260728_122056.jpg</b><small>34m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122052.jpg" data-src="assets/dashboard-images/20260728_122052.jpg" data-name="20260728_122052.jpg" title="20260728_122052.jpg">
+            <img src="assets/dashboard-images/20260728_122052.jpg" loading="lazy" alt="20260728_122052.jpg">
+            <span class="thumb-meta"><b>20260728_122052.jpg</b><small>34m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122048.jpg" data-src="assets/dashboard-images/20260728_122048.jpg" data-name="20260728_122048.jpg" title="20260728_122048.jpg">
+            <img src="assets/dashboard-images/20260728_122048.jpg" loading="lazy" alt="20260728_122048.jpg">
+            <span class="thumb-meta"><b>20260728_122048.jpg</b><small>34m ago · 39 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122045.jpg" data-src="assets/dashboard-images/20260728_122045.jpg" data-name="20260728_122045.jpg" title="20260728_122045.jpg">
+            <img src="assets/dashboard-images/20260728_122045.jpg" loading="lazy" alt="20260728_122045.jpg">
+            <span class="thumb-meta"><b>20260728_122045.jpg</b><small>34m ago · 32 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122042.jpg" data-src="assets/dashboard-images/20260728_122042.jpg" data-name="20260728_122042.jpg" title="20260728_122042.jpg">
+            <img src="assets/dashboard-images/20260728_122042.jpg" loading="lazy" alt="20260728_122042.jpg">
+            <span class="thumb-meta"><b>20260728_122042.jpg</b><small>34m ago · 23 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122038.jpg" data-src="assets/dashboard-images/20260728_122038.jpg" data-name="20260728_122038.jpg" title="20260728_122038.jpg">
+            <img src="assets/dashboard-images/20260728_122038.jpg" loading="lazy" alt="20260728_122038.jpg">
+            <span class="thumb-meta"><b>20260728_122038.jpg</b><small>35m ago · 25 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_122034.jpg" data-src="assets/dashboard-images/20260728_122034.jpg" data-name="20260728_122034.jpg" title="20260728_122034.jpg">
+            <img src="assets/dashboard-images/20260728_122034.jpg" loading="lazy" alt="20260728_122034.jpg">
+            <span class="thumb-meta"><b>20260728_122034.jpg</b><small>35m ago · 25 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_121954.jpg" data-src="assets/dashboard-images/20260728_121954.jpg" data-name="20260728_121954.jpg" title="20260728_121954.jpg">
+            <img src="assets/dashboard-images/20260728_121954.jpg" loading="lazy" alt="20260728_121954.jpg">
+            <span class="thumb-meta"><b>20260728_121954.jpg</b><small>35m ago · 21 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_121946.jpg" data-src="assets/dashboard-images/20260728_121946.jpg" data-name="20260728_121946.jpg" title="20260728_121946.jpg">
+            <img src="assets/dashboard-images/20260728_121946.jpg" loading="lazy" alt="20260728_121946.jpg">
+            <span class="thumb-meta"><b>20260728_121946.jpg</b><small>35m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_121943.jpg" data-src="assets/dashboard-images/20260728_121943.jpg" data-name="20260728_121943.jpg" title="20260728_121943.jpg">
+            <img src="assets/dashboard-images/20260728_121943.jpg" loading="lazy" alt="20260728_121943.jpg">
+            <span class="thumb-meta"><b>20260728_121943.jpg</b><small>35m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_121932.jpg" data-src="assets/dashboard-images/20260728_121932.jpg" data-name="20260728_121932.jpg" title="20260728_121932.jpg">
+            <img src="assets/dashboard-images/20260728_121932.jpg" loading="lazy" alt="20260728_121932.jpg">
+            <span class="thumb-meta"><b>20260728_121932.jpg</b><small>36m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_121549.jpg" data-src="assets/dashboard-images/20260728_121549.jpg" data-name="20260728_121549.jpg" title="20260728_121549.jpg">
+            <img src="assets/dashboard-images/20260728_121549.jpg" loading="lazy" alt="20260728_121549.jpg">
+            <span class="thumb-meta"><b>20260728_121549.jpg</b><small>39m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_120218.jpg" data-src="assets/dashboard-images/20260728_120218.jpg" data-name="20260728_120218.jpg" title="20260728_120218.jpg">
+            <img src="assets/dashboard-images/20260728_120218.jpg" loading="lazy" alt="20260728_120218.jpg">
+            <span class="thumb-meta"><b>20260728_120218.jpg</b><small>53m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_120040.jpg" data-src="assets/dashboard-images/20260728_120040.jpg" data-name="20260728_120040.jpg" title="20260728_120040.jpg">
+            <img src="assets/dashboard-images/20260728_120040.jpg" loading="lazy" alt="20260728_120040.jpg">
+            <span class="thumb-meta"><b>20260728_120040.jpg</b><small>55m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_120033.jpg" data-src="assets/dashboard-images/20260728_120033.jpg" data-name="20260728_120033.jpg" title="20260728_120033.jpg">
+            <img src="assets/dashboard-images/20260728_120033.jpg" loading="lazy" alt="20260728_120033.jpg">
+            <span class="thumb-meta"><b>20260728_120033.jpg</b><small>55m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115930.jpg" data-src="assets/dashboard-images/20260728_115930.jpg" data-name="20260728_115930.jpg" title="20260728_115930.jpg">
+            <img src="assets/dashboard-images/20260728_115930.jpg" loading="lazy" alt="20260728_115930.jpg">
+            <span class="thumb-meta"><b>20260728_115930.jpg</b><small>56m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115918.jpg" data-src="assets/dashboard-images/20260728_115918.jpg" data-name="20260728_115918.jpg" title="20260728_115918.jpg">
+            <img src="assets/dashboard-images/20260728_115918.jpg" loading="lazy" alt="20260728_115918.jpg">
+            <span class="thumb-meta"><b>20260728_115918.jpg</b><small>56m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115857.jpg" data-src="assets/dashboard-images/20260728_115857.jpg" data-name="20260728_115857.jpg" title="20260728_115857.jpg">
+            <img src="assets/dashboard-images/20260728_115857.jpg" loading="lazy" alt="20260728_115857.jpg">
+            <span class="thumb-meta"><b>20260728_115857.jpg</b><small>56m ago · 32 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115854.jpg" data-src="assets/dashboard-images/20260728_115854.jpg" data-name="20260728_115854.jpg" title="20260728_115854.jpg">
+            <img src="assets/dashboard-images/20260728_115854.jpg" loading="lazy" alt="20260728_115854.jpg">
+            <span class="thumb-meta"><b>20260728_115854.jpg</b><small>56m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115847.jpg" data-src="assets/dashboard-images/20260728_115847.jpg" data-name="20260728_115847.jpg" title="20260728_115847.jpg">
+            <img src="assets/dashboard-images/20260728_115847.jpg" loading="lazy" alt="20260728_115847.jpg">
+            <span class="thumb-meta"><b>20260728_115847.jpg</b><small>56m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115041.jpg" data-src="assets/dashboard-images/20260728_115041.jpg" data-name="20260728_115041.jpg" title="20260728_115041.jpg">
+            <img src="assets/dashboard-images/20260728_115041.jpg" loading="lazy" alt="20260728_115041.jpg">
+            <span class="thumb-meta"><b>20260728_115041.jpg</b><small>1h 4m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_115033.jpg" data-src="assets/dashboard-images/20260728_115033.jpg" data-name="20260728_115033.jpg" title="20260728_115033.jpg">
+            <img src="assets/dashboard-images/20260728_115033.jpg" loading="lazy" alt="20260728_115033.jpg">
+            <span class="thumb-meta"><b>20260728_115033.jpg</b><small>1h 5m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110210.jpg" data-src="assets/dashboard-images/20260728_110210.jpg" data-name="20260728_110210.jpg" title="20260728_110210.jpg">
+            <img src="assets/dashboard-images/20260728_110210.jpg" loading="lazy" alt="20260728_110210.jpg">
+            <span class="thumb-meta"><b>20260728_110210.jpg</b><small>1h 53m ago · 41 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110202.jpg" data-src="assets/dashboard-images/20260728_110202.jpg" data-name="20260728_110202.jpg" title="20260728_110202.jpg">
+            <img src="assets/dashboard-images/20260728_110202.jpg" loading="lazy" alt="20260728_110202.jpg">
+            <span class="thumb-meta"><b>20260728_110202.jpg</b><small>1h 53m ago · 39 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110154.jpg" data-src="assets/dashboard-images/20260728_110154.jpg" data-name="20260728_110154.jpg" title="20260728_110154.jpg">
+            <img src="assets/dashboard-images/20260728_110154.jpg" loading="lazy" alt="20260728_110154.jpg">
+            <span class="thumb-meta"><b>20260728_110154.jpg</b><small>1h 53m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110126.jpg" data-src="assets/dashboard-images/20260728_110126.jpg" data-name="20260728_110126.jpg" title="20260728_110126.jpg">
+            <img src="assets/dashboard-images/20260728_110126.jpg" loading="lazy" alt="20260728_110126.jpg">
+            <span class="thumb-meta"><b>20260728_110126.jpg</b><small>1h 54m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110122.jpg" data-src="assets/dashboard-images/20260728_110122.jpg" data-name="20260728_110122.jpg" title="20260728_110122.jpg">
+            <img src="assets/dashboard-images/20260728_110122.jpg" loading="lazy" alt="20260728_110122.jpg">
+            <span class="thumb-meta"><b>20260728_110122.jpg</b><small>1h 54m ago · 30 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110114.jpg" data-src="assets/dashboard-images/20260728_110114.jpg" data-name="20260728_110114.jpg" title="20260728_110114.jpg">
+            <img src="assets/dashboard-images/20260728_110114.jpg" loading="lazy" alt="20260728_110114.jpg">
+            <span class="thumb-meta"><b>20260728_110114.jpg</b><small>1h 54m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110058.jpg" data-src="assets/dashboard-images/20260728_110058.jpg" data-name="20260728_110058.jpg" title="20260728_110058.jpg">
+            <img src="assets/dashboard-images/20260728_110058.jpg" loading="lazy" alt="20260728_110058.jpg">
+            <span class="thumb-meta"><b>20260728_110058.jpg</b><small>1h 54m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110042.jpg" data-src="assets/dashboard-images/20260728_110042.jpg" data-name="20260728_110042.jpg" title="20260728_110042.jpg">
+            <img src="assets/dashboard-images/20260728_110042.jpg" loading="lazy" alt="20260728_110042.jpg">
+            <span class="thumb-meta"><b>20260728_110042.jpg</b><small>1h 54m ago · 30 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110038.jpg" data-src="assets/dashboard-images/20260728_110038.jpg" data-name="20260728_110038.jpg" title="20260728_110038.jpg">
+            <img src="assets/dashboard-images/20260728_110038.jpg" loading="lazy" alt="20260728_110038.jpg">
+            <span class="thumb-meta"><b>20260728_110038.jpg</b><small>1h 55m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110034.jpg" data-src="assets/dashboard-images/20260728_110034.jpg" data-name="20260728_110034.jpg" title="20260728_110034.jpg">
+            <img src="assets/dashboard-images/20260728_110034.jpg" loading="lazy" alt="20260728_110034.jpg">
+            <span class="thumb-meta"><b>20260728_110034.jpg</b><small>1h 55m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110030.jpg" data-src="assets/dashboard-images/20260728_110030.jpg" data-name="20260728_110030.jpg" title="20260728_110030.jpg">
+            <img src="assets/dashboard-images/20260728_110030.jpg" loading="lazy" alt="20260728_110030.jpg">
+            <span class="thumb-meta"><b>20260728_110030.jpg</b><small>1h 55m ago · 32 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_110026.jpg" data-src="assets/dashboard-images/20260728_110026.jpg" data-name="20260728_110026.jpg" title="20260728_110026.jpg">
+            <img src="assets/dashboard-images/20260728_110026.jpg" loading="lazy" alt="20260728_110026.jpg">
+            <span class="thumb-meta"><b>20260728_110026.jpg</b><small>1h 55m ago · 30 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104827.jpg" data-src="assets/dashboard-images/20260728_104827.jpg" data-name="20260728_104827.jpg" title="20260728_104827.jpg">
+            <img src="assets/dashboard-images/20260728_104827.jpg" loading="lazy" alt="20260728_104827.jpg">
+            <span class="thumb-meta"><b>20260728_104827.jpg</b><small>2h 7m ago · 32 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104823.jpg" data-src="assets/dashboard-images/20260728_104823.jpg" data-name="20260728_104823.jpg" title="20260728_104823.jpg">
+            <img src="assets/dashboard-images/20260728_104823.jpg" loading="lazy" alt="20260728_104823.jpg">
+            <span class="thumb-meta"><b>20260728_104823.jpg</b><small>2h 7m ago · 30 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104714.jpg" data-src="assets/dashboard-images/20260728_104714.jpg" data-name="20260728_104714.jpg" title="20260728_104714.jpg">
+            <img src="assets/dashboard-images/20260728_104714.jpg" loading="lazy" alt="20260728_104714.jpg">
+            <span class="thumb-meta"><b>20260728_104714.jpg</b><small>2h 8m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104710.jpg" data-src="assets/dashboard-images/20260728_104710.jpg" data-name="20260728_104710.jpg" title="20260728_104710.jpg">
+            <img src="assets/dashboard-images/20260728_104710.jpg" loading="lazy" alt="20260728_104710.jpg">
+            <span class="thumb-meta"><b>20260728_104710.jpg</b><small>2h 8m ago · 28 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104707.jpg" data-src="assets/dashboard-images/20260728_104707.jpg" data-name="20260728_104707.jpg" title="20260728_104707.jpg">
+            <img src="assets/dashboard-images/20260728_104707.jpg" loading="lazy" alt="20260728_104707.jpg">
+            <span class="thumb-meta"><b>20260728_104707.jpg</b><small>2h 8m ago · 28 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_104703.jpg" data-src="assets/dashboard-images/20260728_104703.jpg" data-name="20260728_104703.jpg" title="20260728_104703.jpg">
+            <img src="assets/dashboard-images/20260728_104703.jpg" loading="lazy" alt="20260728_104703.jpg">
+            <span class="thumb-meta"><b>20260728_104703.jpg</b><small>2h 8m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_103928.jpg" data-src="assets/dashboard-images/20260728_103928.jpg" data-name="20260728_103928.jpg" title="20260728_103928.jpg">
+            <img src="assets/dashboard-images/20260728_103928.jpg" loading="lazy" alt="20260728_103928.jpg">
+            <span class="thumb-meta"><b>20260728_103928.jpg</b><small>2h 16m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_103920.jpg" data-src="assets/dashboard-images/20260728_103920.jpg" data-name="20260728_103920.jpg" title="20260728_103920.jpg">
+            <img src="assets/dashboard-images/20260728_103920.jpg" loading="lazy" alt="20260728_103920.jpg">
+            <span class="thumb-meta"><b>20260728_103920.jpg</b><small>2h 16m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_103734.jpg" data-src="assets/dashboard-images/20260728_103734.jpg" data-name="20260728_103734.jpg" title="20260728_103734.jpg">
+            <img src="assets/dashboard-images/20260728_103734.jpg" loading="lazy" alt="20260728_103734.jpg">
+            <span class="thumb-meta"><b>20260728_103734.jpg</b><small>2h 18m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102451.jpg" data-src="assets/dashboard-images/20260728_102451.jpg" data-name="20260728_102451.jpg" title="20260728_102451.jpg">
+            <img src="assets/dashboard-images/20260728_102451.jpg" loading="lazy" alt="20260728_102451.jpg">
+            <span class="thumb-meta"><b>20260728_102451.jpg</b><small>2h 30m ago · 26 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102447.jpg" data-src="assets/dashboard-images/20260728_102447.jpg" data-name="20260728_102447.jpg" title="20260728_102447.jpg">
+            <img src="assets/dashboard-images/20260728_102447.jpg" loading="lazy" alt="20260728_102447.jpg">
+            <span class="thumb-meta"><b>20260728_102447.jpg</b><small>2h 30m ago · 26 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102439.jpg" data-src="assets/dashboard-images/20260728_102439.jpg" data-name="20260728_102439.jpg" title="20260728_102439.jpg">
+            <img src="assets/dashboard-images/20260728_102439.jpg" loading="lazy" alt="20260728_102439.jpg">
+            <span class="thumb-meta"><b>20260728_102439.jpg</b><small>2h 31m ago · 29 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102411.jpg" data-src="assets/dashboard-images/20260728_102411.jpg" data-name="20260728_102411.jpg" title="20260728_102411.jpg">
+            <img src="assets/dashboard-images/20260728_102411.jpg" loading="lazy" alt="20260728_102411.jpg">
+            <span class="thumb-meta"><b>20260728_102411.jpg</b><small>2h 31m ago · 28 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102359.jpg" data-src="assets/dashboard-images/20260728_102359.jpg" data-name="20260728_102359.jpg" title="20260728_102359.jpg">
+            <img src="assets/dashboard-images/20260728_102359.jpg" loading="lazy" alt="20260728_102359.jpg">
+            <span class="thumb-meta"><b>20260728_102359.jpg</b><small>2h 31m ago · 31 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102355.jpg" data-src="assets/dashboard-images/20260728_102355.jpg" data-name="20260728_102355.jpg" title="20260728_102355.jpg">
+            <img src="assets/dashboard-images/20260728_102355.jpg" loading="lazy" alt="20260728_102355.jpg">
+            <span class="thumb-meta"><b>20260728_102355.jpg</b><small>2h 31m ago · 28 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102147.jpg" data-src="assets/dashboard-images/20260728_102147.jpg" data-name="20260728_102147.jpg" title="20260728_102147.jpg">
+            <img src="assets/dashboard-images/20260728_102147.jpg" loading="lazy" alt="20260728_102147.jpg">
+            <span class="thumb-meta"><b>20260728_102147.jpg</b><small>2h 33m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102123.jpg" data-src="assets/dashboard-images/20260728_102123.jpg" data-name="20260728_102123.jpg" title="20260728_102123.jpg">
+            <img src="assets/dashboard-images/20260728_102123.jpg" loading="lazy" alt="20260728_102123.jpg">
+            <span class="thumb-meta"><b>20260728_102123.jpg</b><small>2h 34m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102115.jpg" data-src="assets/dashboard-images/20260728_102115.jpg" data-name="20260728_102115.jpg" title="20260728_102115.jpg">
+            <img src="assets/dashboard-images/20260728_102115.jpg" loading="lazy" alt="20260728_102115.jpg">
+            <span class="thumb-meta"><b>20260728_102115.jpg</b><small>2h 34m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102043.jpg" data-src="assets/dashboard-images/20260728_102043.jpg" data-name="20260728_102043.jpg" title="20260728_102043.jpg">
+            <img src="assets/dashboard-images/20260728_102043.jpg" loading="lazy" alt="20260728_102043.jpg">
+            <span class="thumb-meta"><b>20260728_102043.jpg</b><small>2h 34m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102039.jpg" data-src="assets/dashboard-images/20260728_102039.jpg" data-name="20260728_102039.jpg" title="20260728_102039.jpg">
+            <img src="assets/dashboard-images/20260728_102039.jpg" loading="lazy" alt="20260728_102039.jpg">
+            <span class="thumb-meta"><b>20260728_102039.jpg</b><small>2h 35m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102027.jpg" data-src="assets/dashboard-images/20260728_102027.jpg" data-name="20260728_102027.jpg" title="20260728_102027.jpg">
+            <img src="assets/dashboard-images/20260728_102027.jpg" loading="lazy" alt="20260728_102027.jpg">
+            <span class="thumb-meta"><b>20260728_102027.jpg</b><small>2h 35m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102023.jpg" data-src="assets/dashboard-images/20260728_102023.jpg" data-name="20260728_102023.jpg" title="20260728_102023.jpg">
+            <img src="assets/dashboard-images/20260728_102023.jpg" loading="lazy" alt="20260728_102023.jpg">
+            <span class="thumb-meta"><b>20260728_102023.jpg</b><small>2h 35m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_102011.jpg" data-src="assets/dashboard-images/20260728_102011.jpg" data-name="20260728_102011.jpg" title="20260728_102011.jpg">
+            <img src="assets/dashboard-images/20260728_102011.jpg" loading="lazy" alt="20260728_102011.jpg">
+            <span class="thumb-meta"><b>20260728_102011.jpg</b><small>2h 35m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100945.jpg" data-src="assets/dashboard-images/20260728_100945.jpg" data-name="20260728_100945.jpg" title="20260728_100945.jpg">
+            <img src="assets/dashboard-images/20260728_100945.jpg" loading="lazy" alt="20260728_100945.jpg">
+            <span class="thumb-meta"><b>20260728_100945.jpg</b><small>2h 45m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100602.jpg" data-src="assets/dashboard-images/20260728_100602.jpg" data-name="20260728_100602.jpg" title="20260728_100602.jpg">
+            <img src="assets/dashboard-images/20260728_100602.jpg" loading="lazy" alt="20260728_100602.jpg">
+            <span class="thumb-meta"><b>20260728_100602.jpg</b><small>2h 49m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100550.jpg" data-src="assets/dashboard-images/20260728_100550.jpg" data-name="20260728_100550.jpg" title="20260728_100550.jpg">
+            <img src="assets/dashboard-images/20260728_100550.jpg" loading="lazy" alt="20260728_100550.jpg">
+            <span class="thumb-meta"><b>20260728_100550.jpg</b><small>2h 49m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100547.jpg" data-src="assets/dashboard-images/20260728_100547.jpg" data-name="20260728_100547.jpg" title="20260728_100547.jpg">
+            <img src="assets/dashboard-images/20260728_100547.jpg" loading="lazy" alt="20260728_100547.jpg">
+            <span class="thumb-meta"><b>20260728_100547.jpg</b><small>2h 49m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100536.jpg" data-src="assets/dashboard-images/20260728_100536.jpg" data-name="20260728_100536.jpg" title="20260728_100536.jpg">
+            <img src="assets/dashboard-images/20260728_100536.jpg" loading="lazy" alt="20260728_100536.jpg">
+            <span class="thumb-meta"><b>20260728_100536.jpg</b><small>2h 50m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100532.jpg" data-src="assets/dashboard-images/20260728_100532.jpg" data-name="20260728_100532.jpg" title="20260728_100532.jpg">
+            <img src="assets/dashboard-images/20260728_100532.jpg" loading="lazy" alt="20260728_100532.jpg">
+            <span class="thumb-meta"><b>20260728_100532.jpg</b><small>2h 50m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100529.jpg" data-src="assets/dashboard-images/20260728_100529.jpg" data-name="20260728_100529.jpg" title="20260728_100529.jpg">
+            <img src="assets/dashboard-images/20260728_100529.jpg" loading="lazy" alt="20260728_100529.jpg">
+            <span class="thumb-meta"><b>20260728_100529.jpg</b><small>2h 50m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100525.jpg" data-src="assets/dashboard-images/20260728_100525.jpg" data-name="20260728_100525.jpg" title="20260728_100525.jpg">
+            <img src="assets/dashboard-images/20260728_100525.jpg" loading="lazy" alt="20260728_100525.jpg">
+            <span class="thumb-meta"><b>20260728_100525.jpg</b><small>2h 50m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100517.jpg" data-src="assets/dashboard-images/20260728_100517.jpg" data-name="20260728_100517.jpg" title="20260728_100517.jpg">
+            <img src="assets/dashboard-images/20260728_100517.jpg" loading="lazy" alt="20260728_100517.jpg">
+            <span class="thumb-meta"><b>20260728_100517.jpg</b><small>2h 50m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100459.jpg" data-src="assets/dashboard-images/20260728_100459.jpg" data-name="20260728_100459.jpg" title="20260728_100459.jpg">
+            <img src="assets/dashboard-images/20260728_100459.jpg" loading="lazy" alt="20260728_100459.jpg">
+            <span class="thumb-meta"><b>20260728_100459.jpg</b><small>2h 50m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100444.jpg" data-src="assets/dashboard-images/20260728_100444.jpg" data-name="20260728_100444.jpg" title="20260728_100444.jpg">
+            <img src="assets/dashboard-images/20260728_100444.jpg" loading="lazy" alt="20260728_100444.jpg">
+            <span class="thumb-meta"><b>20260728_100444.jpg</b><small>2h 50m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100353.jpg" data-src="assets/dashboard-images/20260728_100353.jpg" data-name="20260728_100353.jpg" title="20260728_100353.jpg">
+            <img src="assets/dashboard-images/20260728_100353.jpg" loading="lazy" alt="20260728_100353.jpg">
+            <span class="thumb-meta"><b>20260728_100353.jpg</b><small>2h 51m ago · 38 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100349.jpg" data-src="assets/dashboard-images/20260728_100349.jpg" data-name="20260728_100349.jpg" title="20260728_100349.jpg">
+            <img src="assets/dashboard-images/20260728_100349.jpg" loading="lazy" alt="20260728_100349.jpg">
+            <span class="thumb-meta"><b>20260728_100349.jpg</b><small>2h 51m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100346.jpg" data-src="assets/dashboard-images/20260728_100346.jpg" data-name="20260728_100346.jpg" title="20260728_100346.jpg">
+            <img src="assets/dashboard-images/20260728_100346.jpg" loading="lazy" alt="20260728_100346.jpg">
+            <span class="thumb-meta"><b>20260728_100346.jpg</b><small>2h 51m ago · 41 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100342.jpg" data-src="assets/dashboard-images/20260728_100342.jpg" data-name="20260728_100342.jpg" title="20260728_100342.jpg">
+            <img src="assets/dashboard-images/20260728_100342.jpg" loading="lazy" alt="20260728_100342.jpg">
+            <span class="thumb-meta"><b>20260728_100342.jpg</b><small>2h 51m ago · 40 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100303.jpg" data-src="assets/dashboard-images/20260728_100303.jpg" data-name="20260728_100303.jpg" title="20260728_100303.jpg">
+            <img src="assets/dashboard-images/20260728_100303.jpg" loading="lazy" alt="20260728_100303.jpg">
+            <span class="thumb-meta"><b>20260728_100303.jpg</b><small>2h 52m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_100256.jpg" data-src="assets/dashboard-images/20260728_100256.jpg" data-name="20260728_100256.jpg" title="20260728_100256.jpg">
+            <img src="assets/dashboard-images/20260728_100256.jpg" loading="lazy" alt="20260728_100256.jpg">
+            <span class="thumb-meta"><b>20260728_100256.jpg</b><small>2h 52m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095849.jpg" data-src="assets/dashboard-images/20260728_095849.jpg" data-name="20260728_095849.jpg" title="20260728_095849.jpg">
+            <img src="assets/dashboard-images/20260728_095849.jpg" loading="lazy" alt="20260728_095849.jpg">
+            <span class="thumb-meta"><b>20260728_095849.jpg</b><small>2h 56m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095829.jpg" data-src="assets/dashboard-images/20260728_095829.jpg" data-name="20260728_095829.jpg" title="20260728_095829.jpg">
+            <img src="assets/dashboard-images/20260728_095829.jpg" loading="lazy" alt="20260728_095829.jpg">
+            <span class="thumb-meta"><b>20260728_095829.jpg</b><small>2h 57m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095825.jpg" data-src="assets/dashboard-images/20260728_095825.jpg" data-name="20260728_095825.jpg" title="20260728_095825.jpg">
+            <img src="assets/dashboard-images/20260728_095825.jpg" loading="lazy" alt="20260728_095825.jpg">
+            <span class="thumb-meta"><b>20260728_095825.jpg</b><small>2h 57m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095822.jpg" data-src="assets/dashboard-images/20260728_095822.jpg" data-name="20260728_095822.jpg" title="20260728_095822.jpg">
+            <img src="assets/dashboard-images/20260728_095822.jpg" loading="lazy" alt="20260728_095822.jpg">
+            <span class="thumb-meta"><b>20260728_095822.jpg</b><small>2h 57m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095815.jpg" data-src="assets/dashboard-images/20260728_095815.jpg" data-name="20260728_095815.jpg" title="20260728_095815.jpg">
+            <img src="assets/dashboard-images/20260728_095815.jpg" loading="lazy" alt="20260728_095815.jpg">
+            <span class="thumb-meta"><b>20260728_095815.jpg</b><small>2h 57m ago · 32 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095803.jpg" data-src="assets/dashboard-images/20260728_095803.jpg" data-name="20260728_095803.jpg" title="20260728_095803.jpg">
+            <img src="assets/dashboard-images/20260728_095803.jpg" loading="lazy" alt="20260728_095803.jpg">
+            <span class="thumb-meta"><b>20260728_095803.jpg</b><small>2h 57m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095759.jpg" data-src="assets/dashboard-images/20260728_095759.jpg" data-name="20260728_095759.jpg" title="20260728_095759.jpg">
+            <img src="assets/dashboard-images/20260728_095759.jpg" loading="lazy" alt="20260728_095759.jpg">
+            <span class="thumb-meta"><b>20260728_095759.jpg</b><small>2h 57m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095752.jpg" data-src="assets/dashboard-images/20260728_095752.jpg" data-name="20260728_095752.jpg" title="20260728_095752.jpg">
+            <img src="assets/dashboard-images/20260728_095752.jpg" loading="lazy" alt="20260728_095752.jpg">
+            <span class="thumb-meta"><b>20260728_095752.jpg</b><small>2h 57m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095748.jpg" data-src="assets/dashboard-images/20260728_095748.jpg" data-name="20260728_095748.jpg" title="20260728_095748.jpg">
+            <img src="assets/dashboard-images/20260728_095748.jpg" loading="lazy" alt="20260728_095748.jpg">
+            <span class="thumb-meta"><b>20260728_095748.jpg</b><small>2h 57m ago · 36 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095722.jpg" data-src="assets/dashboard-images/20260728_095722.jpg" data-name="20260728_095722.jpg" title="20260728_095722.jpg">
+            <img src="assets/dashboard-images/20260728_095722.jpg" loading="lazy" alt="20260728_095722.jpg">
+            <span class="thumb-meta"><b>20260728_095722.jpg</b><small>2h 58m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095612.jpg" data-src="assets/dashboard-images/20260728_095612.jpg" data-name="20260728_095612.jpg" title="20260728_095612.jpg">
+            <img src="assets/dashboard-images/20260728_095612.jpg" loading="lazy" alt="20260728_095612.jpg">
+            <span class="thumb-meta"><b>20260728_095612.jpg</b><small>2h 59m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095604.jpg" data-src="assets/dashboard-images/20260728_095604.jpg" data-name="20260728_095604.jpg" title="20260728_095604.jpg">
+            <img src="assets/dashboard-images/20260728_095604.jpg" loading="lazy" alt="20260728_095604.jpg">
+            <span class="thumb-meta"><b>20260728_095604.jpg</b><small>2h 59m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095542.jpg" data-src="assets/dashboard-images/20260728_095542.jpg" data-name="20260728_095542.jpg" title="20260728_095542.jpg">
+            <img src="assets/dashboard-images/20260728_095542.jpg" loading="lazy" alt="20260728_095542.jpg">
+            <span class="thumb-meta"><b>20260728_095542.jpg</b><small>2h 59m ago · 33 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095357.jpg" data-src="assets/dashboard-images/20260728_095357.jpg" data-name="20260728_095357.jpg" title="20260728_095357.jpg">
+            <img src="assets/dashboard-images/20260728_095357.jpg" loading="lazy" alt="20260728_095357.jpg">
+            <span class="thumb-meta"><b>20260728_095357.jpg</b><small>3h 1m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095339.jpg" data-src="assets/dashboard-images/20260728_095339.jpg" data-name="20260728_095339.jpg" title="20260728_095339.jpg">
+            <img src="assets/dashboard-images/20260728_095339.jpg" loading="lazy" alt="20260728_095339.jpg">
+            <span class="thumb-meta"><b>20260728_095339.jpg</b><small>3h 2m ago · 39 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095151.jpg" data-src="assets/dashboard-images/20260728_095151.jpg" data-name="20260728_095151.jpg" title="20260728_095151.jpg">
+            <img src="assets/dashboard-images/20260728_095151.jpg" loading="lazy" alt="20260728_095151.jpg">
+            <span class="thumb-meta"><b>20260728_095151.jpg</b><small>3h 3m ago · 34 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095100.jpg" data-src="assets/dashboard-images/20260728_095100.jpg" data-name="20260728_095100.jpg" title="20260728_095100.jpg">
+            <img src="assets/dashboard-images/20260728_095100.jpg" loading="lazy" alt="20260728_095100.jpg">
+            <span class="thumb-meta"><b>20260728_095100.jpg</b><small>3h 4m ago · 39 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095045.jpg" data-src="assets/dashboard-images/20260728_095045.jpg" data-name="20260728_095045.jpg" title="20260728_095045.jpg">
+            <img src="assets/dashboard-images/20260728_095045.jpg" loading="lazy" alt="20260728_095045.jpg">
+            <span class="thumb-meta"><b>20260728_095045.jpg</b><small>3h 4m ago · 37 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095042.jpg" data-src="assets/dashboard-images/20260728_095042.jpg" data-name="20260728_095042.jpg" title="20260728_095042.jpg">
+            <img src="assets/dashboard-images/20260728_095042.jpg" loading="lazy" alt="20260728_095042.jpg">
+            <span class="thumb-meta"><b>20260728_095042.jpg</b><small>3h 4m ago · 35 KB</small></span>
+          </a>
+        
+          <a class="thumb" href="assets/dashboard-images/20260728_095023.jpg" data-src="assets/dashboard-images/20260728_095023.jpg" data-name="20260728_095023.jpg" title="20260728_095023.jpg">
+            <img src="assets/dashboard-images/20260728_095023.jpg" loading="lazy" alt="20260728_095023.jpg">
+            <span class="thumb-meta"><b>20260728_095023.jpg</b><small>3h 5m ago · 40 KB</small></span>
+          </a>
+        </section>
+      <div class="grid-title person-title"><h2>Person events</h2><div class="sub">Detected separately · 24h retention</div></div>
+      <section class="grid" id="person-grid"><div class="empty">No person events yet.</div></section>
+    </section>
+    <aside class="side">
+      <section class="panel">
+        <div class="metric"><span class="label">CPU</span><span class="value" id="cpu-value">21.5%</span><div class="track"><div class="fill" id="cpu-fill" style="width:21.5%"></div></div></div>
+        <div class="metric"><span class="label">Memory</span><span class="value" id="mem-value">731 / 2010 MB</span><div class="track"><div class="fill" id="mem-fill" style="width:36.4%"></div></div></div>
+        <div class="metric"><span class="label">Temperature</span><span class="value" id="temp-value">47.7&#x27;C</span></div>
+        <div class="metric"><span class="label">Disk free</span><span class="value" id="disk-value">101.0 GB</span></div>
+        <div class="metric"><span class="label">Throttle flag</span><span class="value" id="throttle-value">0x0</span></div>
+        <div class="metric"><span class="label">CPU thermal</span><span class="value">cpu-thermal</span></div>
+        <div class="metric"><span class="label">ARM clock</span><span class="value" id="clock-value">2000027008</span></div>
+        <div class="metric"><span class="label">Core voltage</span><span class="value" id="volts-value">0.8007V</span></div>
+        <div class="metric"><span class="label">ARM / GPU memory</span><span class="value">1020M / 4M</span></div>
+        <div class="label">Temperature history · 24h</div>
+        <canvas class="chart" id="temp-chart" width="320" height="120"></canvas>
+        <div class="chart-meta"><span id="temp-chart-min">min</span><span id="temp-chart-max">max</span></div>
+        <div class="label" style="margin-top:14px">Power / thermal watchdog · 24h</div>
+        <canvas class="chart" id="power-chart" width="320" height="120"></canvas>
+        <div class="chart-meta"><span id="power-chart-min">min</span><span id="power-chart-max">max / throttle</span></div>
+      </section>
+      <section class="panel">
+        <div class="metric"><span class="label">Capture timer</span><span class="value ok" id="timer-value">active</span></div>
+        <div class="metric"><span class="label">Web service</span><span class="value ok" id="web-value">active</span></div>
+        <div class="metric"><span class="label">Retention</span><span class="value">max 200, similar-first pruning</span></div>
+        <div class="metric"><span class="label">Interval</span><span class="value">3 seconds</span></div>
+        <div class="metric"><span class="label">Thermal guard</span><span class="value" id="thermal-guard-value">active</span></div>
+        <div class="label" style="margin-top:10px">Thermal guard log</div>
+        <pre id="thermal-guard-tail">2026-07-28 12:54:27 temp=48.3C state=normal action=none max=2000000 clock=2000017152 volts=0.8007V throttled=0x0
+2026-07-28 12:55:00 temp=48.3C state=normal action=none max=2000000 clock=2000023680 volts=0.8007V throttled=0x0
+2026-07-28 12:55:30 temp=48.3C state=normal action=none max=2000000 clock=2000027008 volts=0.8007V throttled=0x0</pre>
+      </section>
+      <section class="panel">
+        <div class="label">Connected devices</div>
+        <pre>Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 003: ID 1903:8328 Generic HD camera 
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub</pre>
+      </section>
+      <section class="panel">
+        <div class="label">Camera / video devices</div>
+        <pre>pispbe (platform:1000880000.pisp_be):
+	/dev/video20
+	/dev/video21
+	/dev/video22
+	/dev/video23
+	/dev/video24
+	/dev/video25
+	/dev/video26
+	/dev/video27
+	/dev/video28
+	/dev/video29
+	/dev/video30
+	/dev/video31
+	/dev/video32
+	/dev/video33
+	/dev/video34
+	/dev/video35
+	/dev/media0
+	/dev/media1
+
+rpi-hevc-dec (platform:rpi-hevc-dec):
+	/dev/video19</pre>
+      </section>
+      <section class="panel">
+        <div class="label">GPIO / I2C</div>
+        <pre>I2C:
+/dev/i2c-13
+/dev/i2c-14
+
+GPIO:
+/dev/gpiomem0
+/dev/gpiomem1
+/dev/gpiomem2
+/dev/gpiomem3
+/dev/gpiomem4</pre>
+      </section>
+      <section class="panel">
+        <div class="label">Recent capture log</div>
+        <pre id="log-tail">pruned 1 similar snapshots from /home/philip/camera_snapshots
+2026-07-28T12:55:28+09:00 saved /home/philip/camera_snapshots/20260728_125527.jpg
+pruned 1 similar snapshots from /home/philip/camera_snapshots
+2026-07-28T12:55:32+09:00 saved /home/philip/camera_snapshots/20260728_125531.jpg
+pruned 1 similar snapshots from /home/philip/camera_snapshots
+2026-07-28T12:55:36+09:00 saved /home/philip/camera_snapshots/20260728_125535.jpg
+pruned 1 similar snapshots from /home/philip/camera_snapshots
+2026-07-28T12:55:40+09:00 saved /home/philip/camera_snapshots/20260728_125539.jpg</pre>
+        <div class="label" style="margin-top:10px">Recent person events</div>
+        <pre id="person-log-tail">2026-07-28T12:21:52+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_122147.jpg count=2 score=1.48 source=20260728_122147.jpg burst_frames=0
+2026-07-28T12:21:57+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_122151.jpg count=2 score=1.43 source=20260728_122151.jpg burst_frames=4
+2026-07-28T12:22:04+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_122158.jpg count=1 score=0.70 source=20260728_122158.jpg burst_frames=2
+2026-07-28T12:22:10+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_122203.jpg count=1 score=0.75 source=20260728_122203.jpg burst_frames=0
+2026-07-28T12:22:19+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_122212.jpg count=1 score=0.76 source=20260728_122212.jpg burst_frames=0
+2026-07-28T12:33:25+0900 yolo burst capture failed: Command &#x27;[&#x27;ffmpeg&#x27;, &#x27;-y&#x27;, &#x27;-hide_banner&#x27;, &#x27;-loglevel&#x27;, &#x27;error&#x27;, &#x27;-f&#x27;, &#x27;video4linux2&#x27;, &#x27;-framerate&#x27;, &#x27;7&#x27;, &#x27;-i&#x27;, &#x27;/dev/video0&#x27;, &#x27;-frames:v&#x27;, &#x27;5&#x27;, &#x27;/tmp/person-yolo-burst-u_l5apab/burst_%02d.jpg&#x27;]&#x27; returned non-zero exit status 240.
+2026-07-28T12:33:25+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_123321.jpg count=1 score=0.86 source=20260728_123321.jpg burst_frames=0
+2026-07-28T12:39:40+0900 person detected yolo_burst_saved /home/philip/person_snapshots/20260728_123935.jpg count=1 score=0.89 source=20260728_123935.jpg burst_frames=0</pre>
+      </section>
+    </aside>
+  </main>
+  <div class="dialog" id="viewer" aria-hidden="true">
+    <div class="dialog-inner">
+      <div class="dialog-bar"><strong id="viewer-title"></strong><button class="close" type="button" id="viewer-close">Close</button></div>
+      <img id="viewer-img" src="" alt="">
+    </div>
+  </div>
+  <script>
+    const viewer = document.getElementById('viewer');
+    const viewerImg = document.getElementById('viewer-img');
+    const viewerTitle = document.getElementById('viewer-title');
+    const grid = document.getElementById('snapshot-grid');
+    let lastImageKey = '';
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+    const closeViewer = () => {
+      viewer.classList.remove('open');
+      viewer.setAttribute('aria-hidden', 'true');
+      viewerImg.src = '';
+    };
+    const openViewer = (src, name) => {
+      viewerImg.src = src;
+      viewerImg.alt = name;
+      viewerTitle.textContent = name;
+      viewer.classList.add('open');
+      viewer.setAttribute('aria-hidden', 'false');
+    };
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    const setWidth = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.style.width = `${Math.max(0, Math.min(100, Number(value) || 0)).toFixed(1)}%`;
+    };
+    const renderImages = (images) => {
+      if (viewer.classList.contains('open')) return;
+      const key = Array.isArray(images) ? images.map((img) => `${img.name}:${img.mtime}`).join('|') : '';
+      if (key === lastImageKey) return;
+      lastImageKey = key;
+      if (!Array.isArray(images) || images.length === 0) {
+        grid.innerHTML = '<div class="empty">No images found.</div>';
+        return;
+      }
+      grid.innerHTML = images.map((img) => {
+        const name = escapeHtml(img.name);
+        const age = escapeHtml(img.age);
+        const size = escapeHtml(img.size_kb);
+        return `<button class="thumb" type="button" data-src="assets/dashboard-images/${name}" data-name="${name}" title="${name}">
+          <img src="assets/dashboard-images/${name}?v=${img.mtime}" loading="lazy" alt="${name}">
+          <span class="thumb-meta"><b>${name}</b><small>${age} · ${size} KB</small></span>
+        </a>`;
+      }).join('');
+    };
+    const drawTempChart = (history) => {
+      const canvas = document.getElementById('temp-chart');
+      if (!canvas || !Array.isArray(history) || history.length === 0) return;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      const temps = history.map((p) => Number(p.temp_c)).filter((v) => Number.isFinite(v));
+      if (!temps.length) return;
+      const min = Math.floor(Math.min(...temps) - 1);
+      const max = Math.ceil(Math.max(...temps) + 1);
+      const range = Math.max(1, max - min);
+      ctx.strokeStyle = '#303840';
+      ctx.lineWidth = 1;
+      for (let i = 1; i < 4; i += 1) {
+        const y = Math.round((height / 4) * i);
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#5cc8a7';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      history.forEach((point, index) => {
+        const x = history.length === 1 ? width - 2 : (index / (history.length - 1)) * (width - 4) + 2;
+        const y = height - 8 - ((Number(point.temp_c) - min) / range) * (height - 16);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      const last = temps[temps.length - 1];
+      setText('temp-chart-min', `min ${Math.min(...temps).toFixed(1)}°C`);
+      setText('temp-chart-max', `now ${last.toFixed(1)}°C / max ${Math.max(...temps).toFixed(1)}°C`);
+    };
+
+
+    const drawPowerChart = (history) => {
+      const canvas = document.getElementById('power-chart');
+      if (!canvas || !Array.isArray(history) || history.length === 0) return;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#0c0e10';
+      ctx.fillRect(0, 0, width, height);
+      if (history.length < 2) {
+        ctx.fillStyle = '#8b98a5';
+        ctx.font = '12px system-ui';
+        ctx.fillText('Waiting for power samples...', 12, 24);
+        return;
+      }
+      const pad = {left: 34, right: 34, top: 18, bottom: 20};
+      const chartW = width - pad.left - pad.right;
+      const chartH = height - pad.top - pad.bottom;
+      const tsValues = history.map((p) => Number(p.ts)).filter((v) => Number.isFinite(v));
+      const minTs = Math.min(...tsValues);
+      const maxTs = Math.max(...tsValues);
+      const tempValues = history.map((p) => Number(p.temp_c)).filter((v) => Number.isFinite(v));
+      const voltValues = history.map((p) => Number(p.core_volts)).filter((v) => Number.isFinite(v));
+      const clockValues = history.map((p) => Number(p.arm_clock_ghz)).filter((v) => Number.isFinite(v));
+      const minTemp = Math.min(35, Math.floor(Math.min(...tempValues) - 2));
+      const maxTemp = Math.max(85, Math.ceil(Math.max(...tempValues) + 2));
+      const minVolt = voltValues.length ? Math.max(0.55, Math.min(...voltValues) - 0.03) : 0.65;
+      const maxVolt = voltValues.length ? Math.min(1.10, Math.max(...voltValues) + 0.03) : 1.00;
+      const minClock = clockValues.length ? Math.max(0, Math.min(...clockValues) - 0.15) : 0;
+      const maxClock = clockValues.length ? Math.max(2.5, Math.max(...clockValues) + 0.15) : 2.5;
+      const xFor = (ts) => pad.left + ((Number(ts) - minTs) / Math.max(1, maxTs - minTs)) * chartW;
+      const yFor = (v, min, max) => height - pad.bottom - ((v - min) / Math.max(0.0001, max - min)) * chartH;
+
+      ctx.strokeStyle = '#2a323a';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i += 1) {
+        const y = pad.top + (chartH * i / 4);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(width - pad.right, y);
+        ctx.stroke();
+      }
+
+      const plot = (getter, min, max, color, lineWidth) => {
+        let started = false;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath();
+        history.forEach((point) => {
+          const value = Number(getter(point));
+          if (!Number.isFinite(value)) return;
+          const x = xFor(point.ts);
+          const y = yFor(value, min, max);
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        if (started) ctx.stroke();
+      };
+
+      history.forEach((point) => {
+        if (point.throttled && point.throttled !== '0x0') {
+          const x = xFor(point.ts);
+          ctx.fillStyle = 'rgba(239,68,68,.22)';
+          ctx.fillRect(x - 1, pad.top, 3, chartH);
+        }
+      });
+      plot((p) => p.temp_c, minTemp, maxTemp, '#ef4444', 2.2);
+      plot((p) => p.core_volts, minVolt, maxVolt, '#3b82f6', 2);
+      plot((p) => p.arm_clock_ghz, minClock, maxClock, '#22c55e', 1.8);
+
+      const last = history[history.length - 1] || {};
+      const throttleCount = history.filter((p) => p.throttled && p.throttled !== '0x0').length;
+      ctx.font = '11px system-ui';
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText(`${maxTemp}C`, 3, pad.top + 4);
+      ctx.fillText(`${minTemp}C`, 5, height - pad.bottom);
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText(`${maxVolt.toFixed(2)}V`, width - 32, pad.top + 4);
+      ctx.fillText(`${minVolt.toFixed(2)}V`, width - 32, height - pad.bottom);
+      setText('power-chart-min', `red temp / blue core V / green ARM GHz · samples ${history.length}`);
+      const lastTemp = Number.isFinite(Number(last.temp_c)) ? `${Number(last.temp_c).toFixed(1)}C` : 'n/a';
+      const lastVolt = Number.isFinite(Number(last.core_volts)) ? `${Number(last.core_volts).toFixed(4)}V` : 'n/a';
+      const lastClock = Number.isFinite(Number(last.arm_clock_ghz)) ? `${Number(last.arm_clock_ghz).toFixed(2)}GHz` : 'n/a';
+      setText('power-chart-max', `now ${lastTemp} / ${lastVolt} / ${lastClock} · events ${throttleCount}`);
+    };
+
+    const refresh = async () => {
+      try {
+        const response = await fetch('status.json', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        setText('latest-name', data.latest_name || 'none');
+        setText('latest-age', data.latest_age || 'n/a');
+        setText('image-count', data.image_count ?? 0);
+        setText('person-count', data.person_event_count ?? 0);
+        setText('cpu-value', `${Number(data.cpu_pct || 0).toFixed(1)}%`);
+        setWidth('cpu-fill', data.cpu_pct);
+        setText('mem-value', `${data.mem_used_mb} / ${data.mem_total_mb} MB`);
+        setWidth('mem-fill', data.mem_pct);
+        setText('temp-value', data.temp || 'n/a');
+        drawTempChart(data.temp_history);
+        drawPowerChart(data.power_history);
+        setText('disk-value', `${Number(data.disk_free_gb || 0).toFixed(1)} GB`);
+        setText('throttle-value', data.throttled || 'n/a');
+        setText('clock-value', data.arm_clock || 'n/a');
+        setText('volts-value', data.core_volts || 'n/a');
+        setText('timer-value', data.capture_timer || 'unknown');
+        setText('web-value', data.web_service || 'unknown');
+        setText('log-tail', Array.isArray(data.log_tail) ? data.log_tail.join('\n') : '');
+        renderImages(data.images);
+      } catch (error) {
+      }
+    };
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('.thumb');
+      if (!button) return;
+      event.preventDefault();
+      openViewer(button.dataset.src || button.href, button.dataset.name || button.getAttribute('title') || 'snapshot');
+    });
+    // static blog export: live refresh disabled
+    document.getElementById('viewer-close').addEventListener('click', closeViewer);
+    viewer.addEventListener('click', (event) => {
+      if (event.target === viewer) closeViewer();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeViewer();
+    });
+  </script>
+<div style="position:fixed;right:12px;bottom:12px;z-index:9999"><a href="index.html" style="display:inline-block;padding:8px 10px;border-radius:7px;background:#111827;color:#fff;text-decoration:none;font:13px Arial">DVS Pages</a></div></body>
+</html>

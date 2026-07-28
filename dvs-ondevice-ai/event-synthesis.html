@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CIS-DVS Event Synthesis Demo</title>
+  <style>
+    :root { color-scheme:dark; --bg:#0f1114; --panel:#191d22; --panel2:#222832; --line:#343b45; --text:#edf2f4; --muted:#a6b0b8; --accent:#5cc8a7; --blue:#7bb7ff; --warn:#f6c96d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .global-nav { position:sticky; top:0; z-index:30; display:flex; justify-content:center; align-items:center; gap:8px; padding:10px 12px; background:#111318; border-bottom:1px solid #30343d; }
+    .global-nav a { display:inline-flex; align-items:center; justify-content:center; min-width:86px; height:34px; padding:0 14px; border:1px solid #343d46; border-radius:6px; background:#1a1f25; color:#dbeafe; text-decoration:none; font-weight:700; font-size:14px; line-height:1; white-space:nowrap; }
+    .global-nav a:hover { background:#22303a; border-color:#5cc8a7; color:#fff; }
+    header { border-bottom:1px solid var(--line); background:#15191f; }
+    .system-strip { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; padding:9px 12px; background:#0b0d10; border-bottom:1px solid var(--line); }
+    .sys { display:inline-flex; align-items:center; gap:7px; min-height:30px; padding:5px 10px; border:1px solid var(--line); border-radius:6px; background:#15191f; font-size:13px; }
+    .sys b { color:var(--accent); }
+    .hero { max-width:1360px; margin:0 auto; padding:26px 18px 20px; display:grid; grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr); gap:22px; align-items:end; }
+    h1 { margin:0 0 8px; font-size:32px; line-height:1.15; letter-spacing:0; }
+    .lead { margin:0; color:var(--muted); font-size:15px; line-height:1.65; max-width:840px; }
+    .summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .stat { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px; }
+    .stat b { display:block; font-size:20px; }
+    .stat span { color:var(--muted); font-size:12px; }
+    main { max-width:1360px; margin:0 auto; padding:18px; display:grid; gap:18px; }
+    section.block { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    h2 { margin:0 0 10px; font-size:18px; letter-spacing:0; }
+    h3 { margin:16px 0 8px; font-size:15px; }
+    p { color:var(--muted); line-height:1.62; margin:8px 0; }
+    code, pre { font-family:ui-monospace, SFMono-Regular, Consolas, monospace; }
+    pre { margin:10px 0 0; padding:12px; border:1px solid var(--line); border-radius:8px; background:#0b0d10; color:#d8dee5; white-space:pre-wrap; overflow:auto; }
+    .videos { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+    .video-card { border:1px solid var(--line); border-radius:8px; background:#11151a; overflow:hidden; }
+    .card-head { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--line); }
+    .card-head h2 { margin:0; font-size:14px; }
+    .card-head span { color:var(--muted); font-size:12px; white-space:nowrap; }
+    .realtime-caption { min-height:68px; padding:10px 12px; border-top:1px solid var(--line); color:#d8dee5; font-size:13px; line-height:1.45; font-weight:600; }
+    video { width:100%; aspect-ratio:16 / 9; object-fit:contain; display:block; background:#050607; }
+    table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:8px; }
+    th, td { border-bottom:1px solid var(--line); padding:9px 8px; text-align:left; font-size:13px; }
+    th { color:#c7d2dc; background:#11151a; }
+    td { color:#edf2f4; }
+    .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; }
+    .step { border:1px solid var(--line); border-radius:8px; background:#11151a; padding:12px; }
+    .step b { color:var(--accent); }
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .warn { color:var(--warn); }
+    ul { margin:8px 0 0; padding-left:20px; color:var(--muted); line-height:1.65; }
+    @media(max-width:850px) { .hero, .two { grid-template-columns:1fr; } h1 { font-size:25px; } }
+    @media(max-width:520px) { .global-nav { gap:6px; padding:8px; } .global-nav a { min-width:auto; height:32px; padding:0 10px; font-size:13px; } }
+  </style>
+</head>
+<body>
+  <div class="global-nav">
+  <a href="dashboard.html">Home</a>
+  <span style="display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid #343d46">
+    <span style="color:#91a0ad;font-size:12px;font-weight:800;white-space:nowrap">기능</span>
+    <a href="person.html">Person</a>
+    <a href="raspberry-pi5-architecture.html">Pi 5 Architecture</a>
+    <a href="event-synthesis.html">Event Synthesis</a>
+    <a href="synthetic-grid.html">Synthetic</a>
+  </span>
+  <span style="display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid #343d46">
+    <span style="color:#91a0ad;font-size:12px;font-weight:800;white-space:nowrap">제안서</span>
+    <a href="space-edge-proposal.html">Space Edge</a>
+    <a href="fall-plan.html">Fall Plan</a>
+  </span>
+</div>
+  <div class="system-strip">
+    <span class="sys">CPU <b id="es-cpu">23.9%</b></span>
+    <span class="sys">Memory <b id="es-mem">708 / 2010 MB</b></span>
+    <span class="sys">Temp <b id="es-temp">47.2&#x27;C</b></span>
+    <span class="sys">Clock <b id="es-clock">2000017152</b></span>
+    <span class="sys">Throttle <b id="es-throttle">0x0</b></span>
+  </div>
+  <header>
+    <div class="hero">
+      <div>
+        <h1>CIS-DVS Event Synthesis Demo</h1>
+        <p class="lead">CIS는 장면의 색과 질감을 낮은 시간 해상도로 제공하고, DVS는 프레임 사이의 움직임을 x/y/t/p 이벤트로 제공한다. 이 페이지는 비어 있는 timestamp의 이미지를 이벤트 누적으로 생성하는 구조와 Raspberry Pi 실측 성능을 보여준다.</p>
+      </div>
+      <div class="summary">
+        <div class="stat"><b>50 FPS</b><span>CIS source cadence</span></div>
+        <div class="stat"><b>4.1M/s</b><span>average DVS events</span></div>
+        <div class="stat"><b>2000</b><span>frames tested at 320x180</span></div>
+        <div class="stat"><b>0.186x</b><span>400FPS Pi Python realtime factor</span></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="block">
+      <h2>Demo Videos</h2>
+      <div class="videos">
+          <section class="video-card">
+            <div class="card-head"><h2>960x540 @ 60FPS</h2><span>3.8 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/event_synthesis_5s_960w_60fps_h264.mp4"></video>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>480x270 @ 60FPS</h2><span>1.4 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/event_synthesis_5s_480w_60fps_h264.mp4"></video>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>480x270 @ 30FPS</h2><span>1.2 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/event_synthesis_5s_480w_30fps_h264.mp4"></video>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>320x180 @ 200FPS / 1000 frames</h2><span>1.8 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/event_synthesis_5s_320w_200fps_h264.mp4"></video>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>320x180 @ 400FPS / 2000 frames</h2><span>2.9 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/event_synthesis_5s_320w_400fps_h264.mp4"></video>
+          </section>
+        </div>
+    </section>
+
+    <section class="block">
+      <h2>Synthesis Structure</h2>
+      <div class="flow">
+        <div class="step"><b>1. CIS anchor</b><p>현재 CIS 프레임 I0를 색상과 texture 기준으로 사용한다.</p></div>
+        <div class="step"><b>2. Event window</b><p>I0와 I1 사이의 events/NNNNNN.npz에서 target timestamp까지의 이벤트만 선택한다.</p></div>
+        <div class="step"><b>3. Polarity accumulation</b><p>p=1은 양의 밝기 변화, p=0은 음의 밝기 변화로 누적한다.</p></div>
+        <div class="step"><b>4. Missing frame</b><p>누적 polarity를 intensity 변화로 바꿔 비어 있는 timestamp의 이미지를 생성한다.</p></div>
+      </div>
+      <pre>log I(t) = log I(t0) + C * accumulated_polarity_events
+
+events/000000.npz = images/000000 과 images/000001 사이 이벤트
+event fields = x, y, t, p</pre>
+    </section>
+
+    <section class="block two">
+      <div>
+        <h2>Lightweight Reconstruction Explained</h2>
+        <p>이 방식은 딥러닝이 새 이미지를 상상해서 만드는 보간이 아니다. CIS 이미지 한 장을 기준 화면으로 두고, DVS 이벤트가 알려주는 밝아짐/어두워짐 변화를 그 위에 빠르게 더해서 중간 timestamp 이미지를 만든다.</p>
+        <pre>CIS frame = color, texture, background
+DVS event = where and when brightness changed
+
+synthetic_frame(t)
+  = CIS_anchor_frame
+  + accumulated_event_change(t0 -> t)</pre>
+        <p>DVS 이벤트의 `p` 값은 polarity다. `p=1`은 밝아지는 변화, `p=0`은 어두워지는 변화로 보고 같은 위치에 누적한다.</p>
+        <pre>p = 1 -> +1 brightness change
+p = 0 -> -1 brightness change
+
+synth = anchor + polarity_count * gain</pre>
+      </div>
+      <div>
+        <h2>Core Code</h2>
+        <pre>import cv2
+import numpy as np
+
+I0 = cv2.imread("images/000000.jpg").astype(np.float32)
+I1 = cv2.imread("images/000001.jpg").astype(np.float32)
+
+z = np.load("events/000000.npz")
+x = z["x"].astype(np.int32)
+y = z["y"].astype(np.int32)
+t = z["t"]
+p = z["p"]
+
+target_t = 10_000.0  # 10 ms
+mask = t <= target_t
+x, y, p = x[mask], y[mask], p[mask]
+
+h, w = I0.shape[:2]
+event_memory = np.zeros((h, w), np.float32)
+
+pos = p > 0
+np.add.at(event_memory, (y[pos], x[pos]), 1.0)
+np.add.at(event_memory, (y[~pos], x[~pos]), -1.0)
+
+contrast_gain = 4.8
+synth = I0 + event_memory[:, :, None] * contrast_gain
+synth = np.clip(synth, 0, 255).astype(np.uint8)</pre>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Real-Time Loop Additions</h2>
+      <div class="flow">
+        <div class="step"><b>Decay</b><p>오래된 이벤트가 계속 남아 밝기 drift를 만들지 않도록 매 프레임 event memory를 줄인다.</p></div>
+        <div class="step"><b>Anchor blend</b><p>I0만 쓰면 시간이 갈수록 어긋나므로 I1을 약하게 섞어 다음 CIS 프레임 방향으로 잡아준다.</p></div>
+        <div class="step"><b>Scale correction</b><p>출력 해상도를 낮출 때 DVS x/y 좌표도 같은 비율로 줄여야 이벤트가 맞는 위치에 찍힌다.</p></div>
+        <div class="step"><b>Wall-clock test</b><p>목표 프레임을 끝까지 만드는 대신 5초 동안 실제 몇 프레임을 만들었는지 측정한다.</p></div>
+      </div>
+      <pre>event_memory *= 0.70
+
+new_events = events[(last_t < events.t) & (events.t <= target_t)]
+accumulate(new_events, event_memory)
+
+alpha = (target_t - t0) / (t1 - t0)
+anchor = I0 * (1 - 0.12 * alpha) + I1 * (0.12 * alpha)
+
+synth = anchor + event_memory[..., None] * contrast_gain</pre>
+      <p>장점은 빠르고 작은 장비에서도 동작한다는 점이다. 한계는 새로운 texture를 만들지 못하고, 큰 occlusion이나 이벤트가 부족한 영역에서는 품질이 떨어진다는 점이다. 그래서 이 방식은 실시간 preview 또는 작은 AI refinement 전 단계로 보는 것이 맞다.</p>
+    </section>
+
+    <section class="block">
+      <h2>Raspberry Pi Performance</h2>
+      <table>
+        <thead><tr><th>Resolution</th><th>Target FPS</th><th>Frames</th><th>Wall Time</th><th>Achieved FPS</th><th>Realtime</th><th>Event Throughput</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>320x180</td>
+            <td>200</td>
+            <td>1000</td>
+            <td>15.77s</td>
+            <td>63.40</td>
+            <td>0.317x</td>
+            <td>1.28M/s</td>
+            <td>3.2x 개선 필요</td>
+          </tr>
+        
+          <tr>
+            <td>320x180</td>
+            <td>400</td>
+            <td>2000</td>
+            <td>26.90s</td>
+            <td>74.36</td>
+            <td>0.186x</td>
+            <td>0.75M/s</td>
+            <td>5.4x 개선 필요</td>
+          </tr>
+        
+          <tr>
+            <td>480x270</td>
+            <td>30</td>
+            <td>150</td>
+            <td>6.80s</td>
+            <td>22.05</td>
+            <td>0.735x</td>
+            <td>1.18M/s</td>
+            <td>1.4x 개선 필요</td>
+          </tr>
+        
+          <tr>
+            <td>480x270</td>
+            <td>60</td>
+            <td>300</td>
+            <td>11.91s</td>
+            <td>25.19</td>
+            <td>0.420x</td>
+            <td>1.10M/s</td>
+            <td>2.4x 개선 필요</td>
+          </tr>
+        
+          <tr>
+            <td>960x540</td>
+            <td>60</td>
+            <td>300</td>
+            <td>21.59s</td>
+            <td>13.89</td>
+            <td>0.232x</td>
+            <td>0.61M/s</td>
+            <td>4.3x 개선 필요</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="warn">현재 Python/NumPy 구현은 실시간 데모 검증용이다. 병목은 딥러닝 TOPS가 아니라 이벤트 scatter 누적, 메모리 대역폭, 이미지 디코딩, MP4 인코딩, Python overhead다.</p>
+    </section>
+
+    <section class="block">
+      <h2>Real-Time 5s Run: How Many Frames Are Produced?</h2>
+      <p>아래 3개 영상은 모두 target 60FPS 조건에서 Raspberry Pi가 정확히 5초 동안 실제로 몇 프레임까지 합성하는지 보여준다. 영상 내부 오버레이는 제거했고, CPU, memory, temperature 수치는 각 영상 하단에 같은 글자 크기로 표시했다.</p>
+      <div class="videos">
+          <section class="video-card">
+            <div class="card-head"><h2>960x540 target 60FPS</h2><span>1.3 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/realtime_synthesis_960w_target60fps_h264.mp4"></video>
+            <div class="realtime-caption">5s run · 85 frames · 16.58 FPS · CPU 60.8% avg / 83.7% max · MEM 41.4% · TEMP 62.8C avg / 64.5C max</div>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>480x270 target 60FPS</h2><span>0.8 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/realtime_synthesis_480w_target60fps_h264.mp4"></video>
+            <div class="realtime-caption">5s run · 183 frames · 36.00 FPS · CPU 59.6% avg / 95.7% max · MEM 38.0% · TEMP 63.3C avg / 65.0C max</div>
+          </section>
+        
+          <section class="video-card">
+            <div class="card-head"><h2>320x180 target 60FPS</h2><span>0.7 MB</span></div>
+            <video controls muted playsinline src="assets/event-synthesis-video/realtime_synthesis_320w_target60fps_h264.mp4"></video>
+            <div class="realtime-caption">5s run · 213 frames · 42.42 FPS · CPU 52.1% avg / 92.9% max · MEM 38.4% · TEMP 63.4C avg / 65.5C max</div>
+          </section>
+        </div>
+      <table style="margin-top:14px">
+        <thead><tr><th>Resolution</th><th>Target FPS</th><th>Run Time</th><th>Frames Made</th><th>Achieved FPS</th><th>Realtime</th><th>CPU mean/max</th><th>Memory mean</th><th>Temp mean/max</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>320x180</td>
+            <td>60</td>
+            <td>5.0s</td>
+            <td>213</td>
+            <td>42.42</td>
+            <td>0.707x</td>
+            <td>52.1% / 92.9%</td>
+            <td>38.4%</td>
+            <td>63.4C / 65.5C</td>
+          </tr>
+        
+          <tr>
+            <td>480x270</td>
+            <td>60</td>
+            <td>5.0s</td>
+            <td>183</td>
+            <td>36.00</td>
+            <td>0.600x</td>
+            <td>59.6% / 95.7%</td>
+            <td>38.0%</td>
+            <td>63.3C / 65.0C</td>
+          </tr>
+        
+          <tr>
+            <td>960x540</td>
+            <td>60</td>
+            <td>5.0s</td>
+            <td>85</td>
+            <td>16.58</td>
+            <td>0.276x</td>
+            <td>60.8% / 83.7%</td>
+            <td>41.4%</td>
+            <td>62.8C / 64.5C</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>비교 의도는 같은 target 60FPS에서 해상도에 따른 실제 처리량을 보는 것이다. 정상적인 순서는 해상도가 낮을수록 더 많은 프레임이 생성되는 것이다.</p>
+    </section>
+
+    <section class="block two">
+      <div>
+        <h2>Frame Scaling Formula</h2>
+        <pre>required_fps = output_frames / video_seconds
+
+OPS = Fout * (W * H * Cpix) + Esec * Cevent
+
+TOPS_required = OPS / 1e12 / efficiency</pre>
+        <p>여기서 FPS는 playback FPS가 아니라 온디바이스가 실제 시간 1초 동안 만들어내는 synthesis FPS다. 1000프레임을 5초 안에 실시간 생성하려면 합성 엔진이 최소 200 synthesis FPS를 내야 한다. 2000프레임을 5초 안에 만들려면 400 synthesis FPS가 필요하다.</p>
+        <pre>1000 frames / 5s = 200 synthesis FPS
+2000 frames / 5s = 400 synthesis FPS
+1000 frames / 1s = 1000 synthesis FPS</pre>
+      </div>
+      <div>
+        <h2>How To Increase Frames</h2>
+        <ul>
+          <li>출력 해상도를 먼저 낮춘다. 960x540에서 480x270으로 내리면 픽셀 연산량은 1/4이다.</li>
+          <li>NPZ 대신 binary packed event stream을 사용해 압축 해제와 배열 생성 비용을 줄인다.</li>
+          <li>np.add.at 기반 random scatter를 C++ tile accumulation 또는 SIMD-friendly histogram으로 바꾼다.</li>
+          <li>exp/log는 LUT 또는 linear contrast update로 대체한다.</li>
+          <li>합성 루프와 비디오 인코딩을 분리하고, 웹에는 최신 생성 MP4만 제공한다.</li>
+          <li>실시간 200FPS 이상은 Python이 아니라 C++/OpenCV/NEON 또는 GPU compute 경로가 필요하다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block two">
+      <div>
+        <h2>What Hardware Must Be Strong At</h2>
+        <p>이 작업은 AI TOPS 하나로만 판단하면 안 된다. 병목은 프레임 전체를 매번 계산하는 픽셀 처리량과, 이벤트를 좌표별로 누적하는 random memory write다.</p>
+        <pre>required_pixel_rate = target_fps * width * height
+required_event_rate = input_events_per_second
+
+device_is_suitable if:
+  generated_fps >= required_synthesis_fps
+  sustained_event_rate >= peak_event_rate
+  encode_fps >= output_stream_fps
+  memory_bandwidth leaves enough headroom</pre>
+        <ul>
+          <li>픽셀 처리량: 200FPS 이상에서는 해상도 감소가 가장 큰 효과를 낸다.</li>
+          <li>이벤트 처리량: 평균 4.1M events/sec보다 피크 38M events/sec를 버틸 수 있어야 한다.</li>
+          <li>메모리 대역폭: event scatter, frame buffer, encode buffer가 동시에 돈다.</li>
+          <li>하드웨어 인코더: 합성 결과를 웹으로 보낼 때 CPU 인코딩을 피해야 한다.</li>
+          <li>동기화 입력: CIS와 DVS가 같은 시간축을 쓰도록 trigger/PPS/GPIO timestamp가 필요하다.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Is IQ8 Suitable?</h2>
+        <p>공식적으로 판단하면 IQ8 계열은 Raspberry Pi보다 이 구조에 더 적합하다. 이유는 AI TOPS 때문만이 아니라, 카메라 입력, ISP, 하드웨어 비디오 인코딩, 메모리 대역폭, GPU/DSP/NPU 같은 병렬 처리 블록을 함께 쓸 수 있기 때문이다.</p>
+        <pre>IQ8 suitability formula:
+
+if CSI_input >= 2 streams
+and hardware_encoder supports output_fps
+and GPU/DSP/NPU can run fusion_kernel
+and sustained_memory_bandwidth > frame_buffers + event_buffers
+then suitable_for_realtime_fusion = yes
+
+For 1000 frames / 5s:
+  required_synthesis_fps = 200
+
+For 2000 frames / 5s:
+  required_synthesis_fps = 400</pre>
+        <p>따라서 IQ8은 후보로 적합하다. 다만 TimeLens 같은 큰 딥러닝 interpolation을 그대로 올리는 방향보다, event accumulation과 contrast update를 GPU/DSP/NPU-friendly kernel로 바꾸는 쪽이 실시간 가능성이 높다.</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Hardware Architecture For Real-Time Dual-Stream Fusion</h2>
+      <p>현실적으로 두 개의 영상/센서 스트림을 동시에 받으면서 합성하려면 Raspberry Pi 하나에 모든 처리를 몰아넣기보다, 입력 수집, timestamp 동기화, 이벤트 누적, 인코딩을 분리해야 한다.</p>
+      <div class="flow">
+        <div class="step"><b>1. Sensor input</b><p>CIS 카메라는 MIPI CSI-2 또는 USB3로 받고, DVS는 USB3, MIPI, FPGA bridge, 또는 Ethernet 기반 event packet으로 받는다.</p></div>
+        <div class="step"><b>2. Time sync</b><p>두 센서에 공통 PPS/trigger/GPIO timestamp를 넣는다. 소프트웨어 수신 시간만 쓰면 frame-event alignment가 흔들린다.</p></div>
+        <div class="step"><b>3. Fusion compute</b><p>CPU는 orchestration, GPU/ISP/FPGA/NPU는 누적, warp, interpolation, encode 같은 병렬 작업을 맡긴다.</p></div>
+        <div class="step"><b>4. Output service</b><p>실시간 스트림은 raw frame 저장이 아니라 ring buffer와 H.264/H.265 hardware encoder로 바로 웹에 제공한다.</p></div>
+      </div>
+      <h3>Recommended practical build</h3>
+      <pre>CIS camera -> MIPI CSI-2 -> ISP / DMA buffer
+DVS sensor -> USB3 or FPGA bridge -> event packet ring buffer
+Common trigger/PPS -> shared monotonic timestamp
+Fusion engine -> C++/NEON or FPGA/GPU tile accumulator
+Video output -> hardware H.264/H.265 encoder -> WebRTC or HLS
+
+Raspberry Pi 5 role:
+  dashboard, capture control, low-resolution preview, logging
+
+Production role:
+  Qualcomm Dragonwing IQ8 / Jetson / FPGA-assisted SoC for real-time fusion</pre>
+      <p>Raspberry Pi 5는 PoC와 저해상도 preview에는 적합하지만, 두 입력을 동시에 받으면서 200~400FPS급 합성까지 실시간으로 처리하려면 DMA-friendly buffer, hardware encoder, 병렬 누적 엔진이 있는 SoC 구성이 필요하다.</p>
+    </section>
+
+    <section class="block two">
+      <div>
+        <h2>High-Quality Interpolation Limits</h2>
+        <p>고품질 보간은 가능하지만, 전체 프레임 대형 neural interpolation을 200FPS 이상으로 실시간 처리하는 것은 어렵다. 현재 데모는 TimeLens류 고품질 모델이 아니라, 온디바이스 실시간 가능성을 확인하기 위한 lightweight event-based reconstruction이다.</p>
+        <pre>Lightweight synthesis:
+  CIS frame + DVS polarity accumulation
+  fast, lower compute, limited image quality
+
+High-quality interpolation:
+  CIS frame pair + event voxel + neural network
+  better quality, higher latency, larger memory use</pre>
+        <p>고품질 모델이 실시간이 되려면 inference, event preprocessing, postprocessing, encode handoff가 모두 프레임 budget 안에 들어와야 한다.</p>
+        <pre>model_latency_ms <= 1000 / required_synthesis_fps
+
+200 synthesis FPS -> <= 5.0 ms/frame
+400 synthesis FPS -> <= 2.5 ms/frame
+1000 synthesis FPS -> <= 1.0 ms/frame</pre>
+      </div>
+      <div>
+        <h2>IQ8 Practical Judgment</h2>
+        <p>IQ8은 Raspberry Pi보다 이 프로젝트에 훨씬 적합하다. 이유는 NPU TOPS만이 아니라 CPU, GPU, NPU, DSP, real-time MCU, multi-camera input, hardware video encoder를 함께 쓸 수 있는 heterogeneous compute 구조 때문이다.</p>
+        <pre>IQ8_is_suitable if:
+  camera_input >= 2 synchronized streams
+  and hardware_encoder_fps >= output_stream_fps
+  and fusion_kernel_fps >= required_synthesis_fps
+  and event_ingest_rate >= peak_event_rate
+  and memory_bandwidth has enough headroom</pre>
+        <ul>
+          <li>320x180~480x270 경량 neural refinement는 IQ8에서 가능성 있음.</li>
+          <li>960x540 고품질 neural interpolation @ 200FPS는 매우 어려움.</li>
+          <li>1080p 고품질 neural interpolation @ 200FPS 이상은 비현실적에 가까움.</li>
+          <li>TimeLens-XL급 큰 모델을 그대로 실시간 구동하는 방식은 IQ8에서도 어렵다.</li>
+          <li>작은 모델, ROI 처리, INT8 quantization, NPU/DSP/GPU 분산이 필요하다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Recommended Product Architecture</h2>
+      <pre>CIS camera -> ISP / DMA buffer
+DVS sensor -> packed event stream ring buffer
+Time sync -> trigger / PPS / GPIO timestamp
+Fusion core -> C++ / NEON / GPU / DSP tile accumulator
+Optional AI -> small INT8 ROI refinement model on NPU
+Output -> hardware H.264 / H.265 encoder
+Web -> preview stream + latest generated MP4</pre>
+      <p>최종 방향은 전체 프레임 대형 AI 보간이 아니라, 경량 실시간 합성 위에 선택적 AI refinement를 얹는 구조가 가장 현실적이다.</p>
+    </section>
+
+    <section class="block two">
+      <div>
+        <h2>Lightweight Techniques</h2>
+        <ul>
+          <li><b>NPZ 대신 binary packed event stream</b>: 지금 NPZ는 zip 압축을 풀고 x/y/t/p 배열을 새로 만드는 비용이 크다. 실시간에서는 이벤트 하나를 8~12 byte 정도의 고정 구조체로 저장해 바로 읽는 편이 낫다.</li>
+          <li><b>np.add.at 제거</b>: np.add.at는 좌표가 흩어진 곳에 계속 더하는 random scatter라 느리다. C++에서 화면을 작은 tile로 나누고, 각 tile 안에서 histogram을 만든 뒤 합치면 cache 효율이 좋아진다.</li>
+          <li><b>SIMD-friendly histogram</b>: 이벤트를 한 점씩 처리하지 말고, x/y 좌표를 정렬하거나 tile별 bucket에 넣어 NEON/SIMD가 연속 메모리를 처리하게 만든다.</li>
+          <li><b>exp/log 제거</b>: log/exp는 품질은 좋지만 실시간에는 비싸다. 256 또는 1024 단계 LUT를 쓰거나, brightness += polarity_count * gain 같은 linear contrast update로 바꾼다.</li>
+          <li><b>rolling event buffer</b>: 매 출력 프레임마다 처음부터 이벤트를 다시 누적하지 않고, 오래된 이벤트는 빼고 새 이벤트만 더하는 ring buffer를 유지한다.</li>
+          <li><b>ROI/tile update</b>: 이벤트가 없는 영역은 CIS frame을 그대로 둔다. 움직임이 있는 tile만 갱신하면 960x540 전체를 매번 계산하지 않아도 된다.</li>
+          <li><b>합성 루프와 인코딩 분리</b>: fusion thread는 frame만 만들고, encoder thread가 별도로 H.264/H.265를 만든다. 두 작업을 한 루프에 넣으면 latency spike가 커진다.</li>
+          <li><b>웹 출력 단순화</b>: 실시간 스트림은 WebRTC/HLS로 보내고, 데모 페이지에는 최신 MP4 또는 낮은 FPS preview만 둔다. 웹서버가 합성 계산을 직접 하지 않게 한다.</li>
+          <li><b>Python 탈출</b>: 200FPS 이상은 Python/NumPy 프로토타입으로는 어렵다. C++/OpenCV/NEON, GPU compute, DSP, FPGA 중 하나로 핵심 누적 루프를 옮겨야 한다.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Frame Increase Strategy</h2>
+        <pre>현재 Pi Python 결과:
+320x180 @ 200FPS, 1000 frames -> 15.77s
+320x180 @ 400FPS, 2000 frames -> 26.90s
+
+실시간 목표:
+1000 frames / 5s = 200FPS
+2000 frames / 5s = 400FPS
+
+필요 개선:
+200FPS target: 약 3.2x
+400FPS target: 약 5.4x</pre>
+        <p>가장 먼저 C++/NEON으로 event accumulation을 옮기고, 그 다음 packed event stream과 tile accumulator를 적용하는 순서가 현실적이다. 모델 기반 TimeLens류 interpolation은 품질은 좋지만 라즈베리 CPU 실시간 목표에는 맞지 않는다.</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Current Conclusion</h2>
+      <p>Raspberry Pi 5 CPU에서 960x540 @ 60FPS는 현재 구현으로 실시간이 아니다. 480x270 @ 30FPS도 아직 0.735x realtime 수준이다. 1000프레임 생성 테스트는 320x180 @ 200FPS 목표에서 15.77초가 걸려 0.317x realtime, 2000프레임 생성 테스트는 320x180 @ 400FPS 목표에서 26.90초가 걸려 0.186x realtime으로 측정됐다. 다음 단계는 C++/NEON 최적화, packed event stream, tile accumulation, hardware encode 적용이다.</p>
+    </section>
+  </main>
+  <script>
+    const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    async function refreshSystem() {
+      try {
+        const response = await fetch('status.json', {cache:'no-store'});
+        if (!response.ok) return;
+        const data = await response.json();
+        setText('es-cpu', `${Number(data.cpu_pct || 0).toFixed(1)}%`);
+        setText('es-mem', `${data.mem_used_mb} / ${data.mem_total_mb} MB`);
+        setText('es-temp', data.temp || 'n/a');
+        setText('es-clock', data.arm_clock || 'n/a');
+        setText('es-throttle', data.throttled || 'n/a');
+      } catch (e) {}
+    }
+    setInterval(refreshSystem, 3000);
+    refreshSystem();
+  </script>
+<div style="position:fixed;right:12px;bottom:12px;z-index:9999"><a href="index.html" style="display:inline-block;padding:8px 10px;border-radius:7px;background:#111827;color:#fff;text-decoration:none;font:13px Arial">DVS Pages</a></div></body>
+</html>
