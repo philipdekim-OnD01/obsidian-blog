@@ -1,0 +1,8 @@
+name = "obsidian-blog-visitor-counter"
+main = "src/index.js"
+compatibility_date = "2026-08-29"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "obsidian_blog_visitors"
+database_id = "9631fbc0-4ecb-4ffa-806e-f61da8d3f914"

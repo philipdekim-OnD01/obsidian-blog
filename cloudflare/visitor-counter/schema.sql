@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS counters (
+  name TEXT PRIMARY KEY,
+  value INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS daily_visits (
+  date TEXT PRIMARY KEY,
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);

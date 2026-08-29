@@ -17,9 +17,13 @@
     return;
   }
 
-  const apiBase = 'https://api.counterapi.dev/v1';
-  const namespace = 'philipkim-blog';
-  fetch(`${apiBase}/${namespace}/home-total/up`, { cache: 'no-store' }).catch(() => {
+  const defaultApiBase = 'https://obsidian-blog-visitor-counter.navigation01.workers.dev';
+  const apiBase = (window.VISITOR_API_BASE_URL || defaultApiBase).replace(/\/$/, '');
+  if (!apiBase || apiBase.includes('YOUR_WORKERS_SUBDOMAIN')) {
+    return;
+  }
+
+  fetch(`${apiBase}/visit`, { cache: 'no-store' }).catch(() => {
     // Analytics must not interfere with article rendering.
   });
 })();

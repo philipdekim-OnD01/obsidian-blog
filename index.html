@@ -587,11 +587,10 @@
         </section>
     </main>
 
+    <script src="assets/visitor-config.js"></script>
     <script>
     (function () {
-        const namespace = 'philipkim-blog';
-        const totalCounter = 'home-total';
-        const apiBase = 'https://api.counterapi.dev/v1';
+        const apiBase = window.VISITOR_API_BASE_URL?.replace(/\/$/, '');
         const visitorHistoryUrl = 'data/visitors.json';
 
         const totalEl = document.getElementById('visitor-total');
@@ -633,9 +632,12 @@
             }
         }
 
-        async function increment(name) {
-            const data = await fetchJson(`${apiBase}/${namespace}/${name}/up`);
-            return Number(data.count ?? data.value ?? 0);
+        async function increment() {
+            if (!apiBase || apiBase.includes('YOUR_WORKERS_SUBDOMAIN')) {
+                throw new Error('VISITOR_API_BASE_URL is not configured');
+            }
+            const data = await fetchJson(`${apiBase}/visit`);
+            return Number(data.total ?? 0);
         }
 
         function renderChart(points) {
@@ -680,7 +682,7 @@
                     .sort((a, b) => a.date.localeCompare(b.date))
                     .at(-1);
                 const today = dayKey(0);
-                const totalValue = await increment(totalCounter);
+                const totalValue = await increment();
                 const todayValue = latestSnapshot && latestSnapshot.date < today.iso
                     ? Math.max(0, totalValue - latestSnapshot.total)
                     : 0;

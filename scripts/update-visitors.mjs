@@ -1,9 +1,12 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
-const namespace = 'philipkim-blog';
-const apiBase = 'https://api.counterapi.dev/v1';
+const apiBase = process.env.VISITOR_API_BASE_URL?.replace(/\/$/, '');
 const historyDays = 30;
 const outFile = new URL('../data/visitors.json', import.meta.url);
+
+if (!apiBase) {
+  throw new Error('VISITOR_API_BASE_URL is required. Add your Cloudflare Worker URL as a GitHub Actions repository secret.');
+}
 
 function dateParts(date) {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -24,20 +27,21 @@ function dayKey(offset) {
   return dateParts(new Date(Date.now() - offset * 86400000));
 }
 
-async function fetchCount(name) {
-  const response = await fetch(`${apiBase}/${namespace}/${name}`, {
+async function fetchStats() {
+  const response = await fetch(`${apiBase}/stats`, {
     cache: 'no-store',
   });
 
   if (!response.ok) {
-    if (response.status === 404 || response.status === 400) {
-      return 0;
-    }
-    throw new Error(`Failed to fetch ${name}: HTTP ${response.status}`);
+    throw new Error(`Failed to fetch visitor stats: HTTP ${response.status}`);
   }
 
   const data = await response.json();
-  return Number(data.count ?? data.value ?? 0);
+  const total = Number(data.total ?? 0);
+  if (!Number.isFinite(total)) {
+    throw new Error('Visitor API returned an invalid total');
+  }
+  return { total };
 }
 
 async function readExistingSnapshot() {
@@ -89,6 +93,19 @@ function snapshotsFromHistory(existing, total) {
   });
 }
 
+function cleanSnapshots(snapshots) {
+  let previousTotal = -1;
+  return snapshots
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .filter((entry) => {
+      if (!entry.date || !Number.isFinite(entry.total) || entry.total < previousTotal) {
+        return false;
+      }
+      previousTotal = entry.total;
+      return true;
+    });
+}
+
 function buildHistory(snapshots) {
   return snapshots.slice(1).map((entry, index) => ({
     date: entry.date,
@@ -96,19 +113,18 @@ function buildHistory(snapshots) {
   }));
 }
 
-const total = await fetchCount('home-total');
+const { total } = await fetchStats();
 const existing = await readExistingSnapshot();
 const snapshotDate = dayKey(1).iso;
 const snapshotsByDate = new Map(
-  snapshotsFromHistory(existing, total).map((entry) => [entry.date, entry]),
+  cleanSnapshots(snapshotsFromHistory(existing, total)).map((entry) => [entry.date, entry]),
 );
 snapshotsByDate.set(snapshotDate, {
   date: snapshotDate,
   total,
 });
 
-const snapshots = Array.from(snapshotsByDate.values())
-  .sort((a, b) => a.date.localeCompare(b.date))
+const snapshots = cleanSnapshots(Array.from(snapshotsByDate.values()))
   .slice(-(historyDays + 1));
 const history = buildHistory(snapshots).slice(-historyDays);
 
