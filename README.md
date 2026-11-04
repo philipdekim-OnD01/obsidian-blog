@@ -1,6 +1,6 @@
 # Philip Kim | 강의·연구·산업 분석 자료
 
-이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 76개를 개별 웹 링크로 정리했습니다.
+이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 77개를 개별 웹 링크로 정리했습니다.
 
 > 아래 표에서 `웹페이지 열기`를 누르면 GitHub 소스 코드가 아닌, 실제 웹페이지가 열립니다. 새 탭으로 열려면 Mac에서는 `⌘ + 클릭`, Windows에서는 `Ctrl + 클릭`을 이용하세요.
 
@@ -15,7 +15,7 @@
 
 1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
 2. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-3. **온디바이스 AI 강좌**: 학습한 모델을 경량화하고 Raspberry Pi에서 실행합니다.
+3. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
 4. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
@@ -49,6 +49,7 @@
 | 자료 | 웹페이지 | 내용 |
 |---|---|---|
 | 00 · 전체 학습 지도 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-00-overview.html) | Raspberry Pi, TFLite, 전이학습, 경량화를 한눈에 |
+| 실습 준비 · Raspberry Pi 5 환경 구축 및 TFLite 가위바위보 (30장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-06-raspberry-pi5-setup-rps-tflite-30slides.html) | OS 설치 → Yonsei Wi-Fi → SSH → Python 가상환경 → USB 카메라 → DenseNet·TFLite 가위바위보 실행, 오류 해결 및 실습 점검 |
 | 01 · TFLite 가위바위보 인식 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-01-rps-tflite.html) | 카메라 입력부터 추론·후처리까지 |
 | 02 · 전이학습 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-02-transfer-learning.html) | ResNet 분류와 Tiny YOLO 객체탐지 |
 | 03 · Quantization과 Pruning | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-03-lightweighting.html) | 모델 크기·추론 속도·정확도 균형 |
