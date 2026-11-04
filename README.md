@@ -1,6 +1,6 @@
 # Philip Kim | 강의·연구·산업 분석 자료
 
-이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 77개를 개별 웹 링크로 정리했습니다.
+이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 85개를 개별 웹 링크로 정리했습니다.
 
 > 아래 표에서 `웹페이지 열기`를 누르면 GitHub 소스 코드가 아닌, 실제 웹페이지가 열립니다. 새 탭으로 열려면 Mac에서는 `⌘ + 클릭`, Windows에서는 `Ctrl + 클릭`을 이용하세요.
 
@@ -14,9 +14,10 @@
 기초부터 차례대로 배우려면 다음 흐름을 권장합니다.
 
 1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
-2. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-3. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
-4. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+2. **머신러닝 코드 실습**: 퍼셉트론, 경사하강법, 회귀, Softmax, MNIST의 7개 예제를 Python 코드로 익힙니다.
+3. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
+4. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
+5. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
@@ -37,6 +38,21 @@
 | 12 · 작은 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/12-tiny-neural-network.html) |
 | AI 수학 기초 종합 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/ai-math-foundations.html) |
 | AI 수학 강의 목차 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/index.html) |
+
+## 머신러닝 Python 코드 실습 · 7개 예제 / 80장 편집형 슬라이드
+
+7개 Jupyter Notebook의 코드 흐름을 따라가며 퍼셉트론부터 MNIST까지 학습하는 강의자료입니다. 각 HTML은 16:9 화면, 코드별 쉬운 해설, 텍스트 직접 편집, 슬라이드 추가·복제·삭제, 수정본 HTML 저장과 PDF 인쇄를 지원합니다. 강의자료의 편집 내용은 각자의 브라우저 또는 다운로드한 파일에만 반영되며 GitHub 원본은 변경되지 않습니다.
+
+| 실습 | 강의자료 | 핵심 개념 | 분량 |
+|---|---|---|---|
+| 전체 목차 | [7개 실습 통합 목차](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/index.html) | 학습 순서와 개별 강의 바로가기 | 7개 |
+| EX 01 | [퍼셉트론](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_01_Perceptron_editable_16x9.html) | 입력, 가중치, 편향, 활성화 함수 | 9장 |
+| EX 02 | [가설함수 최적화](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_02_Optimize_Hypothesis_editable_16x9.html) | MSE, 경사하강법, 학습률 | 10장 |
+| EX 03 | [혈압 선형회귀](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_03_Blood_Pressure_Linear_Regression_editable_16x9.html) | 혈압 예측, 회귀계수, 오차 해석 | 11장 |
+| EX 04 | [Keras 다중 입력·다중 출력](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_04_Multi_Input_Multi_Output_Keras_editable_16x9.html) | 여러 입력 변수와 여러 출력 동시 예측 | 11장 |
+| EX 05 | [로지스틱 회귀](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_05_Logistic_Regression_editable_16x9.html) | Sigmoid, 확률, 이진 분류 | 11장 |
+| EX 06 | [Softmax 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_06_Softmax_Classification_editable_16x9.html) | 3개 클래스 예측, 분류 정확도 | 13장 |
+| EX 07 | [MNIST 숫자 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_07_MNIST_Classification_editable_16x9.html) | Keras 신경망, 학습·평가, 일반화 | 15장 |
 
 ## 신경망·딥러닝 기초 강의
 
