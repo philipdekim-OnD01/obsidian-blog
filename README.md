@@ -1,6 +1,6 @@
 # Philip Kim | 강의·연구·산업 분석 자료
 
-이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 75개를 개별 웹 링크로 정리했습니다.
+이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 76개를 개별 웹 링크로 정리했습니다.
 
 > 아래 표에서 `웹페이지 열기`를 누르면 GitHub 소스 코드가 아닌, 실제 웹페이지가 열립니다. 새 탭으로 열려면 Mac에서는 `⌘ + 클릭`, Windows에서는 `Ctrl + 클릭`을 이용하세요.
 
@@ -8,6 +8,12 @@
 
 - [전체 웹사이트 첫 화면](https://philipdekim-ond01.github.io/obsidian-blog/)
 - [사이트 시작 페이지 (index.html)](https://philipdekim-ond01.github.io/obsidian-blog/index.html)
+
+## 신경망·딥러닝 기초 강의
+
+| 자료 | 웹페이지 | 내용 |
+|---|---|---|
+| 역전파에서 DenseNet까지 · 24장 편집형 슬라이드 | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 히든층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례, 실습 및 주석 |
 
 ## 온디바이스 AI 강좌
 
