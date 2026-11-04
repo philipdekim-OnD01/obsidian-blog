@@ -9,6 +9,35 @@
 - [전체 웹사이트 첫 화면](https://philipdekim-ond01.github.io/obsidian-blog/)
 - [사이트 시작 페이지 (index.html)](https://philipdekim-ond01.github.io/obsidian-blog/index.html)
 
+### 추천 학습 순서
+
+기초부터 차례대로 배우려면 다음 흐름을 권장합니다.
+
+1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
+2. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
+3. **온디바이스 AI 강좌**: 학습한 모델을 경량화하고 Raspberry Pi에서 실행합니다.
+4. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+
+## AI 수학 기초 · 전체 15개 HTML 페이지
+
+| 학습 자료 | 웹페이지 |
+|---|---|
+| 00 · AI 수학 학습 지도 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/00-ai-math-map.html) |
+| 01 · 함수와 그래프 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/01-functions-graphs.html) |
+| 02 · 벡터와 내적 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/02-vectors-dot-product.html) |
+| 03 · 행렬곱과 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/03-matrix-multiplication-neural-network.html) |
+| 04 · 선형변환 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/04-linear-transform.html) |
+| 05 · 미분과 연쇄법칙 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/05-derivative-chain-rule.html) |
+| 06 · 기울기와 역전파 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/06-gradient-backpropagation.html) |
+| 07 · 경사하강법 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/07-gradient-descent.html) |
+| 08 · 확률과 Softmax | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/08-probability-softmax.html) |
+| 09 · 통계와 전처리 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/09-statistics-preprocessing.html) |
+| 10 · 엔트로피와 교차엔트로피 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/10-entropy-cross-entropy.html) |
+| 11 · 어텐션 수식 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/11-attention-equation.html) |
+| 12 · 작은 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/12-tiny-neural-network.html) |
+| AI 수학 기초 종합 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/ai-math-foundations.html) |
+| AI 수학 강의 목차 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/index.html) |
+
 ## 신경망·딥러닝 기초 강의
 
 | 자료 | 웹페이지 | 내용 |
@@ -78,26 +107,6 @@
 | 17:31:17 · 합성 이벤트 재생 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/play-20260728_173117.html) |
 | 17:31:52 · 합성 이벤트 재생 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/play-20260728_173152.html) |
 | 17:32:27 · 합성 이벤트 재생 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/play-20260728_173227.html) |
-
-## AI 수학 기초 · 전체 15개 HTML 페이지
-
-| 학습 자료 | 웹페이지 |
-|---|---|
-| 00 · AI 수학 학습 지도 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/00-ai-math-map.html) |
-| 01 · 함수와 그래프 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/01-functions-graphs.html) |
-| 02 · 벡터와 내적 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/02-vectors-dot-product.html) |
-| 03 · 행렬곱과 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/03-matrix-multiplication-neural-network.html) |
-| 04 · 선형변환 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/04-linear-transform.html) |
-| 05 · 미분과 연쇄법칙 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/05-derivative-chain-rule.html) |
-| 06 · 기울기와 역전파 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/06-gradient-backpropagation.html) |
-| 07 · 경사하강법 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/07-gradient-descent.html) |
-| 08 · 확률과 Softmax | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/08-probability-softmax.html) |
-| 09 · 통계와 전처리 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/09-statistics-preprocessing.html) |
-| 10 · 엔트로피와 교차엔트로피 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/10-entropy-cross-entropy.html) |
-| 11 · 어텐션 수식 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/11-attention-equation.html) |
-| 12 · 작은 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/12-tiny-neural-network.html) |
-| AI 수학 기초 종합 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/ai-math-foundations.html) |
-| AI 수학 강의 목차 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/index.html) |
 
 ## AI 기술·산업 분석
 
