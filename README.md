@@ -59,14 +59,17 @@
 | EX 06 | [Softmax 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_06_Softmax_Classification_editable_16x9.html) | 3개 클래스 예측, 분류 정확도 | 13장 |
 | EX 07 | [MNIST 숫자 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_07_MNIST_Classification_editable_16x9.html) | Keras 신경망, 학습·평가, 일반화 | 15장 |
 
-## 신경망·딥러닝 기초 강의
+## 신경망 발전사 · 5편 연속 강의 (연대순)
 
-| 자료 | 웹페이지 | 내용 |
-|---|---|---|
-| Frank Rosenblatt · 1958 퍼셉트론 원전 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/rosenblatt-1958-perceptron-editable-16x9.html) | 심리학자 생애, 1956 K-coefficient 박사논문, EPAC, S–A–R 구조, 가중치 학습, 통계적 분리·일반화, 원본 도표, 현대 딥러닝과의 연결 |\n| Henry J. Kelley · 1960 최적 비행경로와 역전파의 수학적 기원 (25장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/kelley-1960-solar-sail-backprop-editable-16x9.html) | Solar Sail 추진 원리와 로켓 비교, Earth→Mars 최적 경로, 수반방정식, 기울기 계산, 역전파 수치 실습 및 반도체 응용 |
-| Paul Werbos 역전파의 기원 · 1974/1982 논문 해설 (22장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/werbos-backprop-1974-1982-editable-16x9.html) | 저자 생애·경력, 퍼셉트론과 다층 신경망, 오차 4와 손실 8, 미분의 연쇄법칙, 가중치 수정, 반도체 불량 예측 |
-| Geoffrey Hinton · 1986 Nature 역전파 실용화 (18장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html) | Hinton의 전공·이력·연구 동기, 퍼셉트론 한계와 XOR, 순전파·오차 역전파, 대칭 판별·가족관계 실험, 가중치 학습 실습, 반도체 공정 응용; HTML에서 직접 편집·저장 및 PDF 출력 가능 |
-| 역전파에서 DenseNet까지 · 24장 편집형 슬라이드 | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 히든층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례, 실습 및 주석 |
+퍼셉트론의 탄생(1958) → 역전파 계산의 수학적 기원(1960) → 신경망 학습법의 발전(1974/1982) → 다층 신경망 학습의 실용화(1986) → 현대 신경망·CNN·DenseNet으로 이어지는 다섯 편입니다. 아래 순서대로 학습하면 기술이 등장한 이유와 각 논문의 차이를 이해하기 쉽습니다.
+
+| 순서 | 강의자료 | 웹페이지 | 핵심 학습 내용 |
+|---|---|---|---|
+| 1강 · 1958 | Frank Rosenblatt · 퍼셉트론 원전 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/rosenblatt-1958-perceptron-editable-16x9.html) | 퍼셉트론의 탄생, S–A–R 구조, 가중치 학습, 통계적 분리와 일반화 |
+| 2강 · 1960 | Henry J. Kelley · 최적 비행경로와 역전파의 수학적 기원 (25장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/kelley-1960-solar-sail-backprop-editable-16x9.html) | Solar Sail, 최적 비행경로, 수반방정식, 역방향 기울기 계산과 반도체 응용 |
+| 3강 · 1974/1982 | Paul Werbos · 신경망 역전파의 발전 (22장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/werbos-backprop-1974-1982-editable-16x9.html) | 다층 신경망, 손실함수, 미분의 연쇄법칙, 가중치 업데이트와 불량 예측 |
+| 4강 · 1986 | Geoffrey Hinton · Nature 역전파 실용화 (18장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html) | 전공·이력·연구 동기, 은닉층과 XOR, 오차 역전파, 대칭·가족관계 실험, 가중치 학습 실습 |
+| 5강 · 이후 발전 | 신경망 기초 · 역전파에서 DenseNet까지 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 은닉층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례 |
 
 ## 온디바이스 AI 강좌
 
