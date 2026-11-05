@@ -16,17 +16,18 @@
 0. [AI 시대, 공학자는 무엇을 위해 배우고 일하는가](https://philipdekim-ond01.github.io/obsidian-blog/ai-engineering-experience-purpose-editable-16x9.html): 지식 → 경험 → 데이터 → AI 활용 → 인간의 책임과 목적을 연결하는 60분 도입 강의입니다. 기술 학습을 시작하기 전 학습 동기를 정리하고, 현장 실습을 마친 뒤 자신의 경험과 데이터를 돌아볼 때 다시 활용합니다.
 
 1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
-2. **퍼셉트론의 탄생 (1958)**: Frank Rosenblatt의 심리학·K-coefficient 박사학위 논문·EPAC와 퍼셉트론 원전을 학습합니다.
-3. **머신러닝 코드 실습**: 퍼셉트론, 경사하강법, 회귀, Softmax, MNIST의 7개 예제를 Python 코드로 익힙니다.
-4. **역전파 수학적 기원 (1960)**: Henry J. Kelley의 Solar Sail 비행시간 최적화에서 수반방정식(Adjoint Equation)과 기울기 역방향 계산의 필요성을 이해합니다.
-5. **신경망 역전파의 발전 (1974/1982)**: Paul Werbos의 논문을 통해 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
-6. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
-7. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-8. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
-9. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
-10. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
-11. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
-12. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+2. **머신러닝 모델별 특성**: KNN, 선형회귀, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM을 거리·선형관계·확률·규칙·마진이라는 관점으로 비교하고, 손실함수·경사하강법·모델 선택 기준을 익힙니다. [편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ml-model-characteristics-editable.html)
+3. **퍼셉트론의 탄생 (1958)**: Frank Rosenblatt의 심리학·K-coefficient 박사학위 논문·EPAC와 퍼셉트론 원전을 학습합니다.
+4. **머신러닝 코드 실습**: 퍼셉트론, 경사하강법, 회귀, Softmax, MNIST의 7개 예제를 Python 코드로 익힙니다.
+5. **역전파 수학적 기원 (1960)**: Henry J. Kelley의 Solar Sail 비행시간 최적화에서 수반방정식(Adjoint Equation)과 기울기 역방향 계산의 필요성을 이해합니다.
+6. **신경망 역전파의 발전 (1974/1982)**: Paul Werbos의 논문을 통해 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
+7. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
+8. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
+9. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
+10. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
+11. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
+12. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
+13. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## 도입 강의 · AI 시대 공학자의 경험과 목적
 
@@ -57,6 +58,16 @@
 | 12 · 작은 신경망 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/12-tiny-neural-network.html) |
 | AI 수학 기초 종합 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/ai-math-foundations.html) |
 | AI 수학 강의 목차 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ai-math/index.html) |
+
+## 머신러닝 모델별 특성 · 모델 선택 기초
+
+AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들이 무엇을 기준으로 서로 다르게 작동하는지 비교하는 강의입니다. 모델 이름을 외우기보다 거리, 선형관계, 확률, 규칙, 마진이라는 관점으로 분류하고, 분류·회귀 문제의 차이와 손실함수·경사하강법·모델 선택 조건까지 연결합니다.
+
+| 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|
+| [머신러닝 모델별 특성](https://philipdekim-ond01.github.io/obsidian-blog/ml-model-characteristics-editable.html) | KNN · 선형회귀 · 로지스틱 회귀 · 나이브 베이즈 · 의사결정나무 · SVM 비교 → 로지스틱 회귀와 나이브 베이즈의 차이 → 손실함수와 경사하강법 → 실습 데이터 매칭 → 소량·고차원 반도체 데이터의 모델 선택 | 표지 포함 편집형 HTML · HTML 저장 · PDF 인쇄 |
+
+강의자료 첫 페이지에는 제목과 강사 김임환을 표시했으며, 화면 상단에서 편집 모드 전환, 수정본 HTML 저장, PDF 인쇄를 할 수 있습니다. 이 자료를 먼저 보면 뒤의 Python 코드 실습에서 “왜 이 모델을 쓰는가”를 이해하기 쉬워집니다.
 
 ## 머신러닝 Python 코드 실습 · 7개 예제 / 80장 편집형 슬라이드
 
