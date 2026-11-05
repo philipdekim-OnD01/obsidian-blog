@@ -22,7 +22,7 @@
 7. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
 8. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
 9. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
-10. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+10. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)\n11. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
@@ -98,6 +98,16 @@
 | 02 · 제품 경쟁력 | [AI 반도체는 어떻게 경쟁력 있는 제품이 되는가?](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html) | AI Super Cycle → 상품기획 → Technology Roadmap → 연구·개발·양산 → 수율 → Accuracy·Throughput → PPAC → DTCO → GAA·BSPDN → STCO → 2.5D/3D·방열 | 그림 포함 16:9 슬라이드 21장 |
 
 강사: 김임환 삼성전자 산학교수. 슬라이드는 화면에서 넘겨볼 수 있고, 내용 편집·HTML 저장·PDF 인쇄 기능을 지원합니다. 편집 결과는 원본 저장소에 자동 반영되지 않습니다.
+
+## 제조 Digital Twin · 강화학습 논문 강의
+
+AI 반도체의 제품·설계·공정 흐름을 이해한 다음, 실제 제조 의사결정을 AI가 어떻게 학습하는지 연결하는 강의입니다. Digital Twin을 단순 시각화 모델이 아니라 RL이 안전하게 시행착오하는 가상 공장으로 보고, Gymnasium의 역할과 Hybrid RL 구조를 설명합니다.
+
+| 순서 | 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|---|
+| 01 · 2026 논문 | [Magodi et al. · Manufacturing Resilience with Hybrid RL](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html) | 제조 Digital Twin → Gymnasium → DDPG/TD3 + Offline CQL → Policy Fusion → Safety Wrapper → 반도체 FAB 적용 해설 및 논문 한계 검토 | 16:9 편집형 HTML 15장 |
+
+논문: Yvonne Magodi et al., “Development of a hybrid reinforcement learning (hybrid-RL) system for manufacturing resilience,” Frontiers in Mechanical Engineering, 2026. DOI 10.3389/fmech.2026.1854257.
 
 ## DVS OnDevice AI · 전체 34개 HTML 페이지
 
