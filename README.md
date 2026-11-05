@@ -11,7 +11,9 @@
 
 ### 추천 학습 순서
 
-기초부터 차례대로 배우려면 다음 흐름을 권장합니다.
+먼저 공학을 배우는 목적을 생각하고, 수학·원리·실습·현장 응용으로 이어지는 흐름을 권장합니다.
+
+0. [AI 시대, 공학자는 무엇을 위해 배우고 일하는가](https://philipdekim-ond01.github.io/obsidian-blog/ai-engineering-experience-purpose-editable-16x9.html): 지식 → 경험 → 데이터 → AI 활용 → 인간의 책임과 목적을 연결하는 60분 도입 강의입니다. 기술 학습을 시작하기 전 학습 동기를 정리하고, 현장 실습을 마친 뒤 자신의 경험과 데이터를 돌아볼 때 다시 활용합니다.
 
 1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
 2. **퍼셉트론의 탄생 (1958)**: Frank Rosenblatt의 심리학·K-coefficient 박사학위 논문·EPAC와 퍼셉트론 원전을 학습합니다.
@@ -25,6 +27,16 @@
 10. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
 11. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
 12. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+
+## 도입 강의 · AI 시대 공학자의 경험과 목적
+
+수학과 기술을 배우기 전에 “왜 공학을 배우고, 누구를 위해 기술을 쓰는가”를 생각하는 강의입니다. 실습과 연구를 마친 뒤에는 자신이 만든 경험·데이터·가치를 돌아보는 마무리 강의로도 활용할 수 있습니다.
+
+| 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|
+| [AI 시대, 공학자는 무엇을 위해 배우고 일하는가](https://philipdekim-ond01.github.io/obsidian-blog/ai-engineering-experience-purpose-editable-16x9.html) | 학교와 문제 해결 경험 → 도메인·데이터의 가치 → 『Nexus』와 AI 관료 → Gates의 AI 에이전트 → Sutton·Silver의 경험 학습 → 『American Factory』와 자동화 → 돌봄·인간의 책임 → 자기효능감·MIT 미션 → 이번 학기 경험 설계 | 60분 · 본문 25장 + 참고자료 2장 · 그림 포함 16:9 편집형 HTML |
+
+글과 그림·글꼴을 파일 하나에 포함했습니다. 텍스트 편집, 그림 교체, 발표자 메모·출처 보기, 수정본 HTML 저장, PDF 인쇄를 지원합니다. 편집 결과는 각자의 브라우저와 저장한 파일에 반영되며, 블로그 원본에는 자동 반영되지 않습니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
