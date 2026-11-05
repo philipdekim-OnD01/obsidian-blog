@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TabPFN 16:9 강의 자료</title>
+<style>
+  :root{
+    --navy:#0f2742;
+    --blue:#1f6fb8;
+    --sky:#eaf4ff;
+    --orange:#c46a1c;
+    --gray:#eef2f6;
+    --ink:#172033;
+    --muted:#5b6878;
+    --line:#d5dee9;
+    --good:#1f7a59;
+    --warn:#b65c00;
+    --bad:#9f2d2d;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:#0b1422;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+    color:var(--ink);
+  }
+  .deck{
+    height:100vh;
+    overflow-y:auto;
+    scroll-snap-type:y mandatory;
+    background:linear-gradient(180deg,#101d31,#0b1422);
+  }
+  .slide{
+    width:100vw;
+    height:56.25vw;
+    max-height:100vh;
+    max-width:177.777vh;
+    margin:auto;
+    scroll-snap-align:start;
+    position:relative;
+    background:#fbfdff;
+    overflow:hidden;
+    padding:42px 58px;
+    box-shadow:0 20px 70px rgba(0,0,0,.38);
+  }
+  .slide::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:28px 28px;
+    opacity:.25;
+    pointer-events:none;
+  }
+  .content{position:relative;z-index:1;height:100%}
+  h1,h2,h3,p{margin:0}
+  h1{font-size:54px;line-height:1.08;letter-spacing:-1.7px;color:var(--navy);font-weight:850}
+  h2{font-size:40px;line-height:1.18;letter-spacing:-1.1px;color:var(--navy);font-weight:820}
+  h3{font-size:24px;line-height:1.25;color:var(--navy);font-weight:780}
+  p{font-size:22px;line-height:1.48;color:var(--ink);letter-spacing:-.25px}
+  .eyebrow{font-size:18px;color:var(--blue);font-weight:760;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase}
+  .subtitle{font-size:25px;line-height:1.42;color:#334155;margin-top:24px;max-width:940px}
+  .small{font-size:17px;line-height:1.44;color:var(--muted)}
+  .tiny{font-size:13px;line-height:1.35;color:#6d7786}
+  .footer{position:absolute;left:58px;right:58px;bottom:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#7a8491;z-index:2}
+  .bar{height:8px;background:linear-gradient(90deg,var(--blue),#66b3ff);border-radius:20px;width:170px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;height:calc(100% - 40px);align-items:center}
+  .panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 12px 30px rgba(15,39,66,.08)}
+  .deep-panel{background:linear-gradient(135deg,#112744,#1f6fb8);color:white;border-radius:28px;padding:30px;box-shadow:0 20px 40px rgba(16,56,95,.25)}
+  .deep-panel h2,.deep-panel h3,.deep-panel p{color:white}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:30px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:24px}
+  .card{background:white;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 10px 24px rgba(15,39,66,.07);min-height:128px}
+  .card h3{margin-bottom:12px}
+  .card p{font-size:18px;color:#364152;line-height:1.42}
+  .tag{display:inline-block;padding:7px 12px;border-radius:999px;background:var(--sky);color:var(--blue);font-size:16px;font-weight:740;margin-bottom:12px}
+  .quote{font-size:30px;line-height:1.35;font-weight:780;color:var(--navy);letter-spacing:-.8px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:30px;height:calc(100% - 96px);align-items:stretch;margin-top:28px}
+  .big-number{font-size:68px;font-weight:900;color:var(--blue);line-height:1}
+  .path{display:flex;align-items:center;gap:16px;margin-top:28px}
+  .step{flex:1;background:white;border:1px solid var(--line);border-radius:20px;padding:18px;text-align:center;box-shadow:0 10px 22px rgba(15,39,66,.06);min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .step strong{font-size:22px;color:var(--navy);display:block;margin-bottom:7px}
+  .arrow{font-size:28px;color:var(--blue);font-weight:800}
+  .compare{width:100%;border-collapse:separate;border-spacing:0;margin-top:26px;font-size:17px;overflow:hidden;border-radius:22px;box-shadow:0 12px 25px rgba(15,39,66,.08)}
+  .compare th{background:#12365d;color:white;padding:15px 12px;text-align:left;font-size:17px}
+  .compare td{background:white;border-bottom:1px solid var(--line);padding:15px 12px;vertical-align:top;line-height:1.36}
+  .compare tr:last-child td{border-bottom:0}
+  .compare .win{background:#edf7ff;font-weight:760;color:#12365d}
+  .metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:28px}
+  .metric{background:white;border:1px solid var(--line);border-radius:22px;padding:22px;text-align:center;box-shadow:0 10px 24px rgba(15,39,66,.07)}
+  .metric .num{font-size:42px;font-weight:900;color:var(--blue);line-height:1;margin-bottom:10px}
+  .metric .label{font-size:17px;color:#3d4959;line-height:1.35}
+  .axis-chart{height:300px;background:white;border:1px solid var(--line);border-radius:24px;padding:22px;margin-top:26px;position:relative;box-shadow:0 10px 24px rgba(15,39,66,.07)}
+  .axis-chart svg{width:100%;height:100%}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#6b3600;border-radius:20px;padding:18px;font-size:18px;line-height:1.42;margin-top:20px}
+  .good{color:var(--good);font-weight:800}.warn{color:var(--warn);font-weight:800}.bad{color:var(--bad);font-weight:800}
+  .flow-vertical{display:grid;grid-template-columns:1fr;gap:14px;margin-top:26px}
+  .row-card{display:grid;grid-template-columns:240px 1fr;gap:18px;align-items:center;background:white;border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:0 10px 22px rgba(15,39,66,.06)}
+  .row-card strong{font-size:22px;color:var(--navy)}
+  .row-card span{font-size:19px;line-height:1.42;color:#344256}
+  .equation{font-size:24px;background:#071525;color:#d9f5ff;border-radius:20px;padding:22px;font-family:"SFMono-Regular",Consolas,monospace;line-height:1.65;margin-top:24px;border:1px solid #1f4774}
+  .split-title{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+  .mini-title{font-size:16px;color:#64748b;margin-top:10px;line-height:1.4}
+  .secom{background:linear-gradient(135deg,#fff,#eef7ff);border-left:8px solid var(--blue)}
+  .source{font-size:15px;color:#667085;line-height:1.45;margin-top:15px}
+  .nav{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:8px;background:rgba(8,17,30,.65);backdrop-filter:blur(8px);border-radius:999px;padding:8px}
+  .nav button{border:0;border-radius:999px;background:#fff;color:#12365d;font-size:14px;font-weight:700;padding:8px 12px;cursor:pointer}
+  .print-hint{position:fixed;left:18px;bottom:18px;z-index:20;background:rgba(8,17,30,.65);color:#fff;border-radius:999px;padding:10px 14px;font-size:12px}
+  @media print{
+    body{background:white}.deck{height:auto;overflow:visible}.slide{page-break-after:always;box-shadow:none;width:100vw;height:56.25vw;max-width:none;max-height:none}.nav,.print-hint{display:none}
+  }
+
+  /* ===== 편집 도구 ===== */
+  .editor-toolbar{
+    position:fixed;top:12px;right:12px;z-index:60;
+    display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+    max-width:min(920px,calc(100vw - 24px));
+    padding:8px 10px;border:1px solid rgba(255,255,255,.18);border-radius:16px;
+    background:rgba(7,18,33,.88);backdrop-filter:blur(12px);
+    box-shadow:0 12px 35px rgba(0,0,0,.28);
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .editor-toolbar button{
+    border:0;border-radius:11px;padding:9px 11px;cursor:pointer;
+    background:#fff;color:#12365d;font-size:12px;font-weight:760;white-space:nowrap;
+  }
+  .editor-toolbar button:hover{background:#eaf4ff}
+  .editor-toolbar button.active{background:#1f6fb8;color:#fff}
+  .editor-toolbar button.danger{background:#fff0f0;color:#9f2d2d}
+  .editor-toolbar button.primary{background:#1f6fb8;color:#fff}
+  .editor-toolbar .page-state{font-size:12px;color:#d7e5f4;font-weight:750;padding:0 4px;white-space:nowrap}
+  .editor-toolbar.collapsed{padding:7px;background:rgba(7,18,33,.76)}
+  .editor-toolbar.collapsed > :not(.toolbar-collapse){display:none}
+  .editor-toolbar .toolbar-collapse{min-width:38px;padding:9px 10px}
+  body.is-editing .slide{outline:3px solid rgba(31,111,184,.35);outline-offset:-3px}
+  body.is-editing .content[contenteditable="true"],
+  body.is-editing .footer span:first-child[contenteditable="true"]{cursor:text}
+  body.is-editing .content[contenteditable="true"]:focus{
+    outline:3px dashed rgba(31,111,184,.55);outline-offset:-10px;border-radius:14px;
+  }
+  body.is-editing .footer span:first-child[contenteditable="true"]{background:#fff7c2;color:#233044;padding:2px 5px;border-radius:5px}
+  .editor-toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);
+    z-index:80;background:rgba(7,18,33,.94);color:white;padding:11px 16px;border-radius:999px;
+    font-size:13px;opacity:0;pointer-events:none;transition:.2s ease;box-shadow:0 10px 28px rgba(0,0,0,.28)
+  }
+  .editor-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .edit-guide{
+    position:fixed;left:18px;top:18px;z-index:55;background:rgba(255,255,255,.94);color:#12365d;
+    border:1px solid #d5dee9;border-radius:13px;padding:8px 11px;font-size:12px;font-weight:700;
+    box-shadow:0 8px 24px rgba(0,0,0,.12);display:none
+  }
+  body.is-editing .edit-guide{display:block}
+  @page{size:13.333in 7.5in;margin:0}
+  @media print{
+    html,body{width:13.333in;height:auto;background:#fff!important}
+    .deck{height:auto!important;overflow:visible!important;background:#fff!important;scroll-snap-type:none!important}
+    .slide{width:13.333in!important;height:7.5in!important;max-width:none!important;max-height:none!important;margin:0!important;page-break-after:always!important;break-after:page!important;box-shadow:none!important}
+    .slide:last-child{page-break-after:auto!important;break-after:auto!important}
+    .editor-toolbar,.editor-toast,.edit-guide,.nav,.print-hint{display:none!important}
+  }
+
+
+  /* ===== v2: 모바일/아이패드 안정 편집 ===== */
+  [data-editable-text="1"]{
+    -webkit-user-select:text;
+    user-select:text;
+    -webkit-touch-callout:default;
+  }
+  body.is-editing .deck{scroll-snap-type:none;}
+  body.is-editing [data-editable-text="1"]{
+    cursor:text;
+    outline:1px dashed rgba(31,111,184,.22);
+    outline-offset:3px;
+    border-radius:4px;
+    caret-color:#111;
+  }
+  body.is-editing [data-editable-text="1"]:focus{
+    outline:3px solid rgba(31,111,184,.62);
+    outline-offset:4px;
+    background:rgba(234,244,255,.42);
+  }
+  .text-editor-backdrop{
+    display:none;position:fixed;inset:0;z-index:120;background:rgba(4,12,24,.58);
+    backdrop-filter:blur(3px);align-items:stretch;justify-content:flex-end;
+  }
+  .text-editor-backdrop.open{display:flex}
+  .text-editor-panel{
+    width:min(620px,94vw);height:100%;background:#f8fbff;color:#172033;
+    box-shadow:-18px 0 55px rgba(0,0,0,.32);display:flex;flex-direction:column;
+  }
+  .text-editor-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:20px;border-bottom:1px solid #d5dee9;background:#fff}
+  .text-editor-head strong{font-size:22px;color:#0f2742}
+  .text-editor-sub{font-size:13px;color:#64748b;margin-top:5px}
+  .text-editor-head button,.text-editor-actions button{border:0;border-radius:10px;padding:10px 14px;font-weight:760;cursor:pointer}
+  .text-editor-body{padding:16px 18px;overflow:auto;flex:1}
+  .text-edit-row{margin-bottom:14px;background:#fff;border:1px solid #d5dee9;border-radius:14px;padding:12px}
+  .text-edit-row label{display:block;font-size:12px;color:#526174;font-weight:800;margin-bottom:7px}
+  .text-edit-row textarea{width:100%;min-height:68px;resize:vertical;border:1px solid #bcc9d8;border-radius:10px;padding:10px 11px;font:16px/1.42 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;color:#172033;background:#fff;-webkit-user-select:text;user-select:text}
+  .text-edit-row textarea:focus{outline:3px solid rgba(31,111,184,.2);border-color:#1f6fb8}
+  .text-editor-actions{display:flex;justify-content:flex-end;gap:9px;padding:14px 18px;border-top:1px solid #d5dee9;background:#fff}
+  .text-editor-actions .primary{background:#1f6fb8;color:#fff}
+  @media (max-width:700px){
+    .editor-toolbar{left:8px;right:8px;top:8px;max-width:none;justify-content:flex-start}
+    .editor-toolbar button{font-size:11px;padding:8px 9px}
+    .edit-guide{top:auto;bottom:72px;left:10px;right:10px;text-align:center}
+  }
+  @media print{.text-editor-backdrop{display:none!important}}
+</style>
+</head>
+<body class="is-editing">
+<div aria-label="슬라이드 편집 도구" class="editor-toolbar" id="editorToolbar" role="toolbar">
+<button aria-pressed="true" class="active" id="editToggle" onclick="toggleEditMode()" title="슬라이드의 글자를 직접 수정합니다">수정 ON</button><button id="openTextEditor" onclick="openTextEditorPanel()" title="현재 페이지의 텍스트를 입력창에서 안정적으로 수정합니다">현재 페이지 편집</button>
+<button onclick="duplicateCurrentSlide()" title="현재 페이지를 복제합니다">페이지 복제</button>
+<button class="danger" onclick="deleteCurrentSlide()" title="현재 페이지를 삭제합니다">페이지 삭제</button>
+<button onclick="undoDeckChange()" title="페이지 삭제/복제를 한 단계 되돌립니다">실행 취소</button>
+<button class="primary" onclick="downloadEditedHTML()" title="현재 수정 상태를 HTML 파일로 저장합니다">HTML 저장</button>
+<button class="primary" onclick="exportPDF()" title="인쇄 창을 열어 16:9 PDF로 저장합니다">PDF 변환</button>
+<span class="page-state" id="pageState">1 / 28</span>
+<button class="toolbar-collapse" id="toolbarCollapse" onclick="toggleToolbar()" title="편집 도구 접기/펼치기">접기</button>
+</div>
+<div class="edit-guide">수정 모드: 슬라이드의 글자를 클릭하여 직접 입력 · Cmd/Ctrl+Z로 텍스트 실행 취소</div>
+<div class="editor-toast" id="editorToast"></div>
+<div class="deck" id="deck">
+<section class="slide"><div class="content hero-grid">
+<div>
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Tabular Foundation Model Lecture</div>
+<h1 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN:<br/>표 데이터 머신러닝의<br/>새로운 작동 방식</h1>
+<p class="subtitle" contenteditable="true" data-editable-text="1" spellcheck="false">기존 XGBoost, LightGBM, AutoML과 무엇이 다르고 왜 빠르며, 실제 반도체 데이터 분석에서 어디까지 쓸 수 있는지 한 번에 이해하는 강의 자료</p>
+</div>
+<div class="deep-panel">
+<h2 contenteditable="true" data-editable-text="1" spellcheck="false">오늘의 핵심 질문</h2>
+<div class="flow-vertical">
+<div class="row-card" style="grid-template-columns:1fr;background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.25)"><span contenteditable="true" data-editable-text="1" spellcheck="false" style="color:white">새 데이터가 올 때마다 다시 학습해야 하는가?</span></div>
+<div class="row-card" style="grid-template-columns:1fr;background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.25)"><span contenteditable="true" data-editable-text="1" spellcheck="false" style="color:white">표 데이터에서도 GPT 같은 사전학습 모델이 가능한가?</span></div>
+<div class="row-card" style="grid-template-columns:1fr;background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.25)"><span contenteditable="true" data-editable-text="1" spellcheck="false" style="color:white">TabPFN이 우수한 조건과 위험한 조건은 무엇인가?</span></div>
+</div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">김임환 강의 자료</span><span>1 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="split-title"><div><div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">One sentence</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN은 “표 데이터를 위한 사전학습 Transformer”다</h2></div><div class="bar"></div></div>
+<div class="grid3">
+<div class="card"><div class="tag" contenteditable="true" data-editable-text="1" spellcheck="false">기존 ML</div><h3 contenteditable="true" data-editable-text="1" spellcheck="false">데이터마다 새로 학습</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">새 CSV가 들어오면 전처리, 모델 선택, 하이퍼파라미터 튜닝, 검증을 반복한다.</p></div>
+<div class="card"><div class="tag" contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN</div><h3 contenteditable="true" data-editable-text="1" spellcheck="false">문제 푸는 법을 미리 학습</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">수많은 synthetic tabular task를 미리 학습하고, 새 데이터는 context로 넣는다.</p></div>
+<div class="card"><div class="tag" contenteditable="true" data-editable-text="1" spellcheck="false">핵심 변화</div><h3 contenteditable="true" data-editable-text="1" spellcheck="false">학습에서 추론으로 이동</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">새 데이터셋에서 긴 튜닝을 하지 않고 한 번의 forward pass로 예측한다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">강의에서 가장 쉬운 비유: GPT가 문장을 미리 공부하고 질문에 답하듯이, TabPFN은 표 데이터 문제를 미리 공부하고 새 Excel 문제를 푼다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">핵심 정의</span><span>2 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Why now</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">이미지와 텍스트는 딥러닝이 이겼지만, 표 데이터는 달랐다</h2>
+<div class="axis-chart">
+<svg preserveaspectratio="none" viewbox="0 0 1000 260">
+<line stroke="#b6c2d1" stroke-width="2" x1="70" x2="950" y1="210" y2="210"></line>
+<line stroke="#b6c2d1" stroke-width="2" x1="70" x2="70" y1="40" y2="210"></line>
+<path d="M70 190 C210 188 320 178 420 150 C550 105 640 92 735 70 C815 52 875 42 950 30" fill="none" stroke="#1f6fb8" stroke-width="7"></path>
+<path d="M70 205 C210 204 330 204 450 203 C570 202 700 201 820 200 C880 199 920 199 950 198" fill="none" stroke="#c46a1c" stroke-width="7"></path>
+<text fill="#1f6fb8" font-size="25" font-weight="800" x="95" y="177">비정형 데이터</text>
+<text fill="#c46a1c" font-size="25" font-weight="800" x="95" y="232">정형 데이터</text>
+<text fill="#334155" font-size="20" x="260" y="196">Random Forest</text>
+<text fill="#334155" font-size="20" x="500" y="194">XGBoost</text>
+<text fill="#334155" font-size="20" x="650" y="192">LightGBM</text>
+<text fill="#334155" font-size="20" x="770" y="190">CatBoost</text>
+<text fill="#334155" font-size="20" x="565" y="82">Transformer</text>
+<text fill="#334155" font-size="20" x="850" y="55">GPT 계열</text>
+</svg>
+</div>
+<p class="subtitle" contenteditable="true" data-editable-text="1" spellcheck="false">현실의 의료, 금융, 제조, 마케팅 데이터는 대부분 표 형태인데, 이 영역은 오랫동안 Tree 기반 모델과 AutoML이 강했다.</p>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">배경 문제</span><span>3 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Why neural networks struggled</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">신경망이 표 데이터에서 자주 약해지는 이유</h2>
+<div class="grid4">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">스케일 차이</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">0.001과 10,000,000이 같은 표 안에 섞인다. 숫자 크기가 곧 의미가 아닐 수 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">결측치</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">NaN, 빈칸, 측정 실패가 의미 있는 신호일 수도 있고 단순 오류일 수도 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">범주형 변수</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">True, Seoul, 장비 ID, Lot ID처럼 숫자가 아닌 값이 많다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">컬럼 의미</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">표의 각 열은 독립된 의미를 가진다. 이미지 픽셀처럼 주변 위치가 항상 중요하지 않다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">그래서 실무에서는 “딥러닝이면 다 좋다”가 아니라, XGBoost나 LightGBM이 여전히 강력한 기본 선택지였다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">기존 딥러닝의 약점</span><span>4 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Old workflow</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">기존 방식의 비용: 새 데이터가 올 때마다 처음부터 다시</h2>
+<div class="path">
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">새 데이터셋</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">SECOM, ATE, 고객, 재무</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">전처리</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">결측, 범주, 스케일</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">모델 선택</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">RF, XGB, LGBM</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">튜닝 반복</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">CV, Grid, Bayesian</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">예측</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">성능 확인</span></div>
+</div>
+<div class="grid2">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">장점</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">대규모 데이터, 많은 변수, 산업 배포에서 검증된 강력한 방식이다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">문제</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">데이터가 작고 빠른 판단이 필요할 때는 튜닝 시간이 의사결정 속도를 잡아먹는다.</p></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">기존 ML 파이프라인</span><span>5 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">New idea</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN의 질문: “모델을 다시 학습하지 말고, 학습 알고리즘 자체를 학습하면?”</h2>
+<div class="two-col">
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">기존 모델의 관점</h3><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false">새 데이터 D<br/>→ 모델 f를 새로 학습<br/>→ f(x)를 예측</div><p contenteditable="true" data-editable-text="1" spellcheck="false" style="margin-top:18px">데이터셋마다 학습 과정이 반복된다.</p></div>
+<div class="deep-panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN의 관점</h3><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false" style="background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.25)">사전학습된 qθ<br/>+ 학습 샘플 Dtrain<br/>+ 테스트 샘플 xtest<br/>→ ytest 확률</div><p contenteditable="true" data-editable-text="1" spellcheck="false" style="margin-top:18px">새 데이터에서는 gradient 기반 재학습 없이 예측한다.</p></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">패러다임 변화</span><span>6 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Original paper</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">원 논문이 주장한 TabPFN의 핵심</h2>
+<div class="metric-row">
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">1초↓</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">작은 표 데이터 분류를 매우 빠르게 예측</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">튜닝 0</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">하이퍼파라미터 튜닝 없이 사용 가능</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">PFN</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">Prior-Data Fitted Network 계열</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">SCM</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">인과 구조를 닮은 synthetic prior 사용</div></div>
+</div>
+<p class="subtitle" contenteditable="true" data-editable-text="1" spellcheck="false">논문 제목 자체가 메시지다. “TabPFN: A Transformer That Solves Small Tabular Classification Problems in a Second.”</p>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">논문 핵심 문장</span><span>7 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">In-context learning</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN은 표 데이터를 “문맥”으로 읽는다</h2>
+<div class="grid2">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">LLM의 예</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">문맥: 사과는 Apple, 바나나는 Banana<br/>질문: 포도는?<br/>답: Grape</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN의 예</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">문맥: X_train과 y_train<br/>질문: X_test의 label은?<br/>답: y_test의 확률 분포</p></div>
+</div>
+<div class="path">
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">학습 샘플</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">feature와 label</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">Transformer</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">샘플 간 관계와 변수 관계 attention</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">테스트 샘플</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">label 확률 출력</span></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">메커니즘 1</span><span>8 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Prior fitting</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">현실 데이터를 미리 모은 것이 아니라, 데이터 생성 세계를 만든다</h2>
+<div class="path">
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">Prior 설계</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">어떤 표 데이터가 현실적인가</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">SCM/BNN 생성</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">구조적 인과 모델과 베이지안 신경망</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">Synthetic Dataset</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">수많은 가상 분류 문제</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">Transformer 학습</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">문제 푸는 방법 학습</span></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">핵심은 데이터 복사가 아니다. 현실 표 데이터가 가질 법한 상관, 비선형, 노이즈, 클래스 경계, 결측 상황을 prior로 시뮬레이션한다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">메커니즘 2</span><span>9 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Training once, using many times</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">사전학습은 한 번, 실전 예측은 빠르게</h2>
+<div class="two-col">
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">Offline 단계</h3><div class="flow-vertical"><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">1</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">Synthetic dataset을 계속 샘플링한다.</span></div><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">2</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">Transformer가 train subset을 보고 test label을 맞히도록 학습한다.</span></div><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">3</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">학습된 weight가 추론 알고리즘 역할을 한다.</span></div></div></div>
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">Online 단계</h3><div class="flow-vertical"><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">1</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">새로운 실제 데이터셋의 train row를 넣는다.</span></div><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">2</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">테스트 row를 함께 넣는다.</span></div><div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">3</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">한 번의 forward pass로 class 확률을 얻는다.</span></div></div></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">훈련과 추론</span><span>10 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Comparison</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">기존 대표 모델과의 차이</h2>
+<table class="compare">
+<tr><th contenteditable="true" data-editable-text="1" spellcheck="false">비교 항목</th><th contenteditable="true" data-editable-text="1" spellcheck="false">Tree 앙상블</th><th contenteditable="true" data-editable-text="1" spellcheck="false">일반 딥러닝</th><th contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN</th></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">학습 방식</td><td contenteditable="true" data-editable-text="1" spellcheck="false">데이터셋마다 반복 학습</td><td contenteditable="true" data-editable-text="1" spellcheck="false">데이터셋마다 반복 학습</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">사전학습 후 context 기반 추론</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">튜닝 부담</td><td contenteditable="true" data-editable-text="1" spellcheck="false">성능을 위해 튜닝 필요</td><td contenteditable="true" data-editable-text="1" spellcheck="false">구조와 학습률 민감</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">기본 사용성이 높음</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">작은 데이터</td><td contenteditable="true" data-editable-text="1" spellcheck="false">강하지만 튜닝 필요</td><td contenteditable="true" data-editable-text="1" spellcheck="false">과적합 위험</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">논문에서 강점으로 제시</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">대규모 데이터</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">여전히 강력</td><td contenteditable="true" data-editable-text="1" spellcheck="false">조건부 가능</td><td contenteditable="true" data-editable-text="1" spellcheck="false">버전과 설정에 따라 제한</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">해석성</td><td contenteditable="true" data-editable-text="1" spellcheck="false">SHAP 등 성숙</td><td contenteditable="true" data-editable-text="1" spellcheck="false">낮은 편</td><td contenteditable="true" data-editable-text="1" spellcheck="false">개선 중, 별도 해석 필요</td></tr>
+</table>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">차별점</span><span>11 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Performance claim</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">우수성 1: 짧은 시간에 강한 baseline 성능</h2>
+<div class="axis-chart">
+<svg preserveaspectratio="none" viewbox="0 0 1000 260">
+<line stroke="#cbd5e1" stroke-width="2" x1="80" x2="940" y1="215" y2="215"></line>
+<line stroke="#cbd5e1" stroke-width="2" x1="80" x2="80" y1="35" y2="215"></line>
+<text fill="#64748b" font-size="18" x="30" y="45">ROC AUC</text>
+<text fill="#64748b" font-size="18" x="850" y="245">시간</text>
+<path d="M85 65 C160 63 250 62 360 60 C520 58 700 58 930 56" fill="none" stroke="#1f6fb8" stroke-width="7"></path>
+<path d="M85 180 C190 160 350 135 500 105 C650 82 800 70 930 62" fill="none" stroke="#c46a1c" stroke-width="5"></path>
+<path d="M85 196 C220 175 380 150 540 118 C690 93 830 78 930 69" fill="none" stroke="#64748b" stroke-width="5"></path>
+<text fill="#1f6fb8" font-size="23" font-weight="800" x="120" y="55">TabPFN</text>
+<text fill="#c46a1c" font-size="20" font-weight="700" x="780" y="92">AutoML</text>
+<text fill="#64748b" font-size="20" font-weight="700" x="780" y="116">XGBoost/LightGBM</text>
+<text fill="#334155" font-size="16" x="100" y="242">1초</text>
+<text fill="#334155" font-size="16" x="500" y="242">수분</text>
+<text fill="#334155" font-size="16" x="895" y="242">1시간</text>
+</svg>
+</div>
+<p class="subtitle" contenteditable="true" data-editable-text="1" spellcheck="false">원 논문은 작은 수치형 tabular benchmark에서 TabPFN이 빠른 시간 안에 튜닝된 Tree/AutoML과 경쟁적 성능을 보였다고 주장한다.</p>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">성능 메시지</span><span>12 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Why it can be strong</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">우수성 2: 작은 데이터에서 과적합을 줄이는 prior 효과</h2>
+<div class="grid3">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">복잡한 튜닝 감소</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">작은 데이터에서 과도한 하이퍼파라미터 탐색은 validation split에 과적합될 수 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">분포 전체를 예측</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">단순 class label이 아니라 class probability를 출력하므로 불확실성 판단이 가능하다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">다양한 문제 경험</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">수많은 synthetic task로 “그럴듯한 표 데이터 구조”를 미리 경험한다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">교수자 관점에서 중요한 메시지: TabPFN의 강점은 마술이 아니라, 사전학습된 prior와 Bayesian inference 근사라는 설계 철학이다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">우수성의 원인</span><span>13 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Uncertainty</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">우수성 3: 점 예측보다 확률 판단에 가깝다</h2>
+<div class="grid2">
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">일반적 분류 결과</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">“이 샘플은 fail입니다.”</p><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false">class = fail</div><p contenteditable="true" data-editable-text="1" spellcheck="false" style="margin-top:16px">의사결정에는 쉽지만, 얼마나 확신하는지는 별도 해석이 필요하다.</p></div>
+<div class="deep-panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN식 결과</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">“fail일 확률이 높지만 불확실성이 있습니다.”</p><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false" style="background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.25)">P(pass)=0.28<br/>P(fail)=0.72</div><p contenteditable="true" data-editable-text="1" spellcheck="false" style="margin-top:16px">샘플 우선순위, 추가 측정, FA 의뢰 판단에 연결하기 쉽다.</p></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">확률적 해석</span><span>14 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">But not magic</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">반드시 조심해야 할 한계</h2>
+<div class="grid4">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">큰 데이터</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">원 논문은 주로 작은 데이터에 초점을 둔다. 대규모 실무 데이터에서는 별도 검증이 필요하다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">범주형 변수</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">범주형 feature가 많으면 Tree 모델이 여전히 더 실용적일 수 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">결측치</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">결측 자체가 중요한 제조 데이터에서는 처리 방식이 성능을 좌우한다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">불필요 변수</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">의미 없는 feature가 많으면 TabPFN 성능이 약해질 수 있다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">강의에서 과장 금지: TabPFN은 XGBoost의 종말이 아니라, 표 데이터에도 Foundation Model 방식이 들어왔다는 신호다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">리스크</span><span>15 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Sweet spot</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN을 먼저 써볼 만한 조건</h2>
+<div class="metric-row">
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">작음</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">샘플 수가 많지 않은 데이터</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">수치형</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">숫자 feature 중심</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">빠름</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">튜닝할 시간이 적은 초기 분석</div></div>
+<div class="metric"><div class="num" contenteditable="true" data-editable-text="1" spellcheck="false">Baseline</div><div class="label" contenteditable="true" data-editable-text="1" spellcheck="false">XGBoost와 비교할 강한 기준선</div></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">실무 권장 판단: TabPFN은 최종 모델 후보이기도 하지만, 먼저 “강력한 빠른 기준선”으로 쓰는 것이 안전하다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">도입 기준</span><span>16 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Decision rule</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">실무 의사결정: 언제 TabPFN, 언제 XGBoost인가</h2>
+<table class="compare">
+<tr><th contenteditable="true" data-editable-text="1" spellcheck="false">상황</th><th contenteditable="true" data-editable-text="1" spellcheck="false">우선 선택</th><th contenteditable="true" data-editable-text="1" spellcheck="false">이유</th></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">샘플 수가 작고 빠른 결과가 필요</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN</td><td contenteditable="true" data-editable-text="1" spellcheck="false">튜닝 없이 빠른 기준 성능을 얻기 쉽다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">수치형 feature 중심의 소규모 classification</td><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN + XGBoost 비교</td><td contenteditable="true" data-editable-text="1" spellcheck="false">논문상 TabPFN의 강점 영역이다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">대규모 생산 데이터, 수십만 행 이상</td><td contenteditable="true" data-editable-text="1" spellcheck="false">XGBoost, LightGBM</td><td contenteditable="true" data-editable-text="1" spellcheck="false">속도, 메모리, 배포 안정성이 검증되어 있다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">범주형, 결측, ID성 변수가 많음</td><td contenteditable="true" data-editable-text="1" spellcheck="false">CatBoost, LightGBM</td><td contenteditable="true" data-editable-text="1" spellcheck="false">해당 데이터 구조에 대한 현장 경험이 풍부하다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">설명 가능성과 감사 대응이 중요</td><td contenteditable="true" data-editable-text="1" spellcheck="false">Tree + SHAP</td><td contenteditable="true" data-editable-text="1" spellcheck="false">조직 내 설명과 승인 프로세스에 유리하다.</td></tr>
+</table>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">모델 선택 기준</span><span>17 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Semiconductor angle</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">반도체 데이터에서의 의미</h2>
+<div class="grid2">
+<div class="card secom"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">SECOM 과제 연결</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">100개 내외의 공정 feature로 pass/fail을 예측하는 문제는 전형적인 tabular classification이다. Logistic, RF, XGBoost 다음 비교 대상으로 TabPFN을 넣기 좋다.</p></div>
+<div class="card secom"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">YE/Failure 분석 연결</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">ATE 결과, bin, inline defect, wafer map 요약 feature, diagnostic feature를 결합하면 “불량 가능성”과 “failure mechanism” 분류 문제로 바꿀 수 있다.</p></div>
+</div>
+<div class="path">
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">공정 변수</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">sensor, inline, lot</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">Test 결과</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">pass/fail, bin</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">모델 비교</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">XGBoost vs TabPFN</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">우선순위</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">FA, 샘플링, 원인 후보</span></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">반도체 적용</span><span>18 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Lecture example</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">학생에게 줄 수 있는 실습 구조</h2>
+<div class="flow-vertical">
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">1단계</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">SECOM 데이터에서 target, is_synthetic, target_name을 구분하고 학습 feature를 정리한다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">2단계</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">Logistic Regression을 baseline으로 둔다. 선형 모델의 한계를 확인한다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">3단계</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">Random Forest와 XGBoost로 Tree 기반 성능을 확인한다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">4단계</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN을 추가하여 “튜닝 시간 대비 성능”을 비교한다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">5단계</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">Accuracy만 보지 말고 fail class의 Recall, Precision, F1, ROC-AUC를 같이 본다.</span></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">수업 설계</span><span>19 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Evaluation</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">반도체 불량 예측에서는 Accuracy만 보면 안 된다</h2>
+<div class="grid3">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">Accuracy</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">전체 정답률이다. 불량이 적으면 모두 양품이라고 해도 높게 나올 수 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">Recall</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">실제 fail 중 얼마나 찾아냈는가. 제조 불량 탐지에서는 특히 중요하다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">Precision</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">fail이라고 예측한 것 중 진짜 fail 비율이다. 불필요한 FA 비용과 연결된다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">의사결정 기준: “모델이 잘 맞췄는가”보다 “놓치면 안 되는 fail을 얼마나 잡았는가”를 먼저 본다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">평가 지표</span><span>20 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Teaching message</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">학생들에게 전달할 가장 중요한 관점</h2>
+<div class="deep-panel" style="margin-top:32px">
+<p class="quote" contenteditable="true" data-editable-text="1" spellcheck="false">“TabPFN은 단순히 빠른 classifier가 아니다. 표 데이터 문제를 미리 학습한 foundation model이라는 점이 본질이다.”</p>
+</div>
+<div class="grid3">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">ML 관점</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">모델을 고르는 시대에서, 사전학습된 추론기를 활용하는 시대로 이동한다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">반도체 관점</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">공정, 테스트, 결함, 수율 데이터를 하나의 tabular prediction 문제로 재구성할 수 있다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">전략 관점</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">빠른 baseline은 분석 시간을 줄이고, 엔지니어가 원인 해석에 더 많은 시간을 쓰게 한다.</p></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">강의 메시지</span><span>21 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Most likely objections</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">강의 중 나올 수 있는 반론과 답변</h2>
+<div class="flow-vertical">
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">반론 1</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">“XGBoost가 충분히 강한데 왜 필요한가?” 답변: 맞다. TabPFN은 대체재라기보다 빠른 강력 baseline이자 foundation model 패러다임의 예다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">반론 2</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">“Synthetic data로 학습했는데 현실에 맞나?” 답변: 그래서 prior 설계가 핵심이며, 실제 데이터에서 반드시 비교 검증해야 한다.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">반론 3</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">“반도체 데이터는 크고 복잡하다.” 답변: 전체 원천 데이터를 그대로 넣기보다 문제를 작게 잘라 빠른 후보 검증에 쓰는 것이 현실적이다.</span></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">반론 검토</span><span>22 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Practical workflow</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">실무 적용 흐름: TabPFN을 어디에 넣을 것인가</h2>
+<div class="path">
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">문제 정의</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">무엇을 예측할지 명확히</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">기본 정리</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">타깃 누수와 ID 변수 제거</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">빠른 baseline</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">XGBoost</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">현장형 비교 모델</span></div><div class="arrow">→</div>
+<div class="step"><strong contenteditable="true" data-editable-text="1" spellcheck="false">판단</strong><span class="small" contenteditable="true" data-editable-text="1" spellcheck="false">성능, 시간, 설명 가능성</span></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN을 단독 정답으로 쓰기보다, XGBoost와 나란히 두고 “시간 대비 성능”과 “fail class 지표”를 비교하는 것이 안전하다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">실행 프로세스</span><span>23 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Minimal code</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">수업용 코드 흐름은 매우 단순하게 보여준다</h2>
+<div class="grid2">
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">기존 방식</h3><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false">preprocess()<br/>split()<br/>GridSearchCV()<br/>model.fit()<br/>evaluate()</div></div>
+<div class="deep-panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN 방식</h3><div class="equation" contenteditable="true" data-editable-text="1" spellcheck="false" style="background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.25)">from tabpfn import TabPFNClassifier<br/><br/>clf = TabPFNClassifier()<br/>clf.fit(X_train, y_train)<br/>proba = clf.predict_proba(X_test)</div></div>
+</div>
+<p class="source" contenteditable="true" data-editable-text="1" spellcheck="false">주의: 실제 버전과 환경에 따라 import 경로, GPU 설정, 지원 데이터 크기는 달라질 수 있으므로 실습 전 공식 문서를 확인한다.</p>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">코드 스케치</span><span>24 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">What to keep, delay, discard</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">이 논문에서 강의에 꼭 남길 것과 버릴 것</h2>
+<table class="compare">
+<tr><th contenteditable="true" data-editable-text="1" spellcheck="false">구분</th><th contenteditable="true" data-editable-text="1" spellcheck="false">내용</th><th contenteditable="true" data-editable-text="1" spellcheck="false">이유</th></tr>
+<tr><td class="win" contenteditable="true" data-editable-text="1" spellcheck="false">반드시 설명</td><td contenteditable="true" data-editable-text="1" spellcheck="false">사전학습, in-context learning, prior fitting, XGBoost와의 차이</td><td contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN의 본질을 이해하는 핵심이다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">나중에 설명</td><td contenteditable="true" data-editable-text="1" spellcheck="false">SCM prior의 상세 수식, architecture 세부 mask, appendix 실험</td><td contenteditable="true" data-editable-text="1" spellcheck="false">60분 강의에서는 이해보다 부담이 커질 수 있다.</td></tr>
+<tr><td contenteditable="true" data-editable-text="1" spellcheck="false">과감히 생략</td><td contenteditable="true" data-editable-text="1" spellcheck="false">모든 benchmark 데이터셋 이름, 세부 hyperparameter table</td><td contenteditable="true" data-editable-text="1" spellcheck="false">학생의 의사결정 능력 향상에는 직접 기여가 작다.</td></tr>
+</table>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">강의 압축 전략</span><span>25 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">60-minute lecture plan</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">60분 강의 운영안</h2>
+<div class="flow-vertical">
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">0–10분</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">왜 표 데이터에서는 Tree 모델이 강했는가. 기존 workflow의 비용 설명.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">10–25분</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">TabPFN의 핵심 개념: PFN, prior fitting, in-context learning.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">25–40분</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">XGBoost, AutoML, TabPFN 비교. 우수성과 한계 같이 설명.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">40–52분</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">SECOM 또는 반도체 YE 데이터에 적용하는 실습 설계.</span></div>
+<div class="row-card"><strong contenteditable="true" data-editable-text="1" spellcheck="false">52–60분</strong><span contenteditable="true" data-editable-text="1" spellcheck="false">언제 써야 하고 언제 쓰면 안 되는지 의사결정 기준 정리.</span></div>
+</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">강의 구성</span><span>26 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Final decision framework</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">수업의 결론: TabPFN을 이렇게 판단하라</h2>
+<div class="grid3">
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">무엇인가</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">표 데이터 문제를 미리 학습한 Transformer 기반 foundation model이다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">왜 중요한가</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">새 데이터마다 모델을 튜닝하는 기존 workflow를 줄일 가능성을 보여준다.</p></div>
+<div class="card"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">어떻게 써야 하나</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">소규모 수치형 classification에서 빠른 baseline으로 먼저 비교한다.</p></div>
+</div>
+<div class="deep-panel" style="margin-top:28px"><p class="quote" contenteditable="true" data-editable-text="1" spellcheck="false">한 문장 결론: TabPFN은 XGBoost를 즉시 대체하는 모델이 아니라, 표 데이터 분석을 “사전학습 모델 시대”로 옮기는 중요한 전환점이다.</p></div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">최종 결론</span><span>27 / 28</span></div></section>
+<section class="slide"><div class="content">
+<div class="eyebrow" contenteditable="true" data-editable-text="1" spellcheck="false">Sources and cautions</div><h2 contenteditable="true" data-editable-text="1" spellcheck="false">참고 자료와 사용 시 주의</h2>
+<div class="grid2">
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">오늘 반영한 자료</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">ICLR 2023 TabPFN 원 논문, 오늘 대화에서 정리한 “누가 언제 왜 만들었는가”, 사용자가 올린 TabPFN 정형 데이터 Foundation Model 요약 자료를 통합했다.</p></div>
+<div class="panel"><h3 contenteditable="true" data-editable-text="1" spellcheck="false">강의 시 주의 문장</h3><p contenteditable="true" data-editable-text="1" spellcheck="false">“TabPFN은 모든 데이터에서 최고”라고 말하지 않는다. “작은 표 데이터에서 매우 강력한 빠른 기준선이며, Foundation Model 패러다임의 실증 사례”라고 설명한다.</p></div>
+</div>
+<div class="note" contenteditable="true" data-editable-text="1" spellcheck="false">다음 실행: SECOM teaching dataset으로 Logistic, Random Forest, XGBoost, TabPFN을 같은 split에서 비교하고 fail class Recall과 F1을 중심으로 결과표를 만든다.</div>
+</div><div class="footer"><span contenteditable="true" data-editable-text="1" spellcheck="false">자료 출처와 다음 행동</span><span>28 / 28</span></div></section>
+</div>
+<div class="nav"><button onclick="prevSlide()">이전</button><button onclick="nextSlide()">다음</button></div>
+<div class="print-hint">편집 도구의 PDF 변환 또는 Ctrl/Cmd + P → PDF로 저장</div>
+
+<div class="text-editor-backdrop" id="textEditorBackdrop" onclick="closeTextEditorPanel(event)">
+<aside aria-label="현재 페이지 텍스트 편집" aria-modal="true" class="text-editor-panel" id="textEditorPanel" role="dialog">
+<div class="text-editor-head">
+<div>
+<strong>현재 페이지 텍스트 편집</strong>
+<div class="text-editor-sub">입력창에서 수정 후 “페이지에 적용”을 누르세요.</div>
+</div>
+<button onclick="closeTextEditorPanel()">닫기</button>
+</div>
+<div class="text-editor-body" id="textEditorBody"></div>
+<div class="text-editor-actions">
+<button onclick="closeTextEditorPanel()">취소</button>
+<button class="primary" onclick="applyTextEditorPanel()">페이지에 적용</button>
+</div>
+</aside>
+</div>
+<script>
+const deck=document.getElementById('deck');
+let slides=[...document.querySelectorAll('.slide')];
+let editMode=true;
+let undoStack=[];
+let toastTimer=null;
+let restoreEditAfterPrint=false;
+let panelTargets=[];
+
+function refreshSlides(){
+  slides=[...document.querySelectorAll('.slide')];
+  renumberSlides();
+  updatePageState();
+  applyEditableState();
+}
+function currentIndex(){
+  const y=deck.scrollTop;
+  let best=0,dist=Infinity;
+  slides.forEach((s,i)=>{const d=Math.abs(s.offsetTop-y);if(d<dist){dist=d;best=i}});
+  return best;
+}
+function go(i,behavior='smooth'){
+  if(!slides.length) return;
+  slides[Math.max(0,Math.min(i,slides.length-1))].scrollIntoView({behavior,block:'start'});
+  setTimeout(updatePageState,behavior==='smooth'?260:0);
+}
+function nextSlide(){go(currentIndex()+1)}
+function prevSlide(){go(currentIndex()-1)}
+function renumberSlides(){
+  slides.forEach((slide,i)=>{
+    const footer=slide.querySelector('.footer'); if(!footer) return;
+    const spans=footer.querySelectorAll('span');
+    if(spans.length) spans[spans.length-1].textContent=`${i+1} / ${slides.length}`;
+  });
+}
+function updatePageState(){
+  const el=document.getElementById('pageState');
+  if(el) el.textContent=slides.length?`${currentIndex()+1} / ${slides.length}`:'0 / 0';
+}
+function getEditableTargets(slide){
+  if(!slide) return [];
+  return [...slide.querySelectorAll('[data-editable-text="1"]')];
+}
+function applyEditableState(){
+  document.body.classList.toggle('is-editing',editMode);
+  slides.forEach(slide=>{
+    getEditableTargets(slide).forEach(el=>{
+      el.setAttribute('contenteditable',editMode?'true':'false');
+      el.setAttribute('spellcheck','false');
+    });
+  });
+  const btn=document.getElementById('editToggle');
+  if(btn){
+    btn.textContent=editMode?'수정 ON':'수정 OFF';
+    btn.classList.toggle('active',editMode);
+    btn.setAttribute('aria-pressed',editMode?'true':'false');
+  }
+}
+function toggleEditMode(force){
+  editMode=typeof force==='boolean'?force:!editMode;
+  applyEditableState();
+  showToast(editMode?'수정 모드가 켜졌습니다. 점선 영역의 글자를 눌러 수정하세요.':'수정 모드가 꺼졌습니다.');
+}
+function pushDeckHistory(){
+  undoStack.push(deck.innerHTML);
+  if(undoStack.length>12) undoStack.shift();
+}
+function duplicateCurrentSlide(){
+  if(!slides.length) return; pushDeckHistory();
+  const idx=currentIndex(); const clone=slides[idx].cloneNode(true);
+  slides[idx].after(clone); refreshSlides(); go(idx+1,'auto');
+  showToast('현재 페이지를 복제했습니다.');
+}
+function deleteCurrentSlide(){
+  if(slides.length<=1){showToast('마지막 한 페이지는 삭제할 수 없습니다.');return;}
+  const idx=currentIndex();
+  if(!window.confirm(`${idx+1}페이지를 삭제하시겠습니까?`)) return;
+  pushDeckHistory(); slides[idx].remove(); refreshSlides();
+  go(Math.min(idx,slides.length-1),'auto');
+  showToast('페이지를 삭제했습니다. 실행 취소로 복원할 수 있습니다.');
+}
+function undoDeckChange(){
+  if(!undoStack.length){showToast('되돌릴 페이지 작업이 없습니다.');return;}
+  deck.innerHTML=undoStack.pop(); refreshSlides(); go(0,'auto');
+  showToast('마지막 페이지 작업을 되돌렸습니다.');
+}
+function cleanCloneForSave(){
+  renumberSlides();
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelector('body')?.classList.add('is-editing');
+  clone.querySelectorAll('[data-editable-text="1"]').forEach(el=>{el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');});
+  clone.querySelector('#editorToast')?.classList.remove('show');
+  clone.querySelector('#textEditorBackdrop')?.classList.remove('open');
+  const toggle=clone.querySelector('#editToggle');
+  if(toggle){toggle.textContent='수정 ON';toggle.classList.add('active');toggle.setAttribute('aria-pressed','true');}
+  return '<!DOCTYPE html>\n'+clone.outerHTML;
+}
+function downloadEditedHTML(){
+  const source=cleanCloneForSave();
+  const blob=new Blob([source],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='tabpfn_lecture_16x9_edited.html'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1200);
+  showToast('수정된 HTML을 저장했습니다.');
+}
+function exportPDF(){
+  restoreEditAfterPrint=editMode;
+  if(editMode){editMode=false;applyEditableState();}
+  renumberSlides();
+  showToast('인쇄 창에서 “PDF로 저장”을 선택하세요.');
+  setTimeout(()=>window.print(),180);
+}
+window.addEventListener('afterprint',()=>{
+  if(restoreEditAfterPrint){editMode=true;applyEditableState();}
+  restoreEditAfterPrint=false;
+});
+function toggleToolbar(){
+  const tb=document.getElementById('editorToolbar'); const btn=document.getElementById('toolbarCollapse');
+  const collapsed=tb.classList.toggle('collapsed'); btn.textContent=collapsed?'편집':'접기'; btn.title=collapsed?'편집 도구 펼치기':'편집 도구 접기';
+}
+function showToast(message){
+  const el=document.getElementById('editorToast'); if(!el) return;
+  el.textContent=message; el.classList.add('show'); clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+function describeTarget(el,index){
+  const tag=el.tagName.toLowerCase();
+  if(tag==='h1') return `제목 ${index+1}`;
+  if(tag==='h2') return `큰 제목 ${index+1}`;
+  if(tag==='h3') return `소제목 ${index+1}`;
+  if(tag==='th') return `표 제목 ${index+1}`;
+  if(tag==='td') return `표 내용 ${index+1}`;
+  if(el.classList.contains('eyebrow')) return `상단 분류 ${index+1}`;
+  if(el.classList.contains('tag')) return `태그 ${index+1}`;
+  if(el.classList.contains('equation')) return `코드/수식 ${index+1}`;
+  if(el.classList.contains('note')) return `강조 문장 ${index+1}`;
+  if(el.closest('.footer')) return '하단 제목';
+  return `텍스트 ${index+1}`;
+}
+function textForEditor(el){
+  return el.innerHTML.replace(/<br\s*\/?>/gi,'\n').replace(/&nbsp;/g,' ').replace(/<[^>]+>/g,'');
+}
+function escapeHTML(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function openTextEditorPanel(){
+  const slide=slides[currentIndex()];
+  panelTargets=getEditableTargets(slide);
+  const body=document.getElementById('textEditorBody');
+  body.innerHTML='';
+  panelTargets.forEach((el,i)=>{
+    const row=document.createElement('div'); row.className='text-edit-row';
+    const label=document.createElement('label'); label.textContent=describeTarget(el,i);
+    const ta=document.createElement('textarea'); ta.dataset.targetIndex=String(i); ta.value=textForEditor(el);
+    row.append(label,ta); body.appendChild(row);
+  });
+  document.getElementById('textEditorBackdrop').classList.add('open');
+  setTimeout(()=>body.querySelector('textarea')?.focus(),80);
+}
+function closeTextEditorPanel(event){
+  if(event && event.target!==document.getElementById('textEditorBackdrop')) return;
+  document.getElementById('textEditorBackdrop').classList.remove('open');
+}
+function applyTextEditorPanel(){
+  pushDeckHistory();
+  const textareas=[...document.querySelectorAll('#textEditorBody textarea')];
+  textareas.forEach((ta,i)=>{
+    const el=panelTargets[i]; if(!el) return;
+    const safe=escapeHTML(ta.value).replace(/\n/g,'<br>');
+    el.innerHTML=safe;
+  });
+  document.getElementById('textEditorBackdrop').classList.remove('open');
+  refreshSlides();
+  showToast('현재 페이지의 텍스트를 적용했습니다.');
+}
+
+deck.addEventListener('scroll',()=>requestAnimationFrame(updatePageState),{passive:true});
+
+document.addEventListener('keydown',e=>{
+  const active=document.activeElement;
+  const typing=active && (active.isContentEditable || ['TEXTAREA','INPUT'].includes(active.tagName));
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){
+    e.preventDefault();downloadEditedHTML();return;
+  }
+  if(e.key==='Escape' && document.getElementById('textEditorBackdrop')?.classList.contains('open')){closeTextEditorPanel();return;}
+  if(typing) return;
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();nextSlide();}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prevSlide();}
+});
+
+// Prevent slide navigation gestures from stealing taps while editing.
+document.addEventListener('pointerdown',e=>{
+  if(editMode && e.target.closest('[data-editable-text="1"]')) e.target.focus();
+});
+
+refreshSlides();
+showToast('수정 모드가 기본으로 켜져 있습니다. 점선 글자를 누르거나 “현재 페이지 편집”을 사용하세요.');
+</script>
+</body>
+</html>
