@@ -1,6 +1,6 @@
 # Philip Kim | 강의·연구·산업 분석 자료
 
-이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 89개를 개별 웹 링크로 정리했습니다.
+이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 강의 및 분석용 HTML 자료를 학습 순서에 맞춰 개별 웹 링크로 정리했습니다.
 
 > 아래 표에서 `웹페이지 열기`를 누르면 GitHub 소스 코드가 아닌, 실제 웹페이지가 열립니다. 새 탭으로 열려면 Mac에서는 `⌘ + 클릭`, Windows에서는 `Ctrl + 클릭`을 이용하세요.
 
@@ -21,7 +21,8 @@
 6. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
 7. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
 8. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
-9. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+9. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
+10. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
@@ -83,6 +84,17 @@
 | Raspberry Pi SSD 객체탐지 실습 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/rsp-ssd-lab-raspberry-pi-object-detection.html) | SSD 실습과 성능 비교 |
 | GCP + VSCode RPS QAT 실습 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/gcp-vscode-rps-qat-lab.html) | GPU 서버 연결과 실습 절차 |
 | 학생을 위한 GitHub 활용 가이드 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/student-github-guide.html) | 가입·Fork·Colab·프로젝트 업로드 |
+
+## AI 반도체설계혁신특론 · 제품 경쟁력 강의
+
+온디바이스 AI의 정확도·속도·전력 효율을 학습한 다음, 실제 AI 반도체가 시장에서 성공하기까지의 개발·설계·공정·패키징을 연결해 이해하는 강의입니다. 아래 순서대로 읽으면 기술 개념을 외우기보다 등장 배경과 역할을 이해할 수 있습니다.
+
+| 순서 | 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|---|
+| 01 · 선행 복습 | [AI반도체설계혁신특론 핵심 복습](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-course-review-ondevice-lightweighting.html) | AI 수학 → ML/DL → 온디바이스 경량화 | HTML |
+| 02 · 제품 경쟁력 | [AI 반도체는 어떻게 경쟁력 있는 제품이 되는가?](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html) | AI Super Cycle → 상품기획 → Technology Roadmap → 연구·개발·양산 → 수율 → Accuracy·Throughput → PPAC → DTCO → GAA·BSPDN → STCO → 2.5D/3D·방열 | 그림 포함 16:9 슬라이드 21장 |
+
+강사: 김임환 삼성전자 산학교수. 슬라이드는 화면에서 넘겨볼 수 있고, 내용 편집·HTML 저장·PDF 인쇄 기능을 지원합니다. 편집 결과는 원본 저장소에 자동 반영되지 않습니다.
 
 ## DVS OnDevice AI · 전체 34개 HTML 페이지
 
