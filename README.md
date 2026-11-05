@@ -65,7 +65,9 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 
 | 강의자료 | 핵심 내용 | 형식 |
 |---|---|---|
-| [머신러닝 모델별 특성](https://philipdekim-ond01.github.io/obsidian-blog/ml-model-characteristics-editable.html) | KNN · 선형회귀 · 로지스틱 회귀 · 나이브 베이즈 · 의사결정나무 · SVM 비교 → 로지스틱 회귀와 나이브 베이즈의 차이 → 손실함수와 경사하강법 → 실습 데이터 매칭 → 소량·고차원 반도체 데이터의 모델 선택 | 표지 포함 편집형 HTML · HTML 저장 · PDF 인쇄 |
+| [머신러닝 모델별 특성](https://philipdekim-ond01.github.io/obsidian-blog/ml-model-characteristics-editable.html) | KNN · 선형회귀 · 로지스틱 회귀 · 나이브 베이즈 · 의사결정나무 · SVM 비교 → 손실함수와 경사하강법 → 모델 선택 | 표지 포함 편집형 HTML · HTML 저장 · PDF 인쇄 |
+| [모델별 Python 실습·데이터 다운로드](https://philipdekim-ond01.github.io/obsidian-blog/ml-model-practice/index.html) | 모델별 Python 코드 6개 + 전체 비교 코드 + Wine/House/Iris/Heart/Sales/Air Quality 등 12개 데이터 설명과 다운로드 | 실습 안내 웹페이지 |
+| [Google Colab 전체 실습](https://colab.research.google.com/github/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/ml_models_practice.ipynb) | Wine 5개 분류모델 비교 + House 선형회귀를 설치 없이 바로 실행 | Colab Notebook |
 
 강의자료 첫 페이지에는 제목과 강사 김임환을 표시했으며, 화면 상단에서 편집 모드 전환, 수정본 HTML 저장, PDF 인쇄를 할 수 있습니다. 이 자료를 먼저 보면 뒤의 Python 코드 실습에서 “왜 이 모델을 쓰는가”를 이해하기 쉬워집니다.
 
