@@ -20,10 +20,11 @@
 5. **신경망 역전파의 발전 (1974/1982)**: Paul Werbos의 논문을 통해 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
 6. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
 7. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-8. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
-9. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
-10. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
-11. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+8. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
+9. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
+10. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
+11. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
+12. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
@@ -71,6 +72,16 @@
 | 3강 · 1974/1982 | Paul Werbos · 신경망 역전파의 발전 (22장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/werbos-backprop-1974-1982-editable-16x9.html) | 다층 신경망, 손실함수, 미분의 연쇄법칙, 가중치 업데이트와 불량 예측 |
 | 4강 · 1986 | Geoffrey Hinton · Nature 역전파 실용화 (18장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html) | 전공·이력·연구 동기, 은닉층과 XOR, 오차 역전파, 대칭·가족관계 실험, 가중치 학습 실습 |
 | 5강 · 이후 발전 | 신경망 기초 · 역전파에서 DenseNet까지 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 은닉층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례 |
+
+## 정형 데이터 AI · TabPFN Foundation Model
+
+신경망의 기본 원리까지 익힌 다음, 현실에서 가장 흔한 표 형태 데이터가 Foundation Model로 어떻게 확장되는지 배우는 강의입니다. ICLR 2023 TabPFN 원 논문을 중심으로 기존 XGBoost·LightGBM·CatBoost·AutoML과의 차이, PFN의 사전학습 방식, In-Context Learning, 합성 데이터 prior, 속도·성능상의 강점과 한계를 연결해 설명합니다.
+
+| 순서 | 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|---|
+| 01 · TabPFN | [TabPFN · 정형 데이터 Foundation Model 강의](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html) | 왜 표 데이터에서는 Tree 계열이 강했는가 → PFN/TabPFN의 등장 → 사전학습과 단일 forward pass → XGBoost·AutoML 비교 → ICLR 2023 실험 결과 → 적용 조건과 한계 | 16:9 편집형 HTML 28장 |
+
+강의자료는 텍스트 직접 수정, 현재 페이지 편집, 페이지 복제·삭제, 실행 취소, 수정본 HTML 저장, PDF 인쇄를 지원합니다. 강의에서는 “TabPFN이 모든 데이터에서 최고”가 아니라 “작은 정형 데이터에서 매우 강력한 빠른 기준선이며, Foundation Model 패러다임을 표 데이터로 확장한 사례”라는 점을 중심으로 봅니다.
 
 ## 온디바이스 AI 강좌
 
