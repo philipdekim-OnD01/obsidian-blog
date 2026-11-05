@@ -24,7 +24,8 @@
 7. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
 8. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
 9. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
-10. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
+10. **ARM 아키텍처 · CP15 · TrustZone**: CPU·ALU·레지스터의 구조부터 r0~r15, CPSR/SPSR, CP15, MRC와 VBAR, MMU·TLB·캐시, 예외·인터럽트, TrustZone을 학습합니다. Exynos 4412(ARMv7-A)와 Exynos 850(Armv8-A)을 비교하고 DVS·온디바이스 시스템의 하드웨어 보안 기반을 익힙니다. [46장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/arm-architecture-cp15-trustzone-editable-16x9.html)
+14. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
 11. **AI 반도체 제품 경쟁력과 설계 최적화**: 시장 전망 → 상품기획·로드맵 → 개발·수율 → Accuracy·Throughput·PPAC → DTCO·STCO·2.5D/3D 패키징 순서로 학습합니다. [21장 그림 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/ai-semiconductor-competitive-product-21slides.html)
 12. **제조 Digital Twin과 강화학습**: 제조 시뮬레이터를 Digital Twin으로 만들고 Gymnasium을 통해 Hybrid RL과 연결하는 방법을 학습합니다. [15장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hybrid-rl-manufacturing-resilience-digital-twin-2026.html)
 13. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
@@ -107,6 +108,18 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | 01 · TabPFN | [TabPFN · 정형 데이터 Foundation Model 강의](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html) | 왜 표 데이터에서는 Tree 계열이 강했는가 → PFN/TabPFN의 등장 → 사전학습과 단일 forward pass → XGBoost·AutoML 비교 → ICLR 2023 실험 결과 → 적용 조건과 한계 | 16:9 편집형 HTML 28장 |
 
 강의자료는 텍스트 직접 수정, 현재 페이지 편집, 페이지 복제·삭제, 실행 취소, 수정본 HTML 저장, PDF 인쇄를 지원합니다. 강의에서는 “TabPFN이 모든 데이터에서 최고”가 아니라 “작은 정형 데이터에서 매우 강력한 빠른 기준선이며, Foundation Model 패러다임을 표 데이터로 확장한 사례”라는 점을 중심으로 봅니다.
+
+## ARM 아키텍처 · 레지스터·운영체제·TrustZone 보안 (46장)
+
+머신러닝·딥러닝의 기본을 익힌 다음, Raspberry Pi 5 및 온디바이스 AI 실습에서 사용하는 프로세서의 내부 동작을 이해하는 하드웨어·운영체제 기초 강의입니다. 반도체 구조 → CPU 실행 → 특수 레지스터 → 메모리 보호 → 보안 경계 → 실제 응용의 순서로 연결합니다.
+
+| 학습 순서 | 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|---|
+| 01 · ARM 시스템 기초 | [ARM Architecture · CP15 · TrustZone 전체 강의](https://philipdekim-ond01.github.io/obsidian-blog/arm-architecture-cp15-trustzone-editable-16x9.html) | CPU·ALU·버스·레지스터 파일 → r0~r15와 SP/LR/PC → CPSR·SPSR → 예외·IRQ·VBAR → CP15와 MRC 명령 해독 → MMU·TLB·캐시 → TrustZone·보안 공격 → Exynos 4412/850 비교 → DVS 시스템 적용 | 16:9 편집형 HTML · 46장 |
+
+강의 중 특히 `MRC p15, 0, r0, c12, c0, 0`은 CP15의 VBAR 값을 r0로 읽는 명령이라는 점을 레지스터 맵으로 설명합니다. `r15(PC)`와 `p15(CP15)`는 서로 다른 번호 체계이며, `c12`는 메모리 주소가 아닌 시스템 레지스터 선택 필드입니다. CPU 내부 레지스터 변조 공격과 TrustZone의 보호 범위 및 한계도 구분합니다.
+
+수업 활용: 본 강의(ARM 구조·시스템 제어) → Raspberry Pi 5 실습(OS·카메라·TFLite) → 온디바이스 추론 최적화 → DVS 센서·드라이버·데이터 보호로 확장하세요. 강의 본문 텍스트·도식 수정, 슬라이드 탐색, HTML 저장, PDF 인쇄를 지원하며 HTML 파일만으로 오프라인 실행할 수 있습니다.
 
 ## 온디바이스 AI 강좌
 
