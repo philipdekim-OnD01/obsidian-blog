@@ -1,6 +1,6 @@
 # Philip Kim | 강의·연구·산업 분석 자료
 
-이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 86개를 개별 웹 링크로 정리했습니다.
+이 저장소는 AI, 온디바이스 AI, DVS, AI 수학, 반도체 및 산업 분석 강의·보고서를 모아 둔 웹사이트입니다. 저장소에 있는 HTML 페이지 87개를 개별 웹 링크로 정리했습니다.
 
 > 아래 표에서 `웹페이지 열기`를 누르면 GitHub 소스 코드가 아닌, 실제 웹페이지가 열립니다. 새 탭으로 열려면 Mac에서는 `⌘ + 클릭`, Windows에서는 `Ctrl + 클릭`을 이용하세요.
 
@@ -15,10 +15,11 @@
 
 1. **AI 수학 기초**: 함수·벡터·행렬·미분·역전파·Softmax를 이해합니다.
 2. **머신러닝 코드 실습**: 퍼셉트론, 경사하강법, 회귀, Softmax, MNIST의 7개 예제를 Python 코드로 익힙니다.
-3. **역전파 원전 이해**: Paul Werbos의 1974/1982 논문을 바탕으로 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
-4. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-5. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
-6. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
+3. **역전파 수학적 기원 (1960)**: Henry J. Kelley의 Solar Sail 비행시간 최적화에서 수반방정식(Adjoint Equation)과 기울기 역방향 계산의 필요성을 이해합니다.
+4. **신경망 역전파의 발전 (1974/1982)**: Paul Werbos의 논문을 통해 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
+5. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
+6. **온디바이스 AI 강좌**: Raspberry Pi 5의 OS·Wi-Fi·SSH·카메라 환경을 구축한 뒤 TFLite 가위바위보 추론을 실습하고, 모델 경량화·QAT로 확장합니다.
+7. **DVS OnDevice AI**: 센서 데이터 수신부터 실시간 AI 처리까지 확장합니다.
 
 ## AI 수학 기초 · 전체 15개 HTML 페이지
 
@@ -59,6 +60,7 @@
 
 | 자료 | 웹페이지 | 내용 |
 |---|---|---|
+| Henry J. Kelley · 1960 최적 비행경로와 역전파의 수학적 기원 (25장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/kelley-1960-solar-sail-backprop-editable-16x9.html) | Solar Sail 추진 원리와 로켓 비교, Earth→Mars 최적 경로, 수반방정식, 기울기 계산, 역전파 수치 실습 및 반도체 응용 |
 | Paul Werbos 역전파의 기원 · 1974/1982 논문 해설 (22장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/werbos-backprop-1974-1982-editable-16x9.html) | 저자 생애·경력, 퍼셉트론과 다층 신경망, 오차 4와 손실 8, 미분의 연쇄법칙, 가중치 수정, 반도체 불량 예측 |
 | 역전파에서 DenseNet까지 · 24장 편집형 슬라이드 | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 히든층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례, 실습 및 주석 |
 
