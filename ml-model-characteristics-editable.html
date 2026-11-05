@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>머신러닝 모델별 특성</title>
+<style>
+:root{
+  --bg:#f5f7f6;
+  --paper:#ffffff;
+  --ink:#18231f;
+  --muted:#66736f;
+  --line:#dfe6e2;
+  --green:#1f6f54;
+  --blue:#2f5f8f;
+  --orange:#b86b26;
+  --red:#b44b45;
+  --purple:#6752a3;
+  --teal:#16818a;
+  --soft-green:#edf7f2;
+  --soft-blue:#eef5fb;
+  --soft-orange:#fff4e8;
+  --soft-red:#fff0ee;
+  --soft-purple:#f3f0fb;
+  --soft-teal:#eaf7f8;
+  --shadow:0 18px 42px rgba(24,35,31,.11);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 80% 8%,rgba(31,111,84,.12),transparent 28%),
+    radial-gradient(circle at 14% 30%,rgba(47,95,143,.10),transparent 26%),
+    var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif;
+}
+a{color:inherit;text-decoration:none}
+.layout{
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+  min-height:100vh;
+}
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:26px 20px;
+  border-right:1px solid var(--line);
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(10px);
+  overflow:auto;
+}
+.brand{
+  font-size:15px;
+  font-weight:900;
+  color:var(--green);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.sidebar h1{
+  font-size:25px;
+  line-height:1.25;
+  margin:0 0 22px;
+}
+.nav{
+  display:grid;
+  gap:6px;
+}
+.nav a{
+  display:block;
+  padding:10px 12px;
+  border-radius:8px;
+  color:#31413b;
+  font-size:15px;
+  font-weight:750;
+}
+.nav a:hover{background:#edf4ef;color:#164b38}
+.main{
+  padding:34px;
+}
+.hero{
+  min-height:420px;
+  border-radius:8px;
+  background:
+    linear-gradient(135deg,rgba(13,31,27,.94),rgba(31,90,70,.91)),
+    #17251f;
+  color:#fff;
+  padding:56px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.hero:after{
+  content:"ML";
+  position:absolute;
+  right:34px;
+  bottom:-74px;
+  font-size:260px;
+  line-height:1;
+  font-weight:950;
+  color:rgba(255,255,255,.075);
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  color:#dff4ea;
+  background:rgba(255,255,255,.10);
+  font-size:15px;
+  font-weight:850;
+}
+.hero h2{
+  max-width:880px;
+  margin:24px 0 18px;
+  font-size:50px;
+  line-height:1.12;
+  letter-spacing:-.02em;
+}
+.hero p{
+  max-width:850px;
+  font-size:23px;
+  line-height:1.58;
+  color:rgba(255,255,255,.86);
+}
+.section{
+  max-width:1180px;
+  margin:30px auto 0;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:0 8px 28px rgba(24,35,31,.06);
+  padding:34px;
+}
+.section.plain{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:8px 0;
+}
+h2{
+  font-size:34px;
+  line-height:1.22;
+  margin:0 0 18px;
+  letter-spacing:-.01em;
+}
+h3{
+  font-size:25px;
+  margin:0 0 12px;
+}
+p{
+  font-size:18px;
+  line-height:1.72;
+  color:#2d3b36;
+  margin:10px 0;
+}
+.lead{
+  font-size:22px;
+  font-weight:850;
+  color:#1d2d27;
+}
+.quote{
+  border-left:6px solid var(--green);
+  background:#f0f7f3;
+  padding:18px 22px;
+  border-radius:0 8px 8px 0;
+  font-size:21px;
+  line-height:1.62;
+  font-weight:850;
+  margin:20px 0;
+}
+.grid{
+  display:grid;
+  gap:18px;
+}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.four{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fbfcfb;
+  padding:22px;
+}
+.card strong{color:#12261e}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eef4ef;
+  color:#225743;
+  font-size:14px;
+  font-weight:900;
+}
+.model-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+}
+.model{
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+}
+.model-head{
+  padding:20px 22px;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+  border-bottom:1px solid var(--line);
+}
+.model h3{margin:0;font-size:24px}
+.model .type{
+  white-space:nowrap;
+  font-size:14px;
+  font-weight:900;
+  border-radius:999px;
+  padding:7px 10px;
+}
+.type.green{background:var(--soft-green);color:var(--green)}
+.type.blue{background:var(--soft-blue);color:var(--blue)}
+.type.orange{background:var(--soft-orange);color:var(--orange)}
+.type.red{background:var(--soft-red);color:var(--red)}
+.type.purple{background:var(--soft-purple);color:var(--purple)}
+.type.teal{background:var(--soft-teal);color:var(--teal)}
+.model-body{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:18px;
+  padding:20px 22px 22px;
+}
+.model-body ul{
+  margin:12px 0 0;
+  padding-left:20px;
+}
+.model-body li{
+  font-size:16px;
+  line-height:1.55;
+  margin:7px 0;
+  color:#35443f;
+}
+.visual{
+  min-height:220px;
+  border:1px solid #e3e9e5;
+  border-radius:8px;
+  background:#f8faf9;
+  display:grid;
+  place-items:center;
+  padding:12px;
+}
+svg{width:100%;height:auto;display:block}
+.figure-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+  margin-top:20px;
+}
+.data-figure{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fbfcfb;
+  overflow:hidden;
+}
+.data-figure img{
+  width:100%;
+  display:block;
+  background:#fff;
+}
+.data-figure figcaption{
+  padding:14px 18px;
+  color:#34423d;
+  font-size:16px;
+  line-height:1.55;
+  border-top:1px solid var(--line);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+  font-size:16px;
+}
+th,td{
+  border-bottom:1px solid var(--line);
+  padding:13px 12px;
+  text-align:left;
+  vertical-align:top;
+  line-height:1.5;
+}
+th{
+  background:#eef4f0;
+  color:#263a32;
+  font-size:15px;
+}
+.compare{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  align-items:stretch;
+}
+.compare-card{
+  border-radius:8px;
+  border:1px solid var(--line);
+  padding:24px;
+  background:#fbfcfb;
+}
+.compare-card.logistic{border-top:6px solid var(--blue)}
+.compare-card.bayes{border-top:6px solid var(--orange)}
+.flow{
+  display:grid;
+  grid-template-columns:1fr 40px 1fr 40px 1fr;
+  gap:10px;
+  align-items:center;
+  margin-top:18px;
+}
+.flow-box{
+  min-height:82px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:12px;
+  font-weight:850;
+  line-height:1.4;
+}
+.arrow{
+  text-align:center;
+  font-size:28px;
+  color:var(--green);
+  font-weight:950;
+}
+.formula{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  background:#17231f;
+  color:#f4f8f5;
+  border-radius:8px;
+  padding:16px 18px;
+  font-size:17px;
+  line-height:1.6;
+  margin:14px 0;
+}
+.checklist{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.check{
+  background:#fbfcfb;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px;
+}
+.check b{display:block;margin-bottom:8px;color:#172820}
+.footer-note{
+  max-width:1180px;
+  margin:30px auto 50px;
+  color:var(--muted);
+  font-size:14px;
+  text-align:center;
+}
+
+
+/* ===== 강의자료 편집 · 저장 · PDF 도구 ===== */
+.tool-bar{
+  position:fixed;
+  right:22px;
+  top:18px;
+  z-index:9999;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  max-width:calc(100vw - 44px);
+}
+.tool-btn{
+  appearance:none;
+  border:1px solid rgba(24,35,31,.18);
+  background:rgba(255,255,255,.95);
+  color:#18352b;
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:14px;
+  font-weight:850;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(24,35,31,.12);
+  backdrop-filter:blur(10px);
+}
+.tool-btn:hover{background:#f0f7f3;border-color:#9bbcac}
+.tool-btn.primary{background:#1f6f54;color:#fff;border-color:#1f6f54}
+.tool-btn.primary:hover{background:#185a44}
+.tool-status{
+  position:fixed;
+  right:22px;
+  top:70px;
+  z-index:9998;
+  padding:8px 12px;
+  border-radius:8px;
+  background:#17231f;
+  color:#fff;
+  font-size:13px;
+  font-weight:750;
+  opacity:0;
+  transform:translateY(-4px);
+  pointer-events:none;
+  transition:.2s ease;
+}
+.tool-status.show{opacity:1;transform:translateY(0)}
+body.edit-mode .main{
+  outline:3px dashed rgba(31,111,84,.38);
+  outline-offset:-10px;
+}
+body.edit-mode .main [contenteditable="true"]:focus{outline:2px solid rgba(47,95,143,.4);outline-offset:3px}
+
+.cover{
+  min-height:calc(100vh - 68px);
+  max-width:1180px;
+  margin:0 auto 30px;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 78% 18%,rgba(255,255,255,.12),transparent 25%),
+    radial-gradient(circle at 16% 82%,rgba(95,183,145,.18),transparent 28%),
+    linear-gradient(145deg,#10251e 0%,#1f6f54 60%,#294d67 100%);
+  color:#fff;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:70px 48px;
+  position:relative;
+  overflow:hidden;
+}
+.cover:before{
+  content:"ML";
+  position:absolute;
+  right:-22px;
+  bottom:-90px;
+  font-size:310px;
+  line-height:1;
+  font-weight:950;
+  color:rgba(255,255,255,.055);
+}
+.cover-inner{position:relative;z-index:1;max-width:900px}
+.cover-kicker{
+  display:inline-block;
+  padding:8px 14px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:999px;
+  font-size:15px;
+  font-weight:850;
+  letter-spacing:.05em;
+  color:#def5e9;
+  background:rgba(255,255,255,.08);
+}
+.cover h1{
+  margin:30px 0 18px;
+  font-size:64px;
+  line-height:1.12;
+  letter-spacing:-.035em;
+}
+.cover-subtitle{
+  margin:0;
+  font-size:24px;
+  line-height:1.55;
+  color:rgba(255,255,255,.80);
+}
+.cover-author{
+  margin-top:72px;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:.10em;
+  color:#fff;
+}
+.cover-rule{
+  width:84px;
+  height:4px;
+  margin:26px auto 0;
+  border-radius:99px;
+  background:rgba(255,255,255,.55);
+}
+
+@media (max-width:980px){
+  .tool-bar{right:10px;top:10px;max-width:calc(100vw - 20px)}
+  .tool-status{right:10px;top:62px}
+  .cover{min-height:78vh;padding:62px 26px}
+  .cover h1{font-size:44px}
+  .cover-subtitle{font-size:20px}
+  .cover-author{margin-top:50px;font-size:24px}
+}
+
+@media (max-width:980px){
+  .layout{display:block}
+  .sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{padding:18px}
+  .hero{padding:34px 26px;min-height:auto}
+  .hero h2{font-size:36px}
+  .hero p{font-size:19px}
+  .model-grid,.grid.two,.grid.three,.grid.four,.compare,.checklist{grid-template-columns:1fr}
+  .model-body{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  .tool-bar,.tool-status,.sidebar{display:none !important}
+  .layout{display:block}
+  .main{padding:0}
+  .cover{
+    min-height:273mm;
+    width:100%;
+    max-width:none;
+    margin:0;
+    border-radius:0;
+    box-shadow:none;
+    break-after:page;
+    page-break-after:always;
+  }
+  .cover h1{font-size:50px}
+  .hero,.section{box-shadow:none}
+  .hero{break-after:page;page-break-after:always}
+  .section{break-inside:auto}
+  .card,.model,.compare-card,.check,.data-figure,table{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="tool-bar" id="toolBar" aria-label="강의자료 편집 도구">
+  <button class="tool-btn primary" id="editToggle" type="button" onclick="toggleEditMode()">편집 모드 켜기</button>
+  <button class="tool-btn" type="button" onclick="saveEditedHtml()">HTML 저장</button>
+  <button class="tool-btn" type="button" onclick="saveAsPdf()">PDF 저장</button>
+</div>
+<div class="tool-status" id="toolStatus" role="status" aria-live="polite"></div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Machine Learning</div>
+    <h1>머신러닝 모델별 특성</h1>
+    <nav class="nav">
+      <a href="#cover">표지</a>
+      <a href="#question">핵심 질문</a>
+      <a href="#map">모델 분류 지도</a>
+      <a href="#models">모델별 도식</a>
+      <a href="#logistic-bayes">로지스틱 vs 나이브 베이즈</a>
+      <a href="#loss">손실함수와 경사하강법</a>
+      <a href="#practice-data">실습 데이터 매칭</a>
+      <a href="#selection">모델 선택 예시</a>
+      <a href="#questions">시험 문제</a>
+      <a href="#summary">수업 정리</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+
+    <section class="cover" id="cover" aria-label="강의자료 표지">
+      <div class="cover-inner">
+        <span class="cover-kicker">MACHINE LEARNING LECTURE NOTE</span>
+        <h1>머신러닝 모델별 특성</h1>
+        <p class="cover-subtitle">거리 · 선형관계 · 확률 · 규칙 · 마진으로 이해하는 머신러닝 모델</p>
+        <div class="cover-rule"></div>
+        <div class="cover-author">김임환</div>
+      </div>
+    </section>
+
+    <section class="hero" id="top">
+      <span class="eyebrow">강의 노트 | 모델의 원리로 이해하기</span>
+      <h2>KNN, 회귀분석, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM은 왜 서로 다른 모델인가?</h2>
+      <p>
+        모델 이름을 외우는 것보다 중요한 것은 각 모델이 데이터를 바라보는 관점이다.
+        거리, 선형 관계, 확률, 규칙, 마진이라는 기준을 잡으면 새로운 알고리즘도 어디에 속하는지 추론할 수 있다.
+      </p>
+    </section>
+
+    <section class="section" id="question">
+      <h2>1. 핵심 질문</h2>
+      <p class="lead">이 질문은 단순 암기 문제가 아니라 모델의 철학과 작동 원리를 묻는 질문이다.</p>
+      <div class="quote">
+        KNN, 회귀분석, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, 서포트 벡터 머신은 왜 서로 다른 모델로 구분되는가?
+      </div>
+      <div class="grid four">
+        <div class="card"><span class="tag">기준</span><p><strong>무엇을 기준으로 예측하는가?</strong><br />거리, 선형식, 확률, 규칙, 마진 등 모델마다 기준이 다르다.</p></div>
+        <div class="card"><span class="tag">관점</span><p><strong>데이터를 어떻게 보는가?</strong><br />가까운 이웃으로 보는지, 확률분포로 보는지, 조건문으로 보는지가 다르다.</p></div>
+        <div class="card"><span class="tag">상황</span><p><strong>언제 잘 작동하는가?</strong><br />데이터 수, 변수 수, 비선형성, 해석 가능성에 따라 적합한 모델이 달라진다.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="map">
+      <h2>2. 모델 분류 지도</h2>
+      <p>머신러닝 모델은 이름별로 외우기보다 원리별 패밀리로 묶어 이해하는 것이 좋다.</p>
+      <table>
+        <thead>
+          <tr><th>모델</th><th>대표 분류</th><th>핵심 원리</th><th>한 줄 질문</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KNN</td><td>거리 기반</td><td>가까운 데이터가 비슷한 정답을 가진다고 본다.</td><td>가장 가까운 이웃은 누구인가?</td></tr>
+          <tr><td>선형회귀</td><td>선형 모델</td><td>입력 변수와 연속형 결과값의 직선적 관계를 찾는다.</td><td>직선으로 설명할 수 있는가?</td></tr>
+          <tr><td>로지스틱 회귀</td><td>선형 분류 모델</td><td>선형 결합 결과를 확률로 바꾸어 분류한다.</td><td>어떤 경계로 나누면 좋은가?</td></tr>
+          <tr><td>나이브 베이즈</td><td>확률 기반</td><td>조건부 확률과 베이즈 정리로 가능성 높은 클래스를 찾는다.</td><td>어느 클래스에서 나왔을 가능성이 큰가?</td></tr>
+          <tr><td>의사결정나무</td><td>규칙 기반</td><td>질문과 조건을 반복해 데이터를 나누고 예측한다.</td><td>어떤 조건으로 나누면 좋은가?</td></tr>
+          <tr><td>SVM</td><td>마진 기반</td><td>클래스 사이의 간격이 가장 큰 경계면을 찾는다.</td><td>가장 여유 있는 경계는 무엇인가?</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:28px">실습 데이터 컬럼으로 연결하기</h3>
+      <p>같은 분류 체계를 실제 데이터에 적용하면 어떤 모델을 어느 데이터에 써야 하는지 더 명확해진다.</p>
+      <table>
+        <thead>
+          <tr><th>모델</th><th>적용 예 데이터</th><th>입력 컬럼 예</th><th>정답 컬럼</th><th>문제 유형</th><th>적용 이유</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KNN</td><td><code>wine_data.csv</code></td><td><code>Alcohol</code>, <code>Color</code>, <code>Proline</code>, <code>Phenols</code></td><td><code>class</code></td><td>분류</td><td>화학 성분값이 가까운 와인끼리 같은 클래스일 가능성이 높다.</td></tr>
+          <tr><td>선형회귀</td><td><code>house_prices.csv</code></td><td><code>RM</code>, <code>LSTAT</code>, <code>TAX</code>, <code>AGE</code>, <code>CRIM</code></td><td><code>MEDV</code></td><td>회귀</td><td>주택 특성과 집값 사이의 선형 관계를 학습해 연속형 가격을 예측한다.</td></tr>
+          <tr><td>로지스틱 회귀</td><td><code>wine_data.csv</code></td><td><code>Alcohol</code>, <code>Malic</code>, <code>Ash</code>, <code>Hue</code>, <code>Proline</code></td><td><code>class</code></td><td>분류</td><td>입력 변수의 선형 결합을 확률로 바꾸어 와인 클래스를 분류한다.</td></tr>
+          <tr><td>나이브 베이즈</td><td><code>wine_data.csv</code></td><td><code>Alcohol</code>, <code>Phenols</code>, <code>Flavanoids</code>, <code>Color</code></td><td><code>class</code></td><td>분류</td><td>각 와인 클래스에서 특정 성분값이 나타날 가능성을 비교한다.</td></tr>
+          <tr><td>의사결정나무</td><td><code>wine_data.csv</code></td><td><code>Color</code>, <code>Proline</code>, <code>Phenols</code>, <code>Hue</code></td><td><code>class</code></td><td>분류</td><td>성분 기준 질문을 반복해 와인 클래스를 나누는 규칙을 만든다.</td></tr>
+          <tr><td>SVM</td><td><code>wine_data.csv</code></td><td><code>Alcohol</code>, <code>Flavanoids</code>, <code>Color</code>, <code>Proline</code></td><td><code>class</code></td><td>분류</td><td>와인 클래스 사이의 경계면을 찾고 마진이 큰 경계를 선택한다.</td></tr>
+        </tbody>
+      </table>
+      <div class="quote">
+        <code>wine_data.csv</code>는 <code>class</code>를 맞히는 분류 문제이고, <code>house_prices.csv</code>는 <code>MEDV</code>라는 연속형 집값을 예측하는 회귀 문제이다.
+      </div>
+
+      <h3 style="margin-top:28px">실제 데이터 분포 그림으로 이해하기</h3>
+      <p>표만 보면 모델 선택이 추상적으로 보일 수 있다. 실제 데이터를 그려보면 분류 문제와 회귀 문제가 왜 다르게 다뤄지는지 더 쉽게 보인다.</p>
+      <div class="figure-grid">
+        <figure class="data-figure">
+          <img src="assets_ml_models/wine_class_distribution.png" alt="wine_data.csv의 Alcohol, Proline, Color 기준 클래스 분포 그래프" />
+          <figcaption>
+            <strong>wine_data.csv:</strong> 왼쪽 산점도는 <code>Alcohol</code>과 <code>Proline</code> 값에 따라 와인 클래스가 어느 정도 나뉘는 모습을 보여준다.
+            오른쪽 박스플롯은 <code>Color</code> 값의 분포가 클래스별로 다르다는 점을 보여준다.
+            이런 데이터는 <code>class</code>를 맞히는 분류 문제이므로 KNN, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM 실습에 적합하다.
+          </figcaption>
+        </figure>
+        <figure class="data-figure">
+          <img src="assets_ml_models/house_price_regression_distribution.png" alt="house_prices.csv의 RM, LSTAT과 MEDV 관계 그래프" />
+          <figcaption>
+            <strong>house_prices.csv:</strong> 왼쪽 산점도는 평균 방 개수 <code>RM</code>이 증가할수록 집값 <code>MEDV</code>가 대체로 증가하는 경향을 보여준다.
+            오른쪽 산점도는 <code>LSTAT</code>이 증가할수록 <code>MEDV</code>가 감소하는 경향을 보여준다.
+            정답이 연속형 숫자이므로 선형회귀로 관계를 설명하기 좋은 회귀 예제이다.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="models">
+      <h2>3. 주요 모델별 특성</h2>
+      <p>각 모델의 그림은 실제 수식 전체가 아니라, 학생이 모델의 관점을 빠르게 잡기 위한 개념도이다.</p>
+
+      <div class="model-grid">
+        <article class="model" id="knn">
+          <div class="model-head">
+            <h3>KNN</h3>
+            <span class="type green">거리 기반</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 서로 가까운 데이터는 비슷한 성질을 가진다.</p>
+              <ul>
+                <li>새 데이터 주변의 K개 이웃을 찾는다.</li>
+                <li>이웃의 정답을 투표하거나 평균내어 예측한다.</li>
+                <li>스케일 차이에 민감하므로 정규화가 중요하다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="KNN 거리 기반 분류 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <g fill="#2f5f8f">
+                  <circle cx="74" cy="70" r="9"/><circle cx="116" cy="86" r="9"/><circle cx="92" cy="132" r="9"/><circle cx="142" cy="128" r="9"/>
+                </g>
+                <g fill="#b44b45">
+                  <circle cx="244" cy="76" r="9"/><circle cx="286" cy="104" r="9"/><circle cx="240" cy="154" r="9"/><circle cx="302" cy="164" r="9"/>
+                </g>
+                <circle cx="185" cy="118" r="13" fill="#1f6f54"/>
+                <circle cx="185" cy="118" r="72" fill="none" stroke="#1f6f54" stroke-width="3" stroke-dasharray="7 7"/>
+                <line x1="185" y1="118" x2="142" y2="128" stroke="#1f6f54" stroke-width="2"/>
+                <line x1="185" y1="118" x2="240" y2="154" stroke="#1f6f54" stroke-width="2"/>
+                <line x1="185" y1="118" x2="244" y2="76" stroke="#1f6f54" stroke-width="2"/>
+                <text x="185" y="111" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">새</text>
+                <text x="185" y="130" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">데이터</text>
+                <text x="22" y="222" font-size="15" font-weight="800" fill="#31413b">가까운 이웃의 정답으로 판단</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="model" id="linear">
+          <div class="model-head">
+            <h3>선형회귀</h3>
+            <span class="type blue">선형 모델</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 결과값은 여러 입력 변수의 가중합으로 설명할 수 있다.</p>
+              <ul>
+                <li>연속형 숫자 예측에 사용한다.</li>
+                <li>계수로 변수의 영향력을 해석하기 쉽다.</li>
+                <li>복잡한 비선형 패턴에는 한계가 있다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="선형회귀 직선 적합 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <line x1="42" y1="198" x2="326" y2="198" stroke="#72827b" stroke-width="2"/>
+                <line x1="42" y1="198" x2="42" y2="34" stroke="#72827b" stroke-width="2"/>
+                <line x1="58" y1="178" x2="310" y2="62" stroke="#2f5f8f" stroke-width="5"/>
+                <g fill="#b86b26">
+                  <circle cx="72" cy="166" r="7"/><circle cx="104" cy="158" r="7"/><circle cx="134" cy="134" r="7"/><circle cx="172" cy="127" r="7"/>
+                  <circle cx="208" cy="104" r="7"/><circle cx="238" cy="96" r="7"/><circle cx="278" cy="75" r="7"/><circle cx="300" cy="88" r="7"/>
+                </g>
+                <text x="205" y="45" font-size="16" font-weight="900" fill="#2f5f8f">가장 잘 맞는 직선</text>
+                <text x="30" y="24" font-size="13" fill="#66736f">y</text>
+                <text x="332" y="215" font-size="13" fill="#66736f">x</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="model" id="logistic">
+          <div class="model-head">
+            <h3>로지스틱 회귀</h3>
+            <span class="type purple">선형 분류</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 선형 모델의 결과를 확률로 바꾸어 분류한다.</p>
+              <ul>
+                <li>정상/불량, 합격/불합격 같은 이진 분류에 자주 사용한다.</li>
+                <li>결과를 확률로 해석할 수 있다.</li>
+                <li>복잡한 비선형 경계에는 한계가 있다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="로지스틱 회귀 S자 확률 곡선 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <line x1="40" y1="198" x2="324" y2="198" stroke="#72827b" stroke-width="2"/>
+                <line x1="40" y1="198" x2="40" y2="34" stroke="#72827b" stroke-width="2"/>
+                <path d="M54 184 C100 182, 126 174, 154 135 C178 101, 196 70, 236 58 C266 49, 294 49, 314 48" fill="none" stroke="#6752a3" stroke-width="6"/>
+                <line x1="40" y1="116" x2="324" y2="116" stroke="#b86b26" stroke-width="2" stroke-dasharray="6 6"/>
+                <line x1="184" y1="198" x2="184" y2="38" stroke="#b44b45" stroke-width="3" stroke-dasharray="5 6"/>
+                <text x="198" y="112" font-size="14" font-weight="900" fill="#b86b26">0.5 기준</text>
+                <text x="194" y="214" font-size="14" font-weight="900" fill="#b44b45">분류 경계</text>
+                <text x="68" y="48" font-size="15" font-weight="850" fill="#6752a3">확률로 변환</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="model" id="bayes">
+          <div class="model-head">
+            <h3>나이브 베이즈</h3>
+            <span class="type orange">확률 기반</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 각 클래스에서 현재 데이터가 나왔을 가능성을 비교한다.</p>
+              <ul>
+                <li>베이즈 정리와 조건부 확률을 사용한다.</li>
+                <li>특성들이 서로 독립이라고 단순하게 가정한다.</li>
+                <li>텍스트 분류에서 빠르고 강한 기준 모델이 된다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="나이브 베이즈 확률 비교 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <text x="28" y="38" font-size="16" font-weight="900" fill="#31413b">현재 데이터</text>
+                <rect x="28" y="52" width="96" height="34" rx="8" fill="#fff4e8" stroke="#e0b37e"/>
+                <text x="76" y="74" text-anchor="middle" font-size="14" font-weight="850" fill="#6e441d">온도 높음</text>
+                <rect x="132" y="52" width="96" height="34" rx="8" fill="#fff4e8" stroke="#e0b37e"/>
+                <text x="180" y="74" text-anchor="middle" font-size="14" font-weight="850" fill="#6e441d">압력 낮음</text>
+                <rect x="236" y="52" width="96" height="34" rx="8" fill="#fff4e8" stroke="#e0b37e"/>
+                <text x="284" y="74" text-anchor="middle" font-size="14" font-weight="850" fill="#6e441d">속도 빠름</text>
+                <text x="44" y="128" font-size="15" font-weight="900" fill="#2f5f8f">정상 클래스 가능성</text>
+                <rect x="44" y="140" width="112" height="24" rx="6" fill="#dbeaf6"/>
+                <text x="166" y="158" font-size="14" font-weight="900" fill="#2f5f8f">0.32</text>
+                <text x="44" y="190" font-size="15" font-weight="900" fill="#b44b45">불량 클래스 가능성</text>
+                <rect x="44" y="202" width="204" height="24" rx="6" fill="#f1c7c3"/>
+                <text x="258" y="220" font-size="14" font-weight="900" fill="#b44b45">0.68</text>
+                <text x="262" y="156" font-size="16" font-weight="900" fill="#1f6f54">더 큰 쪽 선택</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="model" id="tree">
+          <div class="model-head">
+            <h3>의사결정나무</h3>
+            <span class="type teal">규칙 기반</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 좋은 질문을 순서대로 던져 데이터를 나누면 예측할 수 있다.</p>
+              <ul>
+                <li>조건문을 따라가며 분류한다.</li>
+                <li>해석이 쉽고 비선형 관계도 표현할 수 있다.</li>
+                <li>너무 깊게 자라면 과적합이 발생한다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="의사결정나무 조건 분기 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <rect x="116" y="24" width="128" height="42" rx="8" fill="#eaf7f8" stroke="#98cfd4"/>
+                <text x="180" y="51" text-anchor="middle" font-size="14" font-weight="900" fill="#155c62">온도 &gt; 기준?</text>
+                <line x1="180" y1="66" x2="98" y2="110" stroke="#16818a" stroke-width="3"/>
+                <line x1="180" y1="66" x2="262" y2="110" stroke="#16818a" stroke-width="3"/>
+                <rect x="34" y="110" width="128" height="42" rx="8" fill="#fff" stroke="#dfe6e2"/>
+                <text x="98" y="136" text-anchor="middle" font-size="14" font-weight="900" fill="#31413b">압력 &gt; 기준?</text>
+                <rect x="198" y="110" width="128" height="42" rx="8" fill="#fff" stroke="#dfe6e2"/>
+                <text x="262" y="136" text-anchor="middle" font-size="14" font-weight="900" fill="#31413b">속도 &gt; 기준?</text>
+                <line x1="98" y1="152" x2="62" y2="188" stroke="#16818a" stroke-width="3"/>
+                <line x1="98" y1="152" x2="134" y2="188" stroke="#16818a" stroke-width="3"/>
+                <line x1="262" y1="152" x2="226" y2="188" stroke="#16818a" stroke-width="3"/>
+                <line x1="262" y1="152" x2="298" y2="188" stroke="#16818a" stroke-width="3"/>
+                <rect x="24" y="188" width="76" height="34" rx="8" fill="#dbeaf6"/><text x="62" y="210" text-anchor="middle" font-size="13" font-weight="900" fill="#2f5f8f">정상</text>
+                <rect x="100" y="188" width="76" height="34" rx="8" fill="#f1c7c3"/><text x="138" y="210" text-anchor="middle" font-size="13" font-weight="900" fill="#b44b45">불량</text>
+                <rect x="188" y="188" width="76" height="34" rx="8" fill="#dbeaf6"/><text x="226" y="210" text-anchor="middle" font-size="13" font-weight="900" fill="#2f5f8f">정상</text>
+                <rect x="264" y="188" width="76" height="34" rx="8" fill="#f1c7c3"/><text x="302" y="210" text-anchor="middle" font-size="13" font-weight="900" fill="#b44b45">불량</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="model" id="svm">
+          <div class="model-head">
+            <h3>SVM</h3>
+            <span class="type red">마진 기반</span>
+          </div>
+          <div class="model-body">
+            <div>
+              <p><strong>핵심 생각:</strong> 단순히 나누는 선이 아니라 가장 여유 있게 나누는 경계를 찾는다.</p>
+              <ul>
+                <li>클래스 사이의 마진을 최대화한다.</li>
+                <li>작은 데이터와 고차원 변수에서 강할 수 있다.</li>
+                <li>커널을 쓰면 비선형 분류도 가능하다.</li>
+              </ul>
+            </div>
+            <div class="visual">
+              <svg viewBox="0 0 360 240" role="img" aria-label="SVM 마진 최대화 그림">
+                <rect width="360" height="240" rx="10" fill="#f8fbf9"/>
+                <g fill="#2f5f8f">
+                  <circle cx="84" cy="62" r="8"/><circle cx="118" cy="86" r="8"/><circle cx="96" cy="126" r="8"/><circle cx="136" cy="142" r="8"/>
+                </g>
+                <g fill="#b44b45">
+                  <circle cx="242" cy="96" r="8"/><circle cx="282" cy="118" r="8"/><circle cx="226" cy="154" r="8"/><circle cx="272" cy="178" r="8"/>
+                </g>
+                <line x1="132" y1="210" x2="246" y2="26" stroke="#b44b45" stroke-width="5"/>
+                <line x1="96" y1="190" x2="210" y2="6" stroke="#b44b45" stroke-width="2" stroke-dasharray="8 7"/>
+                <line x1="168" y1="230" x2="282" y2="46" stroke="#b44b45" stroke-width="2" stroke-dasharray="8 7"/>
+                <text x="248" y="42" font-size="15" font-weight="900" fill="#b44b45">분류 경계</text>
+                <text x="128" y="38" font-size="14" font-weight="900" fill="#6a5b55">마진</text>
+                <text x="268" y="70" font-size="14" font-weight="900" fill="#6a5b55">마진</text>
+              </svg>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="logistic-bayes">
+      <h2>4. 로지스틱 회귀와 나이브 베이즈의 결정적 차이</h2>
+      <p class="lead">둘 다 확률로 분류하지만, 무엇을 학습하고 계산하는지가 다르다.</p>
+      <div class="quote">
+        로지스틱 회귀는 분류 경계를 직접 학습하고, 나이브 베이즈는 각 클래스에서 데이터가 나왔을 확률 구조를 계산한다.
+      </div>
+
+      <div class="compare">
+        <div class="compare-card logistic">
+          <h3>로지스틱 회귀: 판별 모델</h3>
+          <p>입력 변수의 가중치를 학습해 정상과 불량을 잘 나누는 경계를 만든다.</p>
+          <div class="formula">목표: P(정답 | 데이터)를 직접 추정
+질문: 어떤 선을 그으면 잘 나뉘는가?</div>
+        </div>
+        <div class="compare-card bayes">
+          <h3>나이브 베이즈: 생성 모델</h3>
+          <p>각 클래스에서 현재 데이터가 나올 가능성을 계산하고 더 큰 쪽을 선택한다.</p>
+          <div class="formula">사용: P(데이터 | 정답), P(정답)
+질문: 어느 집단에서 나왔을 가능성이 큰가?</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>구분</th><th>로지스틱 회귀</th><th>나이브 베이즈</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>핵심 관점</td><td>분류 경계를 찾는다.</td><td>클래스별 발생 가능성을 비교한다.</td></tr>
+          <tr><td>학습 방식</td><td>변수의 가중치를 조정한다.</td><td>클래스별 조건부 확률을 계산한다.</td></tr>
+          <tr><td>변수 관계</td><td>변수 간 상관이 있어도 어느 정도 처리한다.</td><td>변수들이 독립이라고 가정한다.</td></tr>
+          <tr><td>직관</td><td>선을 그어 두 집단을 나눈다.</td><td>어느 집단에서 나온 데이터인지 비교한다.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="flow" aria-label="로지스틱 회귀와 나이브 베이즈 흐름도">
+        <div class="flow-box">입력 데이터<br />온도, 압력, 속도</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">로지스틱 회귀<br />가중합과 확률 변환</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">분류 경계 기준<br />정상 또는 불량</div>
+      </div>
+      <div class="flow" aria-label="나이브 베이즈 흐름도">
+        <div class="flow-box">입력 데이터<br />온도, 압력, 속도</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">정상일 가능성<br />불량일 가능성 계산</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">더 가능성 높은<br />클래스로 분류</div>
+      </div>
+    </section>
+
+    <section class="section" id="loss">
+      <h2>5. 손실함수와 경사하강법</h2>
+      <p class="lead">손실함수는 모델의 예측이 실제 정답과 얼마나 다른지를 숫자로 표현한 것이다.</p>
+      <p>모델 학습은 보통 이 손실함수를 작게 만드는 방향으로 진행된다. 다만 모든 모델이 같은 방식으로 손실함수를 미분해 학습하는 것은 아니다.</p>
+
+      <table>
+        <thead>
+          <tr><th>모델</th><th>대표 손실함수 또는 최적화 기준</th><th>공식 또는 기준</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KNN</td><td>명시적 학습 손실함수 없음</td><td>학습 단계에서 파라미터를 최적화하지 않는다.</td></tr>
+          <tr><td>선형회귀</td><td>평균제곱오차, MSE</td><td><code>L = (1/n) Σ(yi - ŷi)^2</code></td></tr>
+          <tr><td>로지스틱 회귀</td><td>이진 교차엔트로피</td><td><code>L = -(1/n) Σ [yi log(pi) + (1 - yi) log(1 - pi)]</code></td></tr>
+          <tr><td>나이브 베이즈</td><td>음의 로그우도</td><td><code>L = -Σ log P(yi | xi)</code></td></tr>
+          <tr><td>의사결정나무</td><td>불순도 감소</td><td><code>Gini = 1 - Σ pk^2</code><br /><code>Entropy = -Σ pk log(pk)</code></td></tr>
+          <tr><td>SVM</td><td>힌지 손실</td><td><code>L = Σ max(0, 1 - yi(w·xi + b)) + λ||w||^2</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid three" style="margin-top:18px">
+        <div class="card">
+          <span class="tag">오차를 줄임</span>
+          <p><strong>선형회귀</strong>는 예측값과 실제값의 차이를 제곱해 평균한 값을 줄인다.</p>
+        </div>
+        <div class="card">
+          <span class="tag">확률을 맞춤</span>
+          <p><strong>로지스틱 회귀와 나이브 베이즈</strong>는 실제 정답에 높은 확률을 주도록 학습하거나 계산한다.</p>
+        </div>
+        <div class="card">
+          <span class="tag">경계를 좋게 만듦</span>
+          <p><strong>의사결정나무와 SVM</strong>은 각각 불순도 감소와 마진 위반 감소를 기준으로 분류 경계를 만든다.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:28px">로지스틱 회귀 손실함수 쉽게 읽기</h3>
+      <div class="quote">
+        이진 교차엔트로피는 실제 정답에 해당하는 확률만 골라서, 그 확률이 낮을수록 큰 벌점을 주는 손실함수이다.
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <span class="tag">정답이 불량이면 y = 1</span>
+          <p>공식 안에 <code>y = 1</code>을 넣으면 두 번째 항이 사라지고 <code>-log(p)</code>만 남는다.</p>
+          <div class="formula">L = -[1 log(p) + 0 log(1-p)]
+L = -log(p)</div>
+          <p>실제 불량일 때는 모델이 예측한 불량 확률 <code>p</code>가 높을수록 손실이 작다.</p>
+        </div>
+        <div class="card">
+          <span class="tag">정답이 정상이면 y = 0</span>
+          <p>공식 안에 <code>y = 0</code>을 넣으면 첫 번째 항이 사라지고 <code>-log(1-p)</code>만 남는다.</p>
+          <div class="formula">L = -[0 log(p) + 1 log(1-p)]
+L = -log(1-p)</div>
+          <p>실제 정상일 때는 정상 확률 <code>1-p</code>가 높을수록 손실이 작다.</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>상황</th><th>예측 확률</th><th>손실 해석</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>실제 불량</td><td><code>p = 0.9</code></td><td><code>-log(0.9)</code>: 정답에 높은 확률을 주었으므로 손실이 작다.</td></tr>
+          <tr><td>실제 불량</td><td><code>p = 0.1</code></td><td><code>-log(0.1)</code>: 정답에 낮은 확률을 주었으므로 손실이 크다.</td></tr>
+          <tr><td>실제 정상</td><td><code>p = 0.1</code></td><td><code>-log(0.9)</code>: 정상 확률이 높으므로 손실이 작다.</td></tr>
+          <tr><td>실제 정상</td><td><code>p = 0.9</code></td><td><code>-log(0.1)</code>: 정상 확률이 낮으므로 손실이 크다.</td></tr>
+        </tbody>
+      </table>
+      <p><code>Σ</code>는 모든 데이터의 손실을 더한다는 뜻이고, <code>1/n</code>은 데이터 개수로 나누어 평균 손실을 구한다는 뜻이다. 앞의 마이너스는 로그 확률이 음수이기 때문에 손실을 양수로 바꾸기 위해 붙는다.</p>
+
+      <h3 style="margin-top:28px">확률 p는 어떻게 계산하는가?</h3>
+      <p>로지스틱 회귀에서 확률 <code>p</code>는 사람이 직접 넣는 값이 아니라, 모델이 입력 데이터와 현재 가중치로 계산한 값이다.</p>
+      <div class="flow" aria-label="로지스틱 회귀 확률 계산 흐름도">
+        <div class="flow-box">입력 데이터<br />온도, 압력, 속도</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">점수 계산<br />z = w1x1 + w2x2 + ... + b</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">확률 변환<br />p = 1 / (1 + e^-z)</div>
+      </div>
+      <div class="formula">예시
+z = 0.05×80 + (-0.8)×3 + 0.1×10 - 2
+z = 0.6
+p = 1 / (1 + e^(-0.6)) ≈ 0.646</div>
+      <p>이 예에서는 모델이 “이 제품이 불량일 확률은 약 64.6%”라고 예측한 것이다. 이 확률을 손실함수에 넣고, 손실이 작아지도록 <code>w</code>와 <code>b</code>를 조정한다.</p>
+
+      <h3 style="margin-top:28px">경사하강법은 선형 모델에서만 쓰는가?</h3>
+      <div class="quote">
+        경사하강법은 선형 모델 전용이 아니라, 미분 가능한 손실함수를 가진 모델의 파라미터를 최적화하는 일반 방법이다.
+      </div>
+      <table>
+        <thead>
+          <tr><th>모델</th><th>경사하강법 사용 여부</th><th>이유</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>선형회귀</td><td>가능</td><td>MSE 손실함수를 미분할 수 있다.</td></tr>
+          <tr><td>로지스틱 회귀</td><td>가능</td><td>교차엔트로피 손실함수를 미분할 수 있다.</td></tr>
+          <tr><td>SVM</td><td>가능</td><td>힌지 손실 또는 변형 손실을 최적화할 수 있다.</td></tr>
+          <tr><td>신경망</td><td>매우 많이 사용</td><td>파라미터가 많아 경사하강법 계열이 핵심이다.</td></tr>
+          <tr><td>KNN</td><td>보통 사용하지 않음</td><td>학습할 파라미터가 거의 없다.</td></tr>
+          <tr><td>나이브 베이즈</td><td>보통 직접 사용하지 않음</td><td>확률을 빈도나 닫힌 형태로 계산하는 경우가 많다.</td></tr>
+          <tr><td>의사결정나무</td><td>보통 사용하지 않음</td><td>조건 분할 후보를 비교해서 선택하는 방식이다.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="flow" aria-label="경사하강법 개념 흐름도">
+        <div class="flow-box">손실함수 계산<br />예측이 얼마나 틀렸는가?</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">기울기 계산<br />어느 방향으로 줄어드는가?</div>
+        <div class="arrow">→</div>
+        <div class="flow-box">파라미터 조정<br />w, b를 조금 이동</div>
+      </div>
+    </section>
+
+    <section class="section" id="practice-data">
+      <h2>6. 실습 데이터와 모델 매칭</h2>
+      <p class="lead">정답 변수가 범주이면 분류 문제이고, 정답 변수가 연속형 숫자이면 회귀 문제이다.</p>
+      <p>실습 데이터 폴더: <code>/Users/PhilipKim/Desktop/00.OSDA/CNN20260510/Lecture/AI.B.Data.Intensive.20260629/01. 실습자료/data</code></p>
+
+      <div class="compare">
+        <div class="compare-card logistic">
+          <h3>wine_data.csv: 분류</h3>
+          <p>와인의 화학적 특성을 보고 와인 종류 <code>class</code>를 맞히는 데이터이다.</p>
+          <div class="formula">입력 X = Alcohol, Malic, Ash, Phenols, Color, Proline ...
+정답 y = class</div>
+          <p>대표 실습 모델: KNN, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM</p>
+        </div>
+        <div class="compare-card bayes">
+          <h3>house_prices.csv: 회귀</h3>
+          <p>주택 특성을 보고 집값 <code>MEDV</code>를 예측하는 데이터이다.</p>
+          <div class="formula">입력 X = CRIM, RM, AGE, TAX, PTRATIO, LSTAT ...
+정답 y = MEDV</div>
+          <p>대표 실습 모델: 선형회귀</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>데이터 파일</th><th>문제 유형</th><th>정답 변수</th><th>대표 모델</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>wine_data.csv</code></td><td>분류</td><td><code>class</code></td><td>KNN, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM</td></tr>
+          <tr><td><code>iris.csv</code></td><td>분류</td><td><code>class</code></td><td>KNN, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM</td></tr>
+          <tr><td><code>heart.csv</code></td><td>분류</td><td><code>target</code></td><td>로지스틱 회귀, KNN, 나이브 베이즈, 의사결정나무, SVM</td></tr>
+          <tr><td><code>house_prices.csv</code></td><td>회귀</td><td><code>MEDV</code></td><td>선형회귀</td></tr>
+        </tbody>
+      </table>
+      <div class="quote">
+        <code>wine_data.csv</code>는 클래스 분류 문제이므로 분류 모델 비교 실습에 적합하고, <code>house_prices.csv</code>는 연속형 집값을 예측하므로 선형회귀 실습에 적합하다.
+      </div>
+    </section>
+
+    <section class="section" id="selection">
+      <h2>7. 모델 선택 예시</h2>
+      <div class="quote">
+        데이터 개수 100개, 변수 500개인 반도체 공정 데이터가 있다. 어떤 모델을 선택할 것인가?
+      </div>
+      <p>이 문제는 모델 이름이 아니라 데이터의 조건을 보고 적절한 모델을 고르는 능력을 평가한다.</p>
+      <div class="checklist">
+        <div class="check"><b>데이터 수가 적다</b>100개뿐이므로 복잡한 모델은 과적합 위험이 크다.</div>
+        <div class="check"><b>변수 수가 많다</b>500개 변수이므로 정규화와 변수 선택이 중요하다.</div>
+        <div class="check"><b>기준 모델이 필요하다</b>로지스틱 회귀나 SVM으로 먼저 성능 기준을 잡는 것이 합리적이다.</div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>선택 가능 모델</th><th>선택 이유</th><th>주의점</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>로지스틱 회귀</td><td>기준 모델로 적합하고 해석이 비교적 쉽다.</td><td>정규화와 변수 선택이 필요하다.</td></tr>
+          <tr><td>SVM</td><td>작은 데이터와 고차원 변수에서 좋은 성능을 낼 수 있다.</td><td>커널과 하이퍼파라미터 선택이 중요하다.</td></tr>
+          <tr><td>나이브 베이즈</td><td>데이터가 적을 때 빠르게 기준 성능을 확인할 수 있다.</td><td>독립성 가정이 실제와 다를 수 있다.</td></tr>
+          <tr><td>의사결정나무</td><td>규칙을 해석하기 쉽다.</td><td>데이터가 적고 변수가 많으면 과적합되기 쉽다.</td></tr>
+          <tr><td>KNN</td><td>단순한 비교 모델로 사용할 수 있다.</td><td>고차원에서는 거리의 의미가 약해질 수 있다.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="questions">
+      <h2>8. 좋은 시험 문제 형태</h2>
+      <div class="grid three">
+        <div class="card">
+          <span class="tag">기본형</span>
+          <p>대표적인 머신러닝 모델은 어떠한 원리적 차이에 의해 서로 다른 모델로 분류되는지 설명하시오.</p>
+        </div>
+        <div class="card">
+          <span class="tag">분류 체계 강조형</span>
+          <p>거리 기반, 선형 모델, 확률 모델, 규칙 기반 모델, 마진 기반 모델의 대표 모델을 예시와 함께 설명하시오.</p>
+        </div>
+        <div class="card">
+          <span class="tag">실무 적용형</span>
+          <p>데이터 100개, 변수 500개인 반도체 공정 데이터가 있다. 어떤 모델을 선택하겠는가?</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="summary">
+      <h2>9. 수업 정리</h2>
+      <table>
+        <tbody>
+          <tr><th>KNN</th><td>가까운 데이터를 참고하는 거리 기반 모델이다.</td></tr>
+          <tr><th>선형회귀</th><td>연속형 값을 예측하는 선형 모델이다.</td></tr>
+          <tr><th>로지스틱 회귀</th><td>확률을 이용해 분류하는 선형 분류 모델이다.</td></tr>
+          <tr><th>나이브 베이즈</th><td>베이즈 정리를 사용하는 확률 기반 모델이다.</td></tr>
+          <tr><th>의사결정나무</th><td>조건문으로 데이터를 나누는 규칙 기반 모델이다.</td></tr>
+          <tr><th>SVM</th><td>마진이 가장 큰 분류 경계를 찾는 마진 기반 모델이다.</td></tr>
+          <tr><th>경사하강법</th><td>선형 모델 전용이 아니라 미분 가능한 손실함수를 최적화하는 일반 방법이다.</td></tr>
+        </tbody>
+      </table>
+      <div class="quote">
+        KNN, 회귀분석, 로지스틱 회귀, 나이브 베이즈, 의사결정나무, SVM으로 구분되는 이유는 각 모델이 데이터를 바라보는 관점과 예측을 만드는 원리가 다르기 때문이다.
+      </div>
+    </section>
+
+    <p class="footer-note">상단 도구에서 편집 모드를 켠 뒤 내용을 수정할 수 있습니다. HTML 저장은 수정 내용을 새 HTML 파일로 저장하고, PDF 저장은 브라우저 인쇄 창을 열어 PDF로 저장할 수 있게 합니다.</p>
+  </main>
+</div>
+
+<script>
+(function(){
+  const main = document.querySelector('.main');
+  if(main) main.setAttribute('contenteditable','false');
+})();
+
+function showToolStatus(message){
+  const el = document.getElementById('toolStatus');
+  if(!el) return;
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(window.__toolStatusTimer);
+  window.__toolStatusTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function toggleEditMode(){
+  const main = document.querySelector('.main');
+  const btn = document.getElementById('editToggle');
+  if(!main || !btn) return;
+  const editing = main.getAttribute('contenteditable') === 'true';
+  main.setAttribute('contenteditable', editing ? 'false' : 'true');
+  document.body.classList.toggle('edit-mode', !editing);
+  btn.textContent = editing ? '편집 모드 켜기' : '편집 모드 끄기';
+  if(!editing){
+    main.focus({preventScroll:true});
+    showToolStatus('편집 모드가 켜졌습니다. 본문을 직접 클릭해 수정하세요.');
+  }else{
+    showToolStatus('편집 모드가 꺼졌습니다.');
+  }
+}
+
+function buildDownloadHtml(){
+  const clone = document.documentElement.cloneNode(true);
+  const body = clone.querySelector('body');
+  const main = clone.querySelector('.main');
+  const btn = clone.querySelector('#editToggle');
+  const status = clone.querySelector('#toolStatus');
+  if(body) body.classList.remove('edit-mode');
+  if(main) main.setAttribute('contenteditable','false');
+  if(btn) btn.textContent = '편집 모드 켜기';
+  if(status){ status.classList.remove('show'); status.textContent = ''; }
+  return '<!doctype html>\n' + clone.outerHTML;
+}
+
+function saveEditedHtml(){
+  const html = buildDownloadHtml();
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '머신러닝_모델별_특성_김임환_편집본.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToolStatus('현재 수정 내용을 HTML 파일로 저장했습니다.');
+}
+
+function saveAsPdf(){
+  const main = document.querySelector('.main');
+  const wasEditing = main && main.getAttribute('contenteditable') === 'true';
+  if(wasEditing){
+    main.setAttribute('contenteditable','false');
+    document.body.classList.remove('edit-mode');
+  }
+  showToolStatus('인쇄 창에서 대상/프린터를 “PDF로 저장”으로 선택하세요.');
+  setTimeout(() => {
+    window.print();
+    if(wasEditing){
+      main.setAttribute('contenteditable','true');
+      document.body.classList.add('edit-mode');
+    }
+  }, 120);
+}
+
+window.addEventListener('beforeprint', () => {
+  const main = document.querySelector('.main');
+  if(main) main.dataset.editBeforePrint = main.getAttribute('contenteditable') || 'false';
+  if(main) main.setAttribute('contenteditable','false');
+  document.body.classList.remove('edit-mode');
+});
+
+window.addEventListener('afterprint', () => {
+  const main = document.querySelector('.main');
+  if(main && main.dataset.editBeforePrint === 'true'){
+    main.setAttribute('contenteditable','true');
+    document.body.classList.add('edit-mode');
+  }
+});
+</script>
+
+</body>
+</html>
