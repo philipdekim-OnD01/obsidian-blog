@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>머신러닝 모델별 특성 실습 | 김임환</title>
+<style>
+body{margin:0;background:#f5f7f6;color:#18231f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
+main{max-width:1180px;margin:auto;padding:34px 20px 70px}
+.hero{background:linear-gradient(135deg,#12271f,#1f6f54);color:#fff;border-radius:14px;padding:44px;box-shadow:0 18px 42px rgba(24,35,31,.12)}
+h1{font-size:42px;margin:0 0 14px}.hero p{font-size:19px;line-height:1.6;color:#e2f1ea}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.actions a{background:#fff;color:#174c39;text-decoration:none;padding:11px 16px;border-radius:9px;font-weight:800}
+section{background:#fff;border:1px solid #dfe6e2;border-radius:12px;padding:28px;margin-top:24px}
+h2{font-size:28px;margin:0 0 14px}p{line-height:1.65}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:12px 10px;border-bottom:1px solid #e3e8e5;text-align:left;vertical-align:top}th{background:#eef4f0}
+a{color:#1f6f54;font-weight:750}.note{background:#eef7f2;border-left:5px solid #1f6f54;padding:15px 18px;border-radius:0 8px 8px 0}
+code{background:#f3f5f4;padding:2px 5px;border-radius:4px}
+@media(max-width:760px){.hero{padding:28px 22px}h1{font-size:32px}section{padding:20px;overflow:auto}table{min-width:850px}}
+</style>
+</head>
+<body><main>
+<div class="hero">
+<h1>머신러닝 모델별 특성 실습</h1>
+<p>강의에서 배운 거리·선형관계·확률·규칙·마진을 실제 데이터와 코드로 확인하는 실습 페이지입니다. 김임환 강의자료와 직접 연결되어 있습니다.</p>
+<div class="actions">
+<a href="https://colab.research.google.com/github/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/ml_models_practice.ipynb" target="_blank">Google Colab에서 바로 실행</a>
+<a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/00_all_models.py" target="_blank">전체 Python 코드 보기</a>
+<a href="https://philipdekim-ond01.github.io/obsidian-blog/ml-model-characteristics-editable.html">강의자료로 돌아가기</a>
+</div>
+</div>
+
+<section><h2>1. 추천 실습 순서</h2>
+<p class="note">처음에는 전체 코드를 한 번 실행한 뒤, 모델별 코드로 분리해서 원리를 확인하는 것이 가장 효율적입니다. KNN과 SVM은 거리와 마진 때문에 표준화의 영향을 특히 크게 받는다는 점을 비교해 보세요.</p>
+<p>① Colab에서 전체 모델 실행 → ② 정확도 비교 → ③ 모델별 코드 확인 → ④ 다른 데이터로 교체 → ⑤ train/test 비율과 하이퍼파라미터를 바꾸어 결과 비교 순서로 진행합니다.</p>
+</section>
+
+<section><h2>2. Python 실습 코드</h2>
+<table><thead><tr><th>코드</th><th>무엇을 배우나</th><th>링크</th></tr></thead><tbody><tr><td>전체 모델 비교</td><td>Wine 5개 분류 모델과 House 선형회귀를 한 번에 실행</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/00_all_models.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/00_all_models.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>KNN</td><td>거리 기반 분류</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/01_knn.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/01_knn.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>선형회귀</td><td>연속형 집값 예측</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/02_linear_regression.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/02_linear_regression.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>로지스틱 회귀</td><td>확률 기반 선형 분류</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/03_logistic_regression.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/03_logistic_regression.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>나이브 베이즈</td><td>조건부 확률 기반 분류</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/04_naive_bayes.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/04_naive_bayes.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>의사결정나무</td><td>조건 분기 규칙 기반 분류</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/05_decision_tree.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/05_decision_tree.py" target="_blank">원본 다운로드</a></td></tr>
+<tr><td>SVM</td><td>최대 마진 기반 분류</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/06_svm.py" target="_blank">코드 보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/06_svm.py" target="_blank">원본 다운로드</a></td></tr></tbody></table>
+</section>
+
+<section><h2>3. 실습 데이터</h2>
+<table><thead><tr><th>파일</th><th>크기</th><th>설명</th><th>추천 실습</th><th>링크</th></tr></thead><tbody><tr><td><code>wine_data.csv</code></td><td>178×14</td><td>와인의 화학 성분으로 class를 예측하는 다중 분류 데이터</td><td>KNN · 로지스틱 회귀 · 나이브 베이즈 · 의사결정나무 · SVM</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/wine_data.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/wine_data.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>house_prices.csv</code></td><td>506×14</td><td>주택 특성으로 MEDV 집값을 예측하는 회귀 데이터</td><td>선형회귀</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/house_prices.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/house_prices.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>iris.csv</code></td><td>150×5</td><td>꽃받침·꽃잎 길이/너비로 붓꽃 class를 분류</td><td>분류 모델 비교</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/iris.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/iris.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>iris_without_y.csv</code></td><td>150×4</td><td>정답 class가 제거된 붓꽃 입력 데이터</td><td>새 데이터 예측 실습</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/iris_without_y.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/iris_without_y.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>heart.csv</code></td><td>303×14</td><td>임상 특성으로 target을 예측하는 이진 분류 데이터</td><td>로지스틱 회귀 · SVM · Tree</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/heart.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/heart.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>badminton_dataset.csv</code></td><td>36×5</td><td>날씨 조건으로 배드민턴 실행 여부를 판단하는 작은 범주형 데이터</td><td>의사결정나무 · 규칙 이해</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/badminton_dataset.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/badminton_dataset.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>performance.csv</code></td><td>1000×7</td><td>교육·훈련·역량·태도와 성과 관련 변수 데이터</td><td>회귀·상관·EDA 확장</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/performance.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/performance.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>sales.csv</code></td><td>1000×17</td><td>고객·상품·가격·매출·결제·평점이 포함된 통합 판매 데이터</td><td>EDA · 회귀 · 분류 확장</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/sales.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/sales.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>sales1.csv</code></td><td>1000×5</td><td>고객/구매 기본 속성만 분리한 판매 데이터</td><td>범주형 전처리 실습</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/sales1.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/sales1.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>sales2.csv</code></td><td>1000×6</td><td>상품·단가·수량·총액 중심 판매 데이터</td><td>회귀·가격 분석</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/sales2.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/sales2.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>sales3.csv</code></td><td>1000×8</td><td>날짜·결제·원가·마진·평점 중심 판매 데이터</td><td>시계열·회귀 확장</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/sales3.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/sales3.csv" target="_blank">다운로드</a></td></tr>
+<tr><td><code>air_quality_uci.csv</code></td><td>1000×15</td><td>가스 센서·온도·습도 등이 포함된 대기질 데이터</td><td>회귀 · 센서 데이터 전처리</td><td><a href="https://github.com/philipdekim-OnD01/obsidian-blog/blob/main/ml-model-practice/data/air_quality_uci.csv" target="_blank">보기</a> · <a href="https://raw.githubusercontent.com/philipdekim-OnD01/obsidian-blog/main/ml-model-practice/data/air_quality_uci.csv" target="_blank">다운로드</a></td></tr></tbody></table>
+</section>
+
+<section><h2>4. 로컬 실행</h2>
+<pre><code>git clone https://github.com/philipdekim-OnD01/obsidian-blog.git
+cd obsidian-blog/ml-model-practice
+pip install -r requirements.txt
+python 00_all_models.py</code></pre>
+<p>코드 파일만 따로 내려받아도 동작하도록 작성했습니다. 같은 폴더의 <code>data/</code>가 없으면 GitHub의 raw CSV를 자동으로 읽습니다.</p>
+</section>
+</main></body></html>
