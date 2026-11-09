@@ -31,13 +31,14 @@
 AI 수학이나 TabPFN의 다음 단계가 아닙니다. CPU 실행·레지스터·메모리·운영체제·하드웨어 보안을 심화 학습하는 별도 교육과정입니다.
 
 1. **ARM 아키텍처 · CP15 · TrustZone**: CPU·ALU·r0~r15 → CPSR/SPSR → CP15·MRC·VBAR → MMU·TLB·캐시 → 예외·인터럽트 → TrustZone·공격과 방어 → Exynos 4412/850 비교. [46장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/arm-architecture-cp15-trustzone-editable-16x9.html)
+2. **E850-96 DVS 드라이버 실습**: ARM 기초를 실제 Exynos850 보드에 적용합니다. Device Tree → I²C·RESET → 커널 모듈 빌드 → Pablo/V4L2 → MIPI CSI-2 문제 해결 → 이벤트 디코딩. [39장 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/e850-96-dvs-driver-lab-20261109.html)
 
 ### 트랙 C · 온디바이스 AI 및 엣지 실습
 
 트랙 A의 머신러닝·딥러닝을 활용합니다. 트랙 B의 ARM 구조를 알고 있으면 성능·메모리·보안 문제를 깊이 분석할 수 있지만, 입문 실습의 필수 선행 강좌는 아닙니다.
 
 1. **Raspberry Pi 5 · 온디바이스 AI**: OS·Wi-Fi·SSH·카메라 → TFLite 추론 → 모델 경량화·QAT. [실습 준비 30장](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-06-raspberry-pi5-setup-rps-tflite-30slides.html)
-2. **DVS OnDevice AI**: 이벤트 센서 수신 → 디코딩·드라이버 → 실시간 모델 처리 → 센서·엣지 시스템 실증. [DVS 전체 강의·실습](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/)
+2. **DVS OnDevice AI**: 먼저 [E850-96 드라이버 실습 39장](https://philipdekim-ond01.github.io/obsidian-blog/e850-96-dvs-driver-lab-20261109.html)에서 센서 제어와 MIPI 수신 과정을 이해하고, [DVS 전체 강의·실습](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/)에서 이벤트 디코딩·실시간 모델 처리·응용으로 확장합니다.
 
 ### 트랙 D · 반도체 산업·제품·제조 응용
 
@@ -147,10 +148,15 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | 학습 순서 | 강의자료 | 핵심 내용 | 형식 |
 |---|---|---|---|
 | 01 · ARM 시스템 기초 | [ARM Architecture · CP15 · TrustZone 전체 강의](https://philipdekim-ond01.github.io/obsidian-blog/arm-architecture-cp15-trustzone-editable-16x9.html) | CPU·ALU·버스·레지스터 파일 → r0~r15와 SP/LR/PC → CPSR·SPSR → 예외·IRQ·VBAR → CP15와 MRC 명령 해독 → MMU·TLB·캐시 → TrustZone·보안 공격 → Exynos 4412/850 비교 → DVS 시스템 적용 | 16:9 편집형 HTML · 46장 |
+| 02 · E850-96 DVS 드라이버 | [E850-96 DVS 드라이버 실습 · 39장](https://philipdekim-ond01.github.io/obsidian-blog/e850-96-dvs-driver-lab-20261109.html) | Device Tree·I²C 센서 매칭 → dvs.ko·probe·RESET → 커널 모듈 빌드·dmesg 검증 → Pablo/V4L2·MIPI CSI-2 → IRQ 폭주·CRC 오류 해결 → DVS 이벤트 디코더·실습 평가 | 16:9 HTML · 39장 · 2026-11-09 |
 
 강의 중 특히 `MRC p15, 0, r0, c12, c0, 0`은 CP15의 VBAR 값을 r0로 읽는 명령이라는 점을 레지스터 맵으로 설명합니다. `r15(PC)`와 `p15(CP15)`는 서로 다른 번호 체계이며, `c12`는 메모리 주소가 아닌 시스템 레지스터 선택 필드입니다. CPU 내부 레지스터 변조 공격과 TrustZone의 보호 범위 및 한계도 구분합니다.
 
 수업 활용: ARM 강의만 독립 수강하거나, 온디바이스 AI/DVS 과정에서 예외 처리·메모리·성능·보안 문제가 나올 때 선택적으로 연결하세요. 강의 본문 텍스트·도식 수정, 슬라이드 탐색, HTML 저장, PDF 인쇄를 지원하며 HTML 파일만으로 오프라인 실행할 수 있습니다.
+
+### E850-96 DVS 실습의 권장 순서
+
+ARM 아키텍처(01) → E850-96의 Device Tree와 드라이버(02) → [DVS OnDevice AI 웹 실습](https://philipdekim-ond01.github.io/obsidian-blog/dvs-ondevice-ai/)으로 이어집니다. E850 자료는 2026년 11월 6~7일의 실제 Bring-up 사례를 바탕으로, I²C가 되더라도 영상이 오지 않을 수 있다는 점과 MIPI IRQ·CRC 오류를 증거로 분리해 해결하는 과정을 다룹니다. 코드는 설명용 발췌이므로 실제 구현은 강의 마지막 장에 연결된 원본 저장소를 확인하세요.
 
 ## AI 반도체설계혁신특론 · 제품 경쟁력 강의
 
