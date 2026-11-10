@@ -25,7 +25,8 @@
 6. **신경망 역전파의 발전 (1974/1982)**: Paul Werbos의 논문을 통해 퍼셉트론의 한계, 손실함수, 미분의 연쇄법칙과 가중치 수정을 이해합니다.
 7. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
 8. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
-9. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
+9. **뇌학습을 응용한 CNN**: 생물학적 뉴런·시냅스 가소성 → 퍼셉트론과 역전파 → 시각피질 수용장 → 합성곱·특징맵 → 반도체 영상 결함 검출로 이어집니다. [37장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html)
+10. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
 ### 트랙 B · 컴퓨터 구조와 ARM 시스템 (독립 강좌)
 
 AI 수학이나 TabPFN의 다음 단계가 아닙니다. CPU 실행·레지스터·메모리·운영체제·하드웨어 보안을 심화 학습하는 별도 교육과정입니다.
@@ -102,9 +103,9 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | EX 06 | [Softmax 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_06_Softmax_Classification_editable_16x9.html) | 3개 클래스 예측, 분류 정확도 | 13장 |
 | EX 07 | [MNIST 숫자 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_07_MNIST_Classification_editable_16x9.html) | Keras 신경망, 학습·평가, 일반화 | 15장 |
 
-## 신경망 발전사 · 5편 연속 강의 (연대순)
+## 신경망 발전사 · 6편 연속 강의 (기초에서 응용으로)
 
-퍼셉트론의 탄생(1958) → 역전파 계산의 수학적 기원(1960) → 신경망 학습법의 발전(1974/1982) → 다층 신경망 학습의 실용화(1986) → 현대 신경망·CNN·DenseNet으로 이어지는 다섯 편입니다. 아래 순서대로 학습하면 기술이 등장한 이유와 각 논문의 차이를 이해하기 쉽습니다.
+퍼셉트론의 탄생(1958) → 역전파 계산의 수학적 기원(1960) → 신경망 학습법의 발전(1974/1982) → 다층 신경망 학습의 실용화(1986) → 현대 신경망·CNN·DenseNet을 거쳐 뇌의 시각학습 원리와 CNN 응용으로 확장하는 여섯 편입니다. 아래 순서대로 학습하면 기술이 등장한 이유와 각 논문의 차이를 이해하기 쉽습니다.
 
 | 순서 | 강의자료 | 웹페이지 | 핵심 학습 내용 |
 |---|---|---|---|
@@ -113,6 +114,17 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | 3강 · 1974/1982 | Paul Werbos · 신경망 역전파의 발전 (22장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/werbos-backprop-1974-1982-editable-16x9.html) | 다층 신경망, 손실함수, 미분의 연쇄법칙, 가중치 업데이트와 불량 예측 |
 | 4강 · 1986 | Geoffrey Hinton · Nature 역전파 실용화 (18장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html) | 전공·이력·연구 동기, 은닉층과 XOR, 오차 역전파, 대칭·가족관계 실험, 가중치 학습 실습 |
 | 5강 · 이후 발전 | 신경망 기초 · 역전파에서 DenseNet까지 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 은닉층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례 |
+| 6강 · CNN 심화 | 뇌학습을 응용한 CNN · 김임환 교수 (37장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html) | 뇌·뉴런·시냅스·가소성 → 퍼셉트론·XOR·역전파 → 시각피질 수용장 → CNN 필터·특징맵 → 반도체 영상 검사 및 합성곱 체험 |
+
+## 뇌학습을 응용한 CNN · 37장 심화 강의
+
+신경망 발전사의 6강으로, 1958년 퍼셉트론에서 배운 '경험에 따라 연결이 바뀐다'는 발상을 실제 뇌의 시각 정보 처리와 연결한 뒤, 현대 CNN의 합성곱·특징맵·분류 과정을 이해합니다. 기존 퍼셉트론·역전파·신경망 기초 강의를 마친 뒤 수강하는 것을 권장합니다.
+
+| 강의자료 | 핵심 내용 | 형식 |
+|---|---|---|
+| [뇌학습을 응용한 CNN · 김임환 교수](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html) | 뇌의 정보처리 → 뉴런·시냅스·가소성 → 퍼셉트론·XOR·MLP·역전파 → 시각피질 수용장 → CNN 필터·Pooling·특징맵 → 반도체 결함 검출과 실습 | 원본 그림·사진 포함, 주요 용어 하단 각주, 16:9 편집형 HTML 37장 |
+
+자료 내 이미지는 강의용 원본 PDF에서 인용·재구성한 도판을 포함합니다. 각 슬라이드의 출처 표기를 확인하고 외부 재배포 시 이미지 사용 권리를 별도로 검토하세요. 파일에는 사진·그림이 포함되어 있으므로 별도 이미지 폴더 없이 실행할 수 있습니다.
 
 ## 정형 데이터 AI · TabPFN Foundation Model
 
