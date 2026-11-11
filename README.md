@@ -26,7 +26,8 @@
 7. **역전파의 실용화와 신경망의 부활 (1986)**: Geoffrey Hinton·Rumelhart·Williams의 Nature 논문을 통해 은닉층 학습, 오차의 역전파, 내부 표현 학습을 이해합니다. [18장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html)
 8. **신경망·딥러닝 기초**: 24장 강의로 히든층·ReLU·역전파·CNN·DenseNet을 연결합니다.
 9. **뇌학습을 응용한 CNN**: 생물학적 뉴런·시냅스 가소성 → 퍼셉트론과 역전파 → 시각피질 수용장 → 합성곱·특징맵 → 반도체 영상 결함 검출로 이어집니다. [37장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html)
-10. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
+10. **CNN에서 비전 파운데이션 모델까지**: AlexNet·ResNet·DenseNet·MobileNet → YOLO 객체탐지 → ViT·DINOv3 자기지도학습. 이미지 분류·탐지·특징 추출과 모델 선택 기준을 비교합니다. [57장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/vision-ai-evolution-yolo-vit-dino-editable-16x9.html)
+11. **정형 데이터 AI · TabPFN**: XGBoost·LightGBM·AutoML과 비교해, 표 데이터를 위한 Transformer·In-Context Learning·Foundation Model의 차이와 장점을 이해합니다. [28장 편집형 강의 보기](https://philipdekim-ond01.github.io/obsidian-blog/tabpfn-tabular-foundation-model-editable-16x9.html)
 ### 트랙 B · 컴퓨터 구조와 ARM 시스템 (독립 강좌)
 
 AI 수학이나 TabPFN의 다음 단계가 아닙니다. CPU 실행·레지스터·메모리·운영체제·하드웨어 보안을 심화 학습하는 별도 교육과정입니다.
@@ -103,9 +104,9 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | EX 06 | [Softmax 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_06_Softmax_Classification_editable_16x9.html) | 3개 클래스 예측, 분류 정확도 | 13장 |
 | EX 07 | [MNIST 숫자 분류](https://philipdekim-ond01.github.io/obsidian-blog/ml-code-lectures/EX_07_MNIST_Classification_editable_16x9.html) | Keras 신경망, 학습·평가, 일반화 | 15장 |
 
-## 신경망 발전사 · 6편 연속 강의 (기초에서 응용으로)
+## 신경망 발전사 · 7편 연속 강의 (기초에서 응용으로)
 
-퍼셉트론의 탄생(1958) → 역전파 계산의 수학적 기원(1960) → 신경망 학습법의 발전(1974/1982) → 다층 신경망 학습의 실용화(1986) → 현대 신경망·CNN·DenseNet을 거쳐 뇌의 시각학습 원리와 CNN 응용으로 확장하는 여섯 편입니다. 아래 순서대로 학습하면 기술이 등장한 이유와 각 논문의 차이를 이해하기 쉽습니다.
+퍼셉트론의 탄생(1958) → 역전파 계산의 수학적 기원(1960) → 신경망 학습법의 발전(1974/1982) → 다층 신경망 학습의 실용화(1986) → 현대 신경망·CNN·DenseNet과 뇌의 시각학습 원리를 거쳐 YOLO·ViT·DINO 비전 AI까지 확장하는 일곱 편입니다. 아래 순서대로 학습하면 기술이 등장한 이유와 각 논문의 차이를 이해하기 쉽습니다.
 
 | 순서 | 강의자료 | 웹페이지 | 핵심 학습 내용 |
 |---|---|---|---|
@@ -115,6 +116,7 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | 4강 · 1986 | Geoffrey Hinton · Nature 역전파 실용화 (18장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/hinton-1986-backprop-editable-16x9.html) | 전공·이력·연구 동기, 은닉층과 XOR, 오차 역전파, 대칭·가족관계 실험, 가중치 학습 실습 |
 | 5강 · 이후 발전 | 신경망 기초 · 역전파에서 DenseNet까지 (24장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/neural-network-backprop-cnn-densenet-editable-16x9.html) | 은닉층, ReLU, Softmax, 역전파·경사하강법, CNN·DenseNet, 반도체 불량 사례 |
 | 6강 · CNN 심화 | 뇌학습을 응용한 CNN · 김임환 교수 (37장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html) | 뇌·뉴런·시냅스·가소성 → 퍼셉트론·XOR·역전파 → 시각피질 수용장 → CNN 필터·특징맵 → 반도체 영상 검사 및 합성곱 체험 |
+| 7강 · 비전 AI 발전사 | CNN에서 비전 파운데이션 모델까지 · 김임환 교수 (57장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/vision-ai-evolution-yolo-vit-dino-editable-16x9.html) | AlexNet→VGG→ResNet→DenseNet→MobileNet→YOLO→ViT→DINOv3, 개발자·연도·핵심 혁신·공식 성능 그래프·반도체 및 Raspberry Pi 5 응용 |
 
 ## 뇌학습을 응용한 CNN · 37장 심화 강의
 
@@ -125,6 +127,14 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | [뇌학습을 응용한 CNN · 김임환 교수](https://philipdekim-ond01.github.io/obsidian-blog/brain-learning-to-cnn-editable-16x9.html) | 뇌의 정보처리 → 뉴런·시냅스·가소성 → 퍼셉트론·XOR·MLP·역전파 → 시각피질 수용장 → CNN 필터·Pooling·특징맵 → 반도체 결함 검출과 실습 | 원본 그림·사진 포함, 주요 용어 하단 각주, 16:9 편집형 HTML 37장 |
 
 자료 내 이미지는 강의용 원본 PDF에서 인용·재구성한 도판을 포함합니다. 각 슬라이드의 출처 표기를 확인하고 외부 재배포 시 이미지 사용 권리를 별도로 검토하세요. 파일에는 사진·그림이 포함되어 있으므로 별도 이미지 폴더 없이 실행할 수 있습니다.
+
+## CNN에서 비전 파운데이션 모델까지 · 제7강 (57장)
+
+[김임환 교수 | 삼성전자 DS교수실 · 57장 16:9 편집형 HTML 강의](https://philipdekim-ond01.github.io/obsidian-blog/vision-ai-evolution-yolo-vit-dino-editable-16x9.html)
+
+AlexNet부터 DenseNet·MobileNet의 이미지 분류 구조, YOLO의 실시간 객체탐지, ViT와 DINO의 자기지도 특징 학습으로 이어지는 발전사입니다. 모델별 개발자·연도·개발 목적과 함께 ImageNet 정확도, COCO mAP, 파라미터·연산량을 서로 구분하여 비교합니다. 모델 선택 기준을 익힌 뒤 [Raspberry Pi 5 가위바위보 TFLite 실습](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-01-rps-tflite.html)으로 이어집니다.
+
+모든 슬라이드에는 출처 각주가 있으며, 텍스트·그래프 수치를 수정하고 HTML 저장 및 PDF 인쇄를 할 수 있습니다. 공개 그래프는 각 모델의 학습 조건 및 하드웨어 측정 조건을 확인한 뒤 해석해야 합니다.
 
 ## 정형 데이터 AI · TabPFN Foundation Model
 
@@ -141,6 +151,7 @@ AI 수학의 기본 개념을 익힌 다음, 실제 머신러닝 알고리즘들
 | 자료 | 웹페이지 | 내용 |
 |---|---|---|
 | 00 · 전체 학습 지도 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-00-overview.html) | Raspberry Pi, TFLite, 전이학습, 경량화를 한눈에 |
+| 사전 학습 · CNN·YOLO·ViT·DINO 비전 AI 발전사 (57장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/vision-ai-evolution-yolo-vit-dino-editable-16x9.html) | DenseNet을 쓰는 이유, MobileNet 경량화, YOLO 탐지, ViT·DINO 특징 학습을 이해하고 모델 선택하기 |
 | 실습 준비 · Raspberry Pi 5 환경 구축 및 TFLite 가위바위보 (30장, 편집형) | [강의 슬라이드 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-06-raspberry-pi5-setup-rps-tflite-30slides.html) | OS 설치 → Yonsei Wi-Fi → SSH → Python 가상환경 → USB 카메라 → DenseNet·TFLite 가위바위보 실행, 오류 해결 및 실습 점검 |
 | 01 · TFLite 가위바위보 인식 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-01-rps-tflite.html) | 카메라 입력부터 추론·후처리까지 |
 | 02 · 전이학습 | [웹페이지 열기](https://philipdekim-ond01.github.io/obsidian-blog/ondevice-ai-02-transfer-learning.html) | ResNet 분류와 Tiny YOLO 객체탐지 |
